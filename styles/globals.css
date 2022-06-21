@@ -1,10 +1,30 @@
-html,
+
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+  font-family: 'Monument', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+
+    @font-face{
+      font-family: 'MyFont';
+      src: local('MyFont'), url(/MonumentExtended-Regular.otf) format('opentype');
+    }  
+    
 }
+
+  @font-face {
+    font-family: 'Monument';
+    src: url('../assets/Monument/MonumentExtended-Regular.otf');
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'MonumentBold';
+    src: url('../assets/Monument/MonumentExtended-Ultrabold.otf');
+    font-weight: 400;
+    font-style: normal;
+  }
 
 a {
   color: inherit;
