@@ -10,7 +10,7 @@ const LearnMintComp = ({setLearnMintComp}) => {
     const [level, setLevel] = useState(0);
 
     const oneMore = () => {
-        if(level != 4) setLevel(level + 1)
+        if(level != 6) setLevel(level + 1)
     }
 
     const lessOne = () => {
@@ -47,13 +47,32 @@ const LearnMintComp = ({setLearnMintComp}) => {
 
                     {level == 2 && 
                         <EducationalBox 
-                        title="Get back to you NftsContext.js file "
+                        title="Get back to you NftsContext.js file"
                         subtitle="Inside of it we will create some states to handle with the NFTs"
                         codeSnippet={MintCodes.StatesNFTs}
                         />
                     }
 
-                    {level == 3 &&
+                    {level == 3 && 
+                        <EducationalBox 
+                        title="Create a folder with your scripts"
+                        subtitle="Inside your flow folder create /flow/cadence/scripts"
+                        content="Inside of it create a file get_samplers.js"
+                        codeSnippet={MintCodes.ScriptSampler}
+                        />
+                    }
+
+                    {level == 4 && 
+                        <EducationalBox 
+                        title="Create a folder with your transactions"
+                        subtitle="Inside your flow folder create /flow/cadence/transactions"
+                        content="Inside of it create a file mint_sampler.js"
+                        codeSnippet={MintCodes.TransactionSampler}
+                        />
+                    }
+
+
+                    {level == 5 &&
                         <EducationalBox 
                         title="Now we can add the functions that will get the NFTs and mint the NFTs"
                         subtitle="Import the script and transactions (created in the “todo → cadenceApp”)"
@@ -62,7 +81,7 @@ const LearnMintComp = ({setLearnMintComp}) => {
                         />
                     }
 
-                    {level == 4 &&
+                    {level == 6 &&
                         <EducationalBox 
                         title="Inside your page/component where you will mint and show the nfts that the address has:"
                         subtitle="Import the NftsContext "

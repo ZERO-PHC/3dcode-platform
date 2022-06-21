@@ -2,6 +2,7 @@ import { LoginCodes } from '../codeSnippets/AppAuthProvider';
 
 import styled from "styled-components";
 import EducationalBox from './EducationalBox';
+import { CssCode } from '../codeSnippets/CssCode';
 import { useState } from 'react';
 
 
@@ -9,7 +10,7 @@ const LearnLoginComp = ({setLearnLoginComp}) => {
     const [level, setLevel] = useState(0);
 
     const oneMore = () => {
-        if(level != 3) setLevel(level + 1)
+        if(level != 4) setLevel(level + 1)
     }
 
     const lessOne = () => {
@@ -19,7 +20,7 @@ const LearnLoginComp = ({setLearnLoginComp}) => {
     return (
         <Wrapper>
             <Header>
-                <button onClick={() => setLearnMintComp(false)}>x</button>
+                <button onClick={() => setLearnLoginComp(false)}>x</button>
                 <h1>How can you make this page?</h1>
             </Header>
             <Main>
@@ -28,40 +29,43 @@ const LearnLoginComp = ({setLearnLoginComp}) => {
                     <>
                         <EducationalBox 
                         title="Create a next js app"
-                        codeSnippet="npm create next-app"
-                        />
-
-                        <EducationalBox 
-                        title="Install the flow fcl and types dependencies"
-                        codeSnippet="npm i @onflow/fcl @onflow/types"
+                        subtitle="Install the flow fcl and types dependencies"
+                        codeSnippet={LoginCodes.NpmDependencies}
                         footer="We used in our application some styling dependencies has well, feel free to use whatever you want in your app"
                         />
                     </>
                     }
+                    { level == 1 && 
+                    <>
+                        <EducationalBox 
+                        title="Add the styles inside /styles/globals.css"
+                        codeSnippet={CssCode.Globals}
+                        />
+                    </>
+                    }
 
-                    {level == 1 &&
+                    {level == 2 &&
                         <EducationalBox
                         title="Create a new Folder /flow"
                         subtitle="Inside of it create a file config.js"
                         codeSnippet={LoginCodes.ConfigFcl}
                         />
                     }
-                    {level == 2 && 
-                    <>
+                    {level == 3 && 
                         <EducationalBox 
                         title="Create a new folder contexts"
                         subtitle="Inside of it create a file /AuthContext.js"
                         content="In our application we use contexts from React to interact with the blockchain through FCL"
                         codeSnippet={LoginCodes.AuthContext}
                         />
-                        
+                    }
+                    { level == 4 &&
                         <EducationalBox 
                         title="Inside pages/_app.js add the AuthProvider"
                         codeSnippet={LoginCodes.AppAuthProvider}
                         />
-                    </> 
                     }
-                    {level == 3 &&
+                    {level == 5 &&
                         <EducationalBox 
                         title="Inside your component/page that you will add the buttons to login and logout"
                         subtitle="Now we just need to import the Auth Context to our page or component and use the functions we created earlier"

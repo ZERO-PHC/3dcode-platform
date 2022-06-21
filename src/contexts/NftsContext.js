@@ -4,7 +4,6 @@ import * as fcl from "@onflow/fcl";
 // ----------- SCRIPTS  -----------
 import { getSamplersScript } from "../flow/cadence/scripts/get_samplers";
 import { MINT_SAMPLER } from "../flow/cadence/transactions/mint_sampler";
-import { useAuth } from "./AuthContext";
 
 export const NftsContext = React.createContext("");
 export const useNFTs = () => useContext(NftsContext);

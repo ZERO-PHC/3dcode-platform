@@ -1,4 +1,8 @@
 export const LoginCodes = {
+  "NpmDependencies": `
+  npm create next-app
+  npm i @onflow/fcl @onflow/types
+  `,
   "ConfigFcl": `
   const fcl = require("@onflow/fcl");
 
