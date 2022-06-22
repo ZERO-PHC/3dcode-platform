@@ -1,15 +1,18 @@
 import "../../styles/globals.css";
-import AuthProvider from "../contexts/AuthContext"
-import NftsProvider  from "../contexts/NftsContext"
+import AnimationProvider from "../contexts/animation/AnimationContext";
+import AuthProvider from "../contexts/AuthContext";
+import NftsProvider from "../contexts/NftsContext";
 
 function MyApp({ Component, pageProps }) {
   return (
     <AuthProvider>
       <NftsProvider>
-        <Component {...pageProps} />
+        <AnimationProvider>
+          <Component {...pageProps} />
+        </AnimationProvider>
       </NftsProvider>
     </AuthProvider>
-  )
+  );
 }
 
 export default MyApp;

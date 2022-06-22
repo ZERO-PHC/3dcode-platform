@@ -1,4 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;200;300;400;500;600;700&family=Montserrat:wght@900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+export const CssCode = {
+    "Globals": `
+    
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;200;300;400;500;600;700&
+              family=Montserrat:wght@900&
+              family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
   
   html,
   body {
@@ -148,4 +153,7 @@
     border: 1px solid;
     border-radius: 77px;
     font-size: 10px;
+  }
+              
+    `
   }
