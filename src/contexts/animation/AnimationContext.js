@@ -22,7 +22,8 @@ export default function AnimationProvider({ children }) {
   );
 
   const handleCompletedLevel = (lvl) => {
-    levelOneInput.value = parseInt(lvl);
+    console.log(levelOneInput)
+    levelOneInput.runtimeInput.value = parseInt(lvl);
   };
 
   const RiveComp = <RiveComponent />;

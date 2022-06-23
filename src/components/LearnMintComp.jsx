@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { LoginCodes } from "../codeSnippets/AppAuthProvider";
 import { MintCodes } from "../codeSnippets/MintCodes";
 import EducationalBox from "./EducationalBox";
 
@@ -17,6 +16,7 @@ const LearnMintComp = ({ setLearnMintComp }) => {
   };
 
   const lessOne = () => {
+    handleCompletedLevel(level - 2);
     if (level != 0) setLevel(level - 1);
   };
 
