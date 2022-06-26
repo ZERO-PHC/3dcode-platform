@@ -1,9 +1,11 @@
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { Icon } from "@iconify/react";
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 import styled from "styled-components"
 
-const EducationalDynamicBox = ({step, codeSnippet}) => {
+const EducationalDynamicBox = ({step}) => {
     return (
         <Wrapper>
             <h1>{step.title}</h1>
@@ -22,16 +24,23 @@ const EducationalDynamicBox = ({step, codeSnippet}) => {
 
             {step.span && <div className='spanDiv'><span>{step.span}</span></div>}
             {step.path && <div className='pathDiv'><span>{step.path}</span></div>}
-            {codeSnippet &&
-            <SyntaxHighlighter language="javascript" style={dracula} wrapLongLines={true}>
-                {codeSnippet}
-            </SyntaxHighlighter>
+            {step.codeSnippet &&
+            <>
+                <CopyToClipboard text={step.codeSnippet}>
+                    <button className='copyBtn'><Icon icon="uil:copy" height={"1.7em"} /></button>
+                </CopyToClipboard>
+                <SyntaxHighlighter language="javascript" style={dracula} wrapLongLines={true}>
+                    {step.codeSnippet}
+                </SyntaxHighlighter>
+            </>
             }
+            {(step.footer || step.footer2) &&
             <div className='footerDiv'>
             {step.footer && 
                 <div><p>{step.footer}</p></div>}
             {step.footer2 && <p>{step.footer2}</p>}
             </div>
+            }
         </Wrapper>
     )
 }
@@ -41,19 +50,22 @@ export default EducationalDynamicBox
 const Wrapper = styled.main`
     background: transparent !important;
     color: white;
+    width: 100%;
     height: unset;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
+    align-items: center;
 
     .subtitleDiv{
         margin: 0;
         padding: 30px 100px;
-        color: #d79b31;
-        font-weight: 700;
+        color: #5a85ff !important;
+        font-weight: 700 !important;
     }
 
     .contentDiv{
+        flex-direction: column;
         padding: 30px;
         padding-bottom: 0;
         margin: 0;
@@ -62,28 +74,45 @@ const Wrapper = styled.main`
     }
 
     .footerDiv{
-        font-size: 1.3rem;
-        font-weight: 900;
+        font-size: 1.1rem;
+        font-weight: 400;
         color: #00bf00;
     }
 
     h1{
-        font-family: 'Fascinate', cursive;
-        font-size: 4rem;
+        font-family: Poppins !important;
+        font-weight: 900 !important;
+        font-size: 4rem !important;
         position: absolute;
-        top: 36px;
-        left: 200px;
-        color: #d79b31;
+        top: -121px;
+        left: 99px;
+        color: #d79b31 !important;
     }
 
     h2{
-        font-size: 1.2rem;
-        text-align: left;
+        font-size: 1.2rem !important;
+        text-align: left !important;
+        font-family: Poppins !important;
+        color: #5a85ff !important;
+        font-weight: 700 !important;
     }
 
     h3{
-        font-size: 1rem;
-        font-weight: 400;
+        font-size: 1rem !important;
+        font-weight: 400 !important;
+    }
+
+    .copyBtn{
+        width: 90%;
+        background: transparent;
+        color: white;
+        border-radius: 6px;
+        border: none;
+        text-align: right;
+
+        &:hover{
+            cursor: pointer;
+        }
     }
 
     .spanDiv{
@@ -96,7 +125,7 @@ const Wrapper = styled.main`
     }
 
     .pathDiv{
-        margin: 0;
+        margin: 20px;
         span{
             background-color: white;
             color: black;
@@ -104,5 +133,17 @@ const Wrapper = styled.main`
             border-radius: 4px;
         }
     }
+
+    pre,
+    code,
+    textarea,
+    kbd,
+    samp,
+    tt {
+    width: 90%;
+    overflow: hidden !important;
+    /* margin: auto !important; */
+    font-size: 14px !important;
+    } 
 
 `
