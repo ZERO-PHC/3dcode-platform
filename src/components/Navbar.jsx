@@ -122,7 +122,7 @@ h4{
 }
 
 h2 {
-  font-family: MonumentBold;
+  font-family: "MonumentBold";
   color: white;
 }
 
