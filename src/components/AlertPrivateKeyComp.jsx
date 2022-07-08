@@ -6,7 +6,7 @@ const AlertPrivateKeyComp = ({setAlert}) => {
     return (
         <Wrapper>
             <div className="alertDiv">
-                <button className="closeBtn" onClick={() => setAlert(false)}><Icon icon="fa:close" height={"1.7em"} /></button>
+                <button className="closeBtn" onClick={() => setAlert(false)}><Icon icon="fa:close" height={"1.2em"} /></button>
                 <img src="/magicSchool/badHackerWizard.png" alt="" />
                 <h2>Never save your private key somewhere that might expose it to other people!</h2>
                 <p>We are creating our application on the testnet, so we add it to our flow.json file directly.</p>
@@ -24,7 +24,7 @@ const Wrapper = styled.div`
     .alertDiv{
     position: fixed;
     width: 100% !important;
-    height: 100vh !important;
+    height: 100% !important;
     margin: 0 !important;
     top: 0 !important;
     padding: 100px;
@@ -51,8 +51,8 @@ const Wrapper = styled.div`
     }
     .closeBtn{
         position: absolute;
-        top: 50px;
-        right: 50px;
+        top: 11px;
+        right: 0px;
 
         path{
             color: white;

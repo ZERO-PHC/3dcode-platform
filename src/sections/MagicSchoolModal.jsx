@@ -28,10 +28,11 @@ const MagicSchoolModal = ({data, nextApp, pathFn, path, externalPath, setLearnCo
                 finalStep={data.length - 1} nextApp={nextApp} pathFn={pathFn}
                 path={path}
                 externalPath={externalPath}
+                setLearnComp={setLearnComp}
                 />
                 <img src="/magicSchool/wizardFlow.png" alt="" />
                 {alert && <AlertPrivateKeyComp setAlert={setAlert}/>}
-                <button className="closeBtn" onClick={() => setLearnComp(false)}>x</button>
+                {/* <button className="closeBtn" onClick={() => setLearnComp(false)}>x</button> */}
             </section>
         </Wrapper>
     )

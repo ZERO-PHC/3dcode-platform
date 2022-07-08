@@ -1,29 +1,36 @@
 import Link from "next/link"
 import styled from "styled-components"
 
-const ChangeStepsComp = ({step, oneMore, lessOne, finalStep, nextApp, pathFn, path, externalPath}) => {
+const ChangeStepsComp = ({step, oneMore, lessOne, finalStep, nextApp, pathFn, path, externalPath, setLearnComp}) => {
+    const finalStepFn = () => {
+        if(pathFn) pathFn()
+        if(setLearnComp) setLearnComp(false)
+    }
     return (
-        <Wrapper>
-            {step == 0 ? 
-            <button onClick={() => oneMore()}> Start </button> :
-            <>
-                {step == finalStep ? 
-                <div className="stepsDiv">
-                    <button onClick={() => lessOne()}> Previous </button> 
-                    <div className="finalStepDiv">
-                        <Link href={"/"}><button disabled>Cadence Tests</button></Link> 
-                        <Link href={path}><a href={externalPath}><button onClick={pathFn}>{nextApp}</button></a></Link>
+        <>
+            <Wrapper>
+                {step == 0 ? 
+                <button onClick={() => oneMore()}> Start </button> :
+                <>
+                    {step == finalStep ? 
+                    <div className="stepsDiv">
+                        <button onClick={() => lessOne()}> Previous </button> 
+                        <div className="finalStepDiv">
+                            <Link href={"/"}><button disabled>Cadence Tests</button></Link> 
+                            <Link href={path}><a href={externalPath}><button onClick={() => finalStepFn()}>{nextApp}</button></a></Link>
+                        </div> 
                     </div> 
-                </div> 
-                :
-                <div className="notFinalStepDiv">
-                    <button onClick={() => lessOne()}> Previous </button>
-                    <button onClick={() => oneMore()}> Next </button>
-                </div>
+                    :
+                    <div className="notFinalStepDiv">
+                        <button onClick={() => lessOne()}> Previous </button>
+                        <button onClick={() => oneMore()}> Next </button>
+                    </div>
+                    }
+                </>
                 }
-            </>
-            }
-        </Wrapper>
+            </Wrapper>
+                <button className="closeBtn" onClick={() => finalStepFn()}>x</button>
+        </>
     )
 }
 
@@ -93,5 +100,19 @@ const Wrapper = styled.div`
     }
 
     
+    .closeBtn{
+        position: absolute;
+        top: -3px;
+        right: 16px;
+        background: none;
+        color: #d79b31;
+        border: none;
+        font-size: 30px;
+        font-family: 'Poppins';
+        font-weight: 900;
 
+        &:hover{
+            cursor: pointer;
+        }
+    }
 `

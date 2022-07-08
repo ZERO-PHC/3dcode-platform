@@ -4,7 +4,7 @@ import * as fcl from "@onflow/fcl";
 // ----------- SCRIPTS  -----------
 import { getSamplersScript } from "../flow/cadence/scripts/get_samplers";
 import { MINT_SAMPLER } from "../flow/cadence/transactions/mint_sampler";
-import { useAuth } from "./AuthContext";
+import { PAID_MINT_SAMPLER } from "../flow/cadence/transactions/paid_mint_sampler";
 
 export const NftsContext = React.createContext("");
 export const useNFTs = () => useContext(NftsContext);
@@ -42,7 +42,7 @@ export default function NftsProvider({ children }){
 
     try {
       const txid = await fcl.mutate({
-        cadence: MINT_SAMPLER,
+        cadence: PAID_MINT_SAMPLER,
         args: (arg, t) => [
           arg(name, t.String),
           arg(description, t.String),

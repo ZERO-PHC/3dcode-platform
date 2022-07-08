@@ -3,9 +3,8 @@ import { CssCode } from "../src/codeSnippets/CssCode"
 export const LoginPageData = [
     {
         "title": "Welcome",
-        "subtitle": "Samplers Contract deployment guide",
-        "content": "Our goal is not to teach you all the details of building this smart contract, it is very simple and beginner level. On this page we will show you how to deploy it for the next FCL teachings",
-        "content2": "If you want to learn about Cadence and Smart Contracts, we recommend that you join the next Emerald Academy Bootcamp"
+        "subtitle": "Authentication page guide",
+        "content": "In this guide you will learn how to create an authentication page using FCL",
     },
     {
         "title": "Step 1",
@@ -122,5 +121,10 @@ export const LoginPageData = [
 
         export default Component;
         `
+    },
+    {
+        "title": "Done",
+        "subtitle": "You got it! Your application is already authenticating the users!",
+        "subtitle2": "The next step is to login!"
     }
 ]
