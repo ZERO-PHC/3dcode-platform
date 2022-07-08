@@ -49,7 +49,7 @@ export default function Home() {
     }}
     >
       <Navbar />
-      <main>
+      <main className="indexMain">
         <Tabs rarities={rarities} />
         <SamplerContent />
         <footer>
@@ -80,7 +80,7 @@ const Wrapper = styled.main`
     justify-content: space-between;
     padding: 0;
     
-    main {
+    .indexMain {
       max-width: 70%;
       width: 100%;
       background: white;

@@ -15,7 +15,7 @@ const Navbar = () => {
     const router = useRouter();
 
     const [howToModal, setHowToModal] = useState(false)
-    const [learnLoginComp, setLearnLoginComp] = useState(false)
+    const [learnComp, setLearnComp] = useState(false)
   
     useEffect(() => {
       if (!user?.loggedIn) {
@@ -32,17 +32,17 @@ const Navbar = () => {
           <h2>SAMPLERS</h2>
         </div>
         {user?.addr ? (
-          <section>
+          <section className="navbarSection">
             <div>
 
               <span 
               className="auth-btn" 
               onMouseEnter={() => setHowToModal(true)} 
               onMouseLeave={() => setHowToModal(false)}
-              onClick={() => setLearnLoginComp(true)}
+              onClick={() => setLearnComp(true)}
               >?</span>
               {howToModal && <h4>Learn how you can make this page</h4>}
-              {learnLoginComp && <LearnMintComp setLearnMintComp={setLearnLoginComp}/>}
+              {learnComp && <LearnMintComp setLearnComp={setLearnComp} loginFn={logIn}/>}
 
               <div className="addressBox">
                 <div className="dot"></div>
@@ -67,10 +67,10 @@ const Navbar = () => {
             <span className="auth-btn" 
             onMouseEnter={() => setHowToModal(true)} 
             onMouseLeave={() => setHowToModal(false)}
-            onClick={() => setLearnLoginComp(true)}
+            onClick={() => setLearnComp(true)}
             >?</span>
             {howToModal && <h4>Learn how you can make this page</h4>}
-            {learnLoginComp && <LearnLoginComp setLearnLoginComp={setLearnLoginComp}/>}
+            {learnComp && <LearnLoginComp setLearnComp={setLearnComp} loginFn={logIn}/>}
             <div className="auth-btn" onClick={logIn}>
               LOG IN / SIGN UP 
             </div>
@@ -95,7 +95,7 @@ const HeaderWrapper = styled.header`
   padding-left: 3rem;
   padding-right: 3rem;
 
-section {
+.navbarSection {
   width: 27%;
   display: flex;
   justify-content:end;

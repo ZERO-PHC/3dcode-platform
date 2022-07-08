@@ -8,3 +8,8 @@ fcl.config({
     "0xDeployer": process.env.NEXT_PUBLIC_CONTRACT_ADDRESS, // this auto configures `0xDeployer` to be replaced by the address in txs and scripts
     "0xCORE": process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
     })
+
+export default ({ app }, inject) => {
+    inject('fcl', fcl)
+    inject('fclArgType', types)
+    }
