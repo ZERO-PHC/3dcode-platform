@@ -5,13 +5,17 @@ import styled from "styled-components"
 
 const EducationalBox = ({title, subtitle, content, codeSnippet, footer}) => {
     return (
-        <Wrapper>
-            <h2>{title}</h2>
-            {subtitle && <h3>{subtitle}</h3>}
-            {content && <p>{content}</p>}
-            <SyntaxHighlighter language="javascript" style={dracula} wrapLongLines={true}>
-                {codeSnippet}
-            </SyntaxHighlighter>
+        <Wrapper className='modal'>
+            <div className='texts'>
+                <h2>{title}</h2>
+                {subtitle && <h3>{subtitle}</h3>}
+                {content && <p>{content}</p>}
+            </div>
+            <div className='code'>
+                <SyntaxHighlighter language="javascript" style={dracula} wrapLongLines={true}>
+                    {codeSnippet}
+                </SyntaxHighlighter>
+            </div>
             {footer && <p>{footer}</p>}
         </Wrapper>
     )
@@ -20,14 +24,32 @@ const EducationalBox = ({title, subtitle, content, codeSnippet, footer}) => {
 export default EducationalBox;
 
 const Wrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin: 30px;
-    padding: 20px;
-    text-align: center;
-    border: 1px solid white;
+    
+    .modal{
+        display: flex;
+        flex-direction: column !important;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin: 30px;
+        padding: 20px;
+        text-align: center;
+        border: 1px solid white;
+    }
+
+    .texts{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-self: baseline;
+        height: 20%;
+    }
+
+    .code{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-self: baseline;
+    }
 
     h2{
         font-size: 17px;
