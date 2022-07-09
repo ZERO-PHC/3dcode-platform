@@ -9,6 +9,11 @@
     background: linear-gradient(89.11deg, #0e0d0d 25.47%, #3f8e76 99.28%);
   }
 
+  @font-face{
+    font-family: 'MyFont';
+    src: local('MyFont'), url(/MonumentExtended-Regular.otf) format('opentype');
+  }
+
   @font-face {
     font-family: 'Monument';
     src: url('../assets/Monument/MonumentExtended-Regular.otf');
