@@ -16,14 +16,14 @@
 
   @font-face {
     font-family: 'Monument';
-    src: url('../assets/Monument/MonumentExtended-Regular.otf');
+    src: url('../public/assets/Monument/MonumentExtended-Regular.otf');
     font-weight: 400;
     font-style: normal;
   }
 
   @font-face {
     font-family: 'MonumentBold';
-    src: url('../assets/Monument/MonumentExtended-Ultrabold.otf');
+    src: url('../public/assets/Monument/MonumentExtended-Ultrabold.otf');
     font-weight: 400;
     font-style: normal;
   }

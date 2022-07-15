@@ -8,6 +8,7 @@ import { useNFTs } from "../contexts/NftsContext";
 import Spinner from "../atoms/Spinner";
 import SamplerParagraph from "./SamplerParagraph";
 import SamplerSectionImg from "./SamplerSectionImg";
+import { useTransaction } from "../contexts/TransactionContext";
 
 const SamplerContent = () => {
         
@@ -16,8 +17,8 @@ const SamplerContent = () => {
             Samplers,
             getSamplers,
             mintSampler,
-            IsLoading,
           } = useNFTs();
+          const { IsProcessing} = useTransaction ()
           const { user, logIn } = useAuth();
         
           const handleMint = async () => {
@@ -41,7 +42,7 @@ const SamplerContent = () => {
                     <h1>{SelectedRarity.toUpperCase()}</h1>
                     <SamplerParagraph />
                     <button onClick={() => handleMint()}>
-                      {IsLoading ? <Spinner /> : "MINT"}
+                      {IsProcessing ? <Spinner /> : "MINT"}
                     </button>
                     
                   </div>

@@ -3,17 +3,27 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 import "../flow/config";
 
-import { useNFTs } from "./NftsContext";
-
 export const AuthContext = createContext({});
 
 export const useAuth = () => useContext(AuthContext);
 
 export default function AuthProvider({ children }) {
-
   const [user, setUser] = useState({ loggedIn: false, addr: undefined });
-
+  const [FlowBalance, setFlowBalance] = useState(0);
   useEffect(() => fcl.currentUser.subscribe(setUser), []);
+
+  useEffect(() => {
+    getAccountObj();
+  }, [user]);
+
+  const getAccountObj = async () => {
+    // so let's add some basic protection here
+    if (user?.addr) {
+      const account = await fcl.account(user.addr);
+      console.log("accountInfo", account.balance);
+      setFlowBalance(account.balance / Math.pow(10,8));
+    }
+  };
 
   const logOut = async () => {
     await fcl.unauthenticate();
@@ -33,6 +43,7 @@ export default function AuthProvider({ children }) {
     logIn,
     signUp,
     user,
+    FlowBalance
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
