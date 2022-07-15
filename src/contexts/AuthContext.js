@@ -21,7 +21,18 @@ export default function AuthProvider({ children }) {
     if (user?.addr) {
       const account = await fcl.account(user.addr);
       console.log("accountInfo", account.balance);
-      setFlowBalance(account.balance / Math.pow(10,8));
+      setFlowBalance(account.balance / Math.pow(10, 8));
+    }
+  };
+
+  // create  checkFlowBalance function
+  const checkFlowBalance = async (price) => {
+    const account = await fcl.account(user.addr);
+    const balance = account.balance / Math.pow(10, 8);
+    if (balance < price) {
+      return false;
+    } else {
+      return true;
     }
   };
 
@@ -43,7 +54,9 @@ export default function AuthProvider({ children }) {
     logIn,
     signUp,
     user,
-    FlowBalance
+    FlowBalance,
+    getAccountObj,
+    checkFlowBalance,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

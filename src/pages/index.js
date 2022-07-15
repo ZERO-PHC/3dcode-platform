@@ -55,7 +55,7 @@ export default function Home() {
         <SamplerContent />
         <footer>
           <div className="samplers-container">
-            {Samplers.length > 0 && <MySamplers samplers={Samplers} />}{" "}
+            {Samplers.length > 0 && <MySamplers samplers={Samplers} />}
           </div>
         </footer>
       </main>
