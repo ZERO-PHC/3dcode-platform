@@ -139,12 +139,7 @@ const Navbar = () => {
                     icon="mdi-account-circle-outline"
                   />
                 </div>
-                <Dropdown isOpen={IsOpen}>
-                  <DropdownItem>FLOW: {FlowBalance}</DropdownItem>
-                  <DropdownItem>My NFTs</DropdownItem>
-                  <DropdownItem>My Favorites</DropdownItem>
-                  <DropdownItem>Logout</DropdownItem>
-                </Dropdown>
+               
               </div>
             </div>
           </section>
