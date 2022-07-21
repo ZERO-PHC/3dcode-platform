@@ -6,7 +6,7 @@
     margin: 0;
     font-family: Monument, 'Poppins' ,-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
       Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-    background: linear-gradient(89.11deg, #0e0d0d 25.47%, #3f8e76 99.28%);
+    background: whitesmoke
   }
 
   @font-face{
@@ -61,21 +61,7 @@
     padding-right: 7rem;
   }
   
-  nav > button {
-    background-color: gray;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 40px;
-    background: radial-gradient(
-        54.9% 630.78% at 48.69% 44.74%,
-        rgba(253, 253, 253, 0.12) 0%,
-        rgba(248, 241, 255, 0.6) 100%
-      );
-    color: white;
-    font-size: 15px;
-    font-family: 'IBM Plex Sans';
-    font-weight: 800;
-  }
+ 
   
   nav > button:hover {
     cursor: pointer;
@@ -105,7 +91,6 @@
       );
     color: white;
     font-size: 15px;
-    font-family: 'IBM Plex Sans';
     font-weight: 800;
   }
   

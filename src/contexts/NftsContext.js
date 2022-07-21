@@ -25,7 +25,7 @@ export default function NftsProvider({ children }) {
         args: (arg, t) => [arg(addr, t.Address)],
       });
 
-      console.log("samplers res", res);
+      // console.log("samplers res", res);
       setSamplers(res);
 
       // return result;

@@ -1,0 +1,46 @@
+export const categories = [
+    {
+      name: "2D",
+      id: "art",
+      color: "#f5f5f5",
+      background: "#f5f5f5",
+      border: "#f5f5f5",
+      text: "#f5f5f5",
+      icon: "🎨",
+      active: false,
+      selected: true,
+    },
+    {
+      name: "3D",
+      id: "3d",
+      color: "#f5f5f5",
+      background: "#f5f5f5",
+      border: "#f5f5f5",
+      text: "#f5f5f5",
+      icon: "🧪",
+      active: false,
+      selected: false
+    },
+    {
+      name: "Abstract",
+      id: "abstract",
+      color: "#f5f5f5",
+      background: "#f5f5f5",
+      border: "#f5f5f5",
+      text: "#f5f5f5",
+      icon: "🎨",
+      active: false,
+      selected: false,
+    },
+    {
+      name: "Realistic",
+      id: "craft",
+      color: "#f5f5f5",
+      background: "#f5f5f5",
+      border: "#f5f5f5",
+      text: "#f5f5f5",
+      icon: "🧪",
+      active: false,
+      selected: false
+    },
+  ];
