@@ -6,51 +6,52 @@ import ArtworkComponent from "./ArtworkComponent";
 export default function ArtgridComponent({
   currentWrapper,
   columns,
+  variations,
   artworks,
   handleArtworkSelection,
-  artworkId
+  artworkId,
+  isOwner
 }) {
-  const Artgrid = styled.div`
+
+  console.log("isOwner", isOwner)
+
+
+  const Artgrid= styled.div`
+padding-top: ${(props) => props.paddingTop};} ;
 width: 80%;
 display: grid;
 grid-template-columns: repeat(${(props) => props.columns} , 1fr);
-grid-gap: 2rem;
+grid-gap: ${props => props.gridGap};
 height: 100%;
 `;
 
   function renderArtworks() {
-    return artworks.map((artwork) => {
+    return artworks.map((artwork, i) => {
       return (
         <ArtworkComponent
-          key={artwork.id}
+          key={i}
           artwork={artwork}
           handleArtworkSelection={handleArtworkSelection}
-          isDialog={currentWrapper === "dialog"}
+          currentWrapper={currentWrapper}
+          isOwner={true}
         />
       );
     });
   }
 
-  function getVariations() {
-    const ids = artworks[artworkId].variations;
-    // console.log(ids, "ids");
-    const variationsObjs = artworks.filter((artwork) =>
-      ids.includes(artwork.id)
-    );
-    console.log("variationsObjs", variationsObjs);
-    return variationsObjs;
-  }
 
   function renderVariations() {
-    const variations = getVariations(artworks);
+    // const variations = getVariations(artworks);
     console.log("variations", variations);
-    return variations.map((variation) => {
+    return variations.map((variation, i) => {
       return (
+        // <div key={i}>w</div>
         <ArtworkComponent
-          key={variation.id}
+          key={i}
           artwork={variation}
           handleArtworkSelection={handleArtworkSelection}
-          isDialog={currentWrapper === "dialog" || currentWrapper === "details"}
+          isOwner={isOwner}
+          currentWrapper={currentWrapper}
         />
       );
     });
@@ -58,8 +59,10 @@ height: 100%;
 
   return (
     <div>
-      <Artgrid columns={columns}>
-        {currentWrapper === "dialog" || currentWrapper === "details" ? renderVariations() : renderArtworks()}
+      <Artgrid
+      gridGap={currentWrapper === "dialog" || currentWrapper === "details" ? "1rem 2rem" : "4rem  2rem" }
+      columns={columns} paddingTop={currentWrapper === "dialog" || currentWrapper === "details" ? "0rem" : "3rem"}>
+        {currentWrapper === "dialog" || currentWrapper === "details" ? renderVariations() : renderArtworks()}
       </Artgrid>
     </div>
   );

@@ -1,7 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  domains: ["media.discordapp.net"],
+  images: {
+    domains: [
+      "media.discordapp.net",
+      "firebasestorage.googleapis.com",
+    ],
+  },
 };
 
 // create the config for a network image that can be used in the src property of an image tag

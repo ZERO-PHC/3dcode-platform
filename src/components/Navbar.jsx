@@ -13,22 +13,27 @@ import LearnLoginComp from "./LearnLoginComp";
 import LearnMintComp from "./LearnMintComp";
 import NetworkSwitch from "./NetworkSwitch";
 import Iconify from "./Iconify";
+import TimerComponent from "./TimerComponent";
 
 const Navbar = () => {
-  const { logIn, logOut, user, FlowBalance } = useAuth();
+  const { login, logout, user, Coins } = useAuth();
   const [IsOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
   const [howToModal, setHowToModal] = useState(false);
   const [learnComp, setLearnComp] = useState(false);
 
+  const handleNavigation = (e) => {
+    router.push("/coins")
+  }
+
   const MyImage = (props) => {
     return (
       <Image
         src={flowLogo}
         alt="logo"
-        // width={500}
-        // height={500}
+      // width={500}
+      // height={500}
       />
     );
   };
@@ -100,70 +105,59 @@ const Navbar = () => {
         <h2>SAMPLERS</h2>
       </div>
 
-      {user?.addr ? (
+      <TimerComponent />
+
+      {user ? (
         <>
-          <section className="navbarSection">
+
+          <section className="navbar-section" onClick={handleNavigation}>
             <div>
               <div
                 onPointerEnter={() => setIsOpen(true)}
                 onPointerLeave={() => setIsOpen(false)}
                 className="addressBox"
               >
+                {Coins}
                 <div className="avatarBox">
-                  <Iconify
-                    size={"1.5rem"}
-                    color="black"
-                    icon="mdi-account-circle-outline"
-                  />
+                  <Image height={50} width={50} src="/assets/coin.png" />
                 </div>
-                <Dropdown isOpen={IsOpen}>
-                  <DropdownItem>FLOW: {FlowBalance}</DropdownItem>
-                  <DropdownItem>My NFTs</DropdownItem>
-                  <DropdownItem>My Favorites</DropdownItem>
-                  <DropdownItem>Logout</DropdownItem>
-                </Dropdown>
+
               </div>
             </div>
-          </section>
-          <section className="navbarSection">
-            <div>
-              <div
-                onPointerEnter={() => setIsOpen(true)}
-                onPointerLeave={() => setIsOpen(false)}
-                className="addressBox"
-              >
-                <div className="avatarBox">
-                  <Iconify
-                    size={"1.5rem"}
-                    color="black"
-                    icon="mdi-account-circle-outline"
-                  />
-                </div>
-               
-              </div>
+
+            <div className="avatarBox">
+              <Iconify
+                size={"1.5rem"}
+                color="black"
+                icon="akar-icons:heart"
+              />
             </div>
+            <div className="avatarBox" onClick={() => router.push("/profile")}>
+              <Iconify
+                size={"1.5rem"}
+                color="black"
+                icon="mdi-account-circle-outline"
+              />
+            </div>
+            <div className="avatarBox">
+              <Iconify
+                size={"1.5rem"}
+                color="black"
+                icon="charm:moon"
+              />
+            </div>
+
           </section>
         </>
       ) : (
         <div>
-          {/* <span
-            className="auth-btn"
-            onMouseEnter={() => setHowToModal(true)}
-            onMouseLeave={() => setHowToModal(false)}
-            onClick={() => setLearnComp(true)}
-          >
-            ?
-          </span> */}
-          {howToModal && <h4>Learn how you can make this page</h4>}
-          {learnComp && (
-            <LearnLoginComp setLearnComp={setLearnComp} loginFn={logIn} />
-          )}
-          <div className="auth-btn" onClick={logIn}>
+
+          <div className="auth-btn" onClick={login}>
             LOG IN / SIGN UP
           </div>
-          <div className="code-container">
+          {/* <div className="code-container">
             <Iconify size={"1.5rem"} color="black" icon="mdi-code-brackets" />
-          </div>
+          </div> */}
         </div>
       )}
     </HeaderWrapper>
@@ -186,11 +180,12 @@ const HeaderWrapper = styled.header`
   background-color: #ffff;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 
-  .navbarSection {
-    width: 40%;
+  .navbar-section {
+    width: 20%;
     display: flex;
     justify-content: end;
   }
+  
 
   div {
     display: flex;
@@ -299,24 +294,19 @@ const HeaderWrapper = styled.header`
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    background-color: black;
+    color: white;
     margin-right: 0.5rem;
     margin-left: 1rem;
     font-family: "Monument";
     text-transform: uppercase;
 
-    font-size: 0.9rem;
-    background-color: gray;
+    font-size: 1rem;
     height: 2.3rem;
     padding-left: 0.8rem;
     border: 2px solid #b6b6b6;
     border-radius: 40px;
-    background: radial-gradient(
-        54.9% 630.78% at 48.69% 44.74%,
-        rgba(253, 253, 253, 0.12) 0%,
-        rgba(248, 241, 255, 0.6) 100%
-      )
-      /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
-
+   
     & button {
       display: none;
       padding: 5px 15px;

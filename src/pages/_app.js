@@ -1,4 +1,7 @@
 import "../../styles/globals.css";
+import "@stripe/stripe-js"
+
+
 import AnimationProvider from "../contexts/animation/AnimationContext";
 import AuthProvider from "../contexts/AuthContext";
 import NftsProvider from "../contexts/NftsContext";

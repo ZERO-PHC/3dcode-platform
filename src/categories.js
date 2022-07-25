@@ -1,5 +1,16 @@
 export const categories = [
     {
+      name: "All",
+      id: "all",
+      color: "#f5f5f5",
+      background: "#f5f5f5",
+      border: "#f5f5f5",
+      text: "#f5f5f5",
+      icon: "🎨",
+      active: false,
+      selected: true,
+    },
+    {
       name: "2D",
       id: "art",
       color: "#f5f5f5",
@@ -8,7 +19,7 @@ export const categories = [
       text: "#f5f5f5",
       icon: "🎨",
       active: false,
-      selected: true,
+      selected: false,
     },
     {
       name: "3D",
