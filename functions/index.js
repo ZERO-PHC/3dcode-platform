@@ -3,32 +3,119 @@ const { event } = require("firebase-functions/v1/analytics");
 const admin = require("firebase-admin");
 admin.initializeApp();
 
-// create an scheduled function that runs every minute that updates the artworks collection
+// exports.updateArtworks = functions.pubsub
+//   .schedule("every 10 minutes")
+//   .onRun((context) => {
+//     console.log("Updating artworks collection");
+//     return admin
+//       .firestore()
+//       .collection("artworks")
+//       .get()
+//       .then((snapshot) => {
+//         snapshot.forEach((doc) => {
+//           const artwork = doc.data();
+//           const artworkId = doc.id;
+//           const artworkRef = admin
+//             .firestore()
+//             .collection("artworks")
+//             .doc(artworkId);
+//           const artworkUpdate = {
+//             // lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
+//             state: "inactive"
+//           };
+//           artworkRef.update(artworkUpdate);
+//         });
+//       });
+//   });
 
-exports.updateArtworks = functions.pubsub
+// create a cloud function that logs the firestore admin server timestamp
+// exports.logServerTimestamp = functions.https.onRequest((request, response) => {
+//   const currentTime = admin.firestore.FieldValue.serverTimestamp();
+//   console.log("currentTime", currentTime);
+// });
+
+// create a cloud function that runs a countdown timer for the next day and logs the time remaining every minute
+exports.countdownTimer = functions.pubsub
   .schedule("every 1 minutes")
   .onRun((context) => {
-    console.log("Updating artworks collection");
-    return admin
+    // const nextDay = new Date();
+    // get the nextDay document from the nextDay collection in the firestore database
+    const nextDayRef = admin
       .firestore()
-      .collection("artworks")
+      .collection("nextDay")
+      .doc("nextDay");
+    // get the nextDay document from the nextDay collection in the firestore database
+    return nextDayRef
       .get()
-      .then((snapshot) => {
-        snapshot.forEach((doc) => {
-          const artwork = doc.data();
-          const artworkId = doc.id;
-          const artworkRef = admin
-            .firestore()
-            .collection("artworks")
-            .doc(artworkId);
-          const artworkUpdate = {
-            // lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
-            state: "inactive"
-          };
-          artworkRef.update(artworkUpdate);
-        });
+      .then((doc) => {
+        // console.log("doc.data().nextDay", doc.data().nextDay);
+        const nextDay = doc.data().nextDay;
+
+        const timeRemaining = nextDay - new Date();
+        console.log("timeRemaining", timeRemaining);
+        // save the timeRemaining to the nextDay document in the firestore database
+        const nextDayUpdate = {
+          timeRemaining: timeRemaining,
+        };
+        nextDayRef.update(nextDayUpdate);
+      })
+      .catch((err) => {
+        console.log("Error getting nextDay document", err);
       });
   });
+
+// create a cloud function that saves the next day date in a firestore document
+exports.saveNextDay = functions.https.onRequest((request, response) => {
+  // front end data
+const DAY_IN_MS = 1 * 24 * 60 * 60 * 1000;
+console.log("DAY_IN_MS", DAY_IN_MS);
+const NOW_IN_MS = new Date().getTime();
+
+const dateTimeAfterOneDay = NOW_IN_MS + DAY_IN_MS;
+
+  // const nextDay = new Date();
+  // nextDay.setDate(nextDay.getDate() + 1);
+  const nextDayRef = admin
+    .firestore()
+    .collection("nextDay")
+    .doc("nextDay");
+  nextDayRef
+    .set({
+      nextDay: dateTimeAfterOneDay,
+    })
+    .catch((err) => {
+      console.log("Error saving nextDay document", err);
+    });
+});
+
+// create an scheduled function that runs every day and updates the artworks collection
+// exports.updateArtworks = functions.pubsub
+//   .schedule("every day")
+//   .onRun((context) => {
+//     // saving target time
+//     // const currentTime = admin.firestore.FieldValue.serverTimestamp()
+
+//     console.log("Updating artworks collection");
+//     return admin
+//       .firestore()
+//       .collection("artworks")
+//       .get()
+//       .then((snapshot) => {
+//         snapshot.forEach((doc) => {
+//           const artwork = doc.data();
+//           const artworkId = doc.id;
+//           const artworkRef = admin
+//             .firestore()
+//             .collection("artworks")
+//             .doc(artworkId);
+//           const artworkUpdate = {
+//             lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
+//             state: "inactive",
+//           };
+//           artworkRef.update(artworkUpdate);
+//         });
+//       });
+//   });
 
 exports.stripeWebhook = functions.https.onRequest((request, response) => {
   const stripe = require("stripe")(

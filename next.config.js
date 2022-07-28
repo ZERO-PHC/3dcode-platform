@@ -5,6 +5,7 @@ const nextConfig = {
     domains: [
       "media.discordapp.net",
       "firebasestorage.googleapis.com",
+      "i.mj.run",
     ],
   },
 };

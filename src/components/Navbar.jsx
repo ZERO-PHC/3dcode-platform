@@ -15,13 +15,41 @@ import NetworkSwitch from "./NetworkSwitch";
 import Iconify from "./Iconify";
 import TimerComponent from "./TimerComponent";
 
-const Navbar = () => {
+import { collection, onSnapshot, doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
+
+
+const Navbar = ({height}) => {
   const { login, logout, user, Coins } = useAuth();
   const [IsOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
   const [howToModal, setHowToModal] = useState(false);
   const [learnComp, setLearnComp] = useState(false);
+  const [NextDay, setNextDay] = useState(null);
+  const [IsLoading, setIsLoading] = useState(false);
+
+
+  useEffect(() => {
+    getNextDay();
+    // get the artworks from the ids of the user's purchased artworks
+
+    // setPurchasedArtworks();
+
+  }, []);
+
+  const getNextDay = async () => {
+    // loop over the artworkIds and get the artwork for each one using the getDoc function
+    setIsLoading(true);
+
+
+    // loop over the artworkIds and get the artwork for each one using the getDoc function
+    const docRef = doc(db, "nextDay", "nextDay");
+    const docSnap = await getDoc(docRef);
+    console.log("docSnap", docSnap.data().nextDay);
+    setNextDay(docSnap.data().nextDay);
+    setIsLoading(false);
+  }
 
   const handleNavigation = (e) => {
     router.push("/coins")
@@ -38,12 +66,82 @@ const Navbar = () => {
     );
   };
 
-  // create a function that returns an Icon component from the react-iconify library
 
-  // create a dropdown menu that animates when the user clicks the addressBox div button and displays the user's address
-  // handle visibility of the dropdown menu with props.isOpen
+  return (
+    <HeaderWrapper>
+      <div>
+        <Link href="/">
+          <Image height={50} width={50} src="/Logo.png" />
+        </Link>
+        <h2>SAMPLERS</h2>
+      </div>
 
-  const Dropdown = styled.div`
+      {!IsLoading && NextDay ? <TimerComponent nextDay={NextDay} /> : <div>loading</div>}
+
+      {user ? (
+        <>
+
+          <section className="navbar-section" >
+            <div >
+              <div
+                onClick={handleNavigation}
+                className="addressBox"
+              >
+                {Coins}
+                <div className="avatarBox">
+                  <Image height={50} width={50} src="/assets/coin.png" />
+                </div>
+
+              </div>
+            </div>
+
+            <div className="avatarBox" onClick={() => router.push("/favorites")}>
+              <Iconify
+                size={"1.5rem"}
+                color="black"
+                icon="akar-icons:heart"
+              />
+            </div>
+            <div className="avatarBox" onClick={() => router.push("/profile")}>
+              <Iconify
+                size={"1.5rem"}
+                color="black"
+                icon="mdi-account-circle-outline"
+              />
+            </div>
+            {/* <div className="avatarBox">
+              <Iconify
+                size={"1.5rem"}
+                color="black"
+                icon="charm:moon"
+              />
+            </div> */}
+
+          </section>
+        </>
+      ) : (
+        <div>
+
+          <div className="auth-btn" onClick={login}>
+            LOG IN / SIGN UP
+          </div>
+          {/* <div className="code-container">
+            <Iconify size={"1.5rem"} color="black" icon="mdi-code-brackets" />
+          </div> */}
+        </div>
+      )}
+    </HeaderWrapper>
+  );
+};
+
+export default Navbar;
+
+// create a function that returns an Icon component from the react-iconify library
+
+// create a dropdown menu that animates when the user clicks the addressBox div button and displays the user's address
+// handle visibility of the dropdown menu with props.isOpen
+
+const Dropdown = styled.div`
     position: absolute;
     top: 2.2rem;
     text-align: left;
@@ -78,8 +176,8 @@ const Navbar = () => {
     }
   `;
 
-  // create a styled component called dropdown item that has a height of 1.5rem and a width of 100% and a center align text
-  const DropdownItem = styled.div`
+// create a styled component called dropdown item that has a height of 1.5rem and a width of 100% and a center align text
+const DropdownItem = styled.div`
     height: 1.5rem;
     width: 100%;
     display: flex;
@@ -96,75 +194,6 @@ const Navbar = () => {
     }
   `;
 
-  return (
-    <HeaderWrapper>
-      <div>
-        <Link href="/">
-          <Image height={50} width={50} src="/Logo.png" />
-        </Link>
-        <h2>SAMPLERS</h2>
-      </div>
-
-      <TimerComponent />
-
-      {user ? (
-        <>
-
-          <section className="navbar-section" onClick={handleNavigation}>
-            <div>
-              <div
-                onPointerEnter={() => setIsOpen(true)}
-                onPointerLeave={() => setIsOpen(false)}
-                className="addressBox"
-              >
-                {Coins}
-                <div className="avatarBox">
-                  <Image height={50} width={50} src="/assets/coin.png" />
-                </div>
-
-              </div>
-            </div>
-
-            <div className="avatarBox">
-              <Iconify
-                size={"1.5rem"}
-                color="black"
-                icon="akar-icons:heart"
-              />
-            </div>
-            <div className="avatarBox" onClick={() => router.push("/profile")}>
-              <Iconify
-                size={"1.5rem"}
-                color="black"
-                icon="mdi-account-circle-outline"
-              />
-            </div>
-            <div className="avatarBox">
-              <Iconify
-                size={"1.5rem"}
-                color="black"
-                icon="charm:moon"
-              />
-            </div>
-
-          </section>
-        </>
-      ) : (
-        <div>
-
-          <div className="auth-btn" onClick={login}>
-            LOG IN / SIGN UP
-          </div>
-          {/* <div className="code-container">
-            <Iconify size={"1.5rem"} color="black" icon="mdi-code-brackets" />
-          </div> */}
-        </div>
-      )}
-    </HeaderWrapper>
-  );
-};
-
-export default Navbar;
 
 const HeaderWrapper = styled.header`
   display: flex;
@@ -178,7 +207,9 @@ const HeaderWrapper = styled.header`
   padding-left: 3rem;
   padding-right: 3rem;
   background-color: #ffff;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  z-index: 20;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  position: fixed;
 
   .navbar-section {
     width: 20%;
@@ -237,11 +268,10 @@ const HeaderWrapper = styled.header`
     padding: 10px 30px;
     background-color: gray;
     border-radius: 40px;
-    background: radial-gradient(
-        54.9% 630.78% at 48.69% 44.74%,
-        rgba(253, 253, 253, 0.12) 0%,
-        rgba(248, 241, 255, 0.6) 100%
-      )
+    background-color: black;
+    color: white;
+    border: 2px solid lightgray;
+    
       /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
 
     & button {

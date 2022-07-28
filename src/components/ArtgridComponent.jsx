@@ -34,6 +34,7 @@ height: 100%;
           handleArtworkSelection={handleArtworkSelection}
           currentWrapper={currentWrapper}
           isOwner={true}
+          idx={i}
         />
       );
     });

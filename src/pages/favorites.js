@@ -13,22 +13,22 @@ import { collection, onSnapshot, getDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
 import ArtgridComponent from "../components/ArtgridComponent";
 
-export default function Profile() {
+export default function Favorites() {
   const router = useRouter();
   const [Loading, setLoading] = React.useState(false);
-  const { user, FirestoreUser, logout } = useAuth();
-  const [PurchasedArtworks, setPurchasedArtworks] = useState([]);
+  const { user, FirestoreUser } = useAuth();
+  const [Favorites, setFavorites] = useState([]);
 
   useEffect(() => {
     if (FirestoreUser) {
-      getPurchasedArtworks(FirestoreUser.purchasedArtworks);
+      getFavorites(FirestoreUser.favorites);
       // get the artworks from the ids of the user's purchased artworks
-        
+
       // setPurchasedArtworks();
     }
   }, [FirestoreUser]);
 
-  const getPurchasedArtworks = async (artworkIds) => {
+  const getFavorites = async (artworkIds) => {
     // loop over the artworkIds and get the artwork for each one using the getDoc function
     setLoading(true);
 
@@ -46,13 +46,7 @@ export default function Profile() {
     setLoading(false);
 
     console.log("artworks", artworks);
-    setPurchasedArtworks(artworks);
-  };
-
-  // create a function that returns a log out icon
-  const LogoutIcon = () => {
-    // import the iconify component with an logout icon prop
-    return <Iconify icon="mdi-logout" />;
+    setFavorites(artworks);
   };
 
   const handleArtworkSelection = (artwork) => {
@@ -70,28 +64,16 @@ export default function Profile() {
     <MainWrapper>
       <Navbar />
       <Container>
-        <section style={{ height: "10%" }}>
-          <ArtworkTitle>PROFILE</ArtworkTitle>
-          <Underline />
-        </section>
-        <BalanceWrapper>
-          <div>{user && user.email.toUpperCase()}</div>
-          <div style={{ width: "0.5rem" }}></div>
-          <PrimaryBtn onClick={logout}>
-            Logout
-            <LogoutIcon />
-          </PrimaryBtn>
-        </BalanceWrapper>
         <PacksWrapper>
           <div
             style={{ height: "20%", marginTop: "2rem", marginBottom: "1rem" }}
           >
-            <ArtworkTitle>{"Your Artworks".toUpperCase()}</ArtworkTitle>
+            <ArtworkTitle>{"Your Favorites".toUpperCase()}</ArtworkTitle>
             <Underline />
           </div>
-          {PurchasedArtworks && (
+          {Favorites && (
             <ArtgridComponent
-              artworks={PurchasedArtworks}
+              artworks={Favorites}
               columns={"4"}
               currentWrapper={"main"}
               handleArtworkSelection={handleArtworkSelection}

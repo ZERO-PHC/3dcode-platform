@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Iconify from './Iconify';
+import CountdownTimer from './CountdownTimer';
 
-export default function TimerComponent() {
+
+// const THREE_DAYS_IN_MS = 3 * 24 * 60 * 60 * 1000;
+// const DAY_IN_MS = 1 * 24 * 60 * 60 * 1000;
+// console.log("DAY_IN_MS", DAY_IN_MS);
+// const NOW_IN_MS = new Date().getTime();
+
+// const dateTimeAfterOneDay = NOW_IN_MS + DAY_IN_MS;
+
+
+export default function TimerComponent({nextDay}) {
     return (
         <TimerWrapper>
-            <div style={{fontSize:"1.6rem"}}>0:00</div>
+            <CountdownTimer targetDate={nextDay} />
             <Iconify size={"2rem"} icon="mdi:timer-sand" />
         </TimerWrapper>
     )

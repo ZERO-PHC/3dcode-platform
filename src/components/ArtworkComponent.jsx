@@ -1,40 +1,48 @@
-import React from "react";
+
+import React, { useState, useEffect } from 'react';
+
 import styled from "styled-components";
 import Image from "next/image";
+import { animated, config, useSpring } from "react-spring";
 
 export default function ArtworkComponent({
   artwork,
   handleArtworkSelection,
   currentWrapper,
-  isOwner
+  isOwner,
+  idx
 }) {
 
-  // create a function called resolve blur that has an if statement that checks if the isDialog and isOwner props are true
-  // if they are true, then return the blur class
-  // if they are false, then return the empty string
-  // const resolveBlur = (isDialog, isOwner) => {
-  //   if (isDialog && !isOwner) {
-  //     return "6px";
-  //   } else if (isDialog && isOwner) {
-  //     return "none";
-  //   } else {
-  //     "none";
-  //   }
-  // }
+  const [Hovered, setHovered] = useState();
 
 
+  const nameAnimation = useSpring({
+    opacity: Hovered ? 1 : 0,
+    transform: Hovered ? 'translate(0%)' : 'translate(-30%)',
+  })
+  const underlineAnimation = useSpring({
+    opacity: Hovered ? 0.5 : 0,
+    transform: Hovered ? 'translateX(0%) skewX(-20deg)' : 'translateX(-30%) skewX(-20deg)',
+
+  })
+  const overlayAnimation = useSpring({
+    opacity: Hovered ? 1 : 0,
+    // transform: Hovered ? 'translateY(0%)' : 'translateY(0%)',
+
+  })
 
   const Artwork = styled.div`
   cursor: pointer;
-    position: relative;
-    width: ${(props) => props.width};
-    height: ${(props) => props.height};
-    border-radius: 0.8rem;
-    // box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease-in-out;
+  position: relative;
+  transform: ${(props) => props.transform};
+  width: ${(props) => props.width};
+  height: ${(props) => props.height};
+  border - radius: 0.7rem;
+  // box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease -in -out;
     &:hover {
-      box-shadow: 0 0.6rem 1rem rgba(0, 0, 0, 0.4);
-    }
+    box - shadow: 0 0.6rem 1rem rgba(0, 0, 0, 0.4);
+  }
   `;
 
   // console.log("isOwner", isOwner)
@@ -44,7 +52,7 @@ export default function ArtworkComponent({
       case "dialog":
         return "5rem"
       case "details":
-        return "5rem"
+        return "6rem"
       case "main":
         return "16rem"
 
@@ -60,11 +68,31 @@ export default function ArtworkComponent({
       case "details":
         return "10rem"
       case "main":
+
         return "26rem"
 
       default:
         break;
     }
+  }
+
+  const resolveTransform = () => {
+    switch (idx) {
+      case 0:
+        return "TranslateY(10%)"
+      case 2:
+        return "TranslateY(10%)"
+      case 4:
+        return "TranslateY(10%) TranslateX(30%)"
+      case 5:
+        return "TranslateX(30%)"
+      case 6:
+        return "TranslateY(10%) TranslateX(30%)"
+
+      default:
+        return "0rem 0rem"
+    }
+
   }
 
   if (!isOwner) {
@@ -78,6 +106,7 @@ export default function ArtworkComponent({
           width={resolveWidth()}
           height={resolveHeight()}
           isOwner={isOwner}
+          margin={resolveTransform(idx)}
         >
           <Image
             style={{ borderRadius: "0.8rem" }}
@@ -85,6 +114,7 @@ export default function ArtworkComponent({
             alt={"artwork.url"}
             layout="fill"
           />
+
         </Artwork>
       </div >
 
@@ -95,23 +125,85 @@ export default function ArtworkComponent({
         filter: "blur(none)"
       }}>
         <Artwork
+          onPointerEnter={() => setHovered(true)}
+          onPointerLeave={() => setHovered(false)}
           onClick={() => handleArtworkSelection(artwork)}
           key={artwork.url}
           width={resolveWidth()}
           height={resolveHeight()}
           isOwner={isOwner}
+          transform={resolveTransform()}
+
         >
           <Image
             style={{ borderRadius: "0.8rem" }}
             src={artwork.url}
             alt={"artwork.url"}
+            // placeholder="blur"
+            // blurDataURL="/assets/placeholder.png"
             layout="fill"
           />
+          <ArtworkName style={nameAnimation}>
+            {artwork.name}
+          </ArtworkName>
+          <Underline style={underlineAnimation} />
+          <Overlay style={overlayAnimation} />
         </Artwork>
       </div>
-
     );
   }
-
-
 }
+
+// linear gradient from bottom black to top transparent 
+
+const Overlay = styled(animated.div)`
+background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  border-radius: 0.8rem;
+  bottom: 0;
+  z-index:1;
+  `
+
+const ArtworkName = styled(animated.div)`
+  position: absolute;
+  bottom: 0.6rem;
+  left: 0.5rem;
+  font - size: 1.2rem;
+  color: white;
+  z-index: 2;
+
+  `;
+
+const Underline = styled(animated.div)`
+  position: absolute;
+  width: 20%;
+  opacity: 0.5;
+  z-index: 2;
+  height: 0.2rem;
+  background-color: white;
+  transform: skewX(-20deg);
+  left: 0.4rem;
+  bottom: 0.5rem;
+  @media(max - width: 768px) {
+    width: 100 %;
+    height: 0.5rem;
+    background - color: white;
+    transform: skewX(-20deg);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+  @media(max - width: 480px) {
+    width: 100 %;
+    height: 0.5rem;
+    background - color: white;
+    transform: skewX(-20deg);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+  `;
+
+

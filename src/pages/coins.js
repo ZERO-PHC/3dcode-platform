@@ -170,7 +170,7 @@ export default function Coins() {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-
+    font-size: 1.5rem;
     height: 8rem;
     width: 12rem;
     background-color: rgba(0, 0, 0, 0.3);
@@ -205,11 +205,12 @@ export default function Coins() {
               onClick={() => redirectToCheckout("basic")}
             >
               <div style={{ position: "absolute", top: 0, left: 10 }}>
-                <p>
+                <p style={{ marginBottom: 0, paddingBottom: 0 }}>
                   Basic
                   <br />
                   Pack{" "}
                 </p>
+                <WhiteUnderline />
               </div>
               <PriceWrapper>
                 <div
@@ -248,11 +249,12 @@ export default function Coins() {
               onPointerEnter={() => setIsHovered(true)}
             >
               <div style={{ position: "absolute", top: 0, left: 10 }}>
-                <p>
+                <p style={{ marginBottom: 0, paddingBottom: 0 }}>
                   Pro
                   <br />
                   Pack{" "}
                 </p>
+                <WhiteUnderline />
               </div>
               <PriceWrapper>
                 <div
@@ -291,11 +293,12 @@ export default function Coins() {
               onPointerEnter={() => setIsHovered(true)}
             >
               <div style={{ position: "absolute", top: 0, left: 10 }}>
-                <p>
+                <p style={{ marginBottom: 0, paddingBottom: 0 }}>
                   Creative
                   <br />
                   Pack{" "}
                 </p>
+                <WhiteUnderline />
               </div>
               <PriceWrapper>
                 <div
@@ -403,6 +406,28 @@ const Underline = styled.div`
     width: 10%;
     height: 0.5rem;
     background-color: black;
+    transform: skewX(-20deg);
+    bottom: 0;
+    left: 0;
+  }
+`;
+
+const WhiteUnderline = styled.div`
+  width: 20%;
+  height: 0.2rem;
+  background-color: white;
+  transform: skewX(-20deg);
+  left: 0;
+  @media (max-width: 768px) {
+    width: 10%;
+    height: 0.5rem;
+    transform: skewX(-20deg);
+    bottom: 0;
+    left: 0;
+  }
+  @media (max-width: 480px) {
+    width: 10%;
+    height: 0.5rem;
     transform: skewX(-20deg);
     bottom: 0;
     left: 0;

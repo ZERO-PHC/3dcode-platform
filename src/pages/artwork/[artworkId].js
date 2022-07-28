@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { loadStripe } from "@stripe/stripe-js";
 import { useRouter } from "next/router";
-import { animated, useSpring } from "react-spring";
+import { animated, useSpring, config } from "react-spring";
 
 import { useAuth } from "../../contexts/AuthContext";
 import { useNFTs } from "../../contexts/NftsContext";
@@ -16,6 +16,8 @@ import ArtgridComponent from "../../components/ArtgridComponent";
 
 import { db } from "../../firebase";
 import { doc, updateDoc, onSnapshot, collection } from "firebase/firestore";
+import PromptSection from "../../sections/PromptSection";
+import { TwitterAuthProvider } from "firebase/auth";
 
 const Logo = () => {
   return <Image layout="fill" src="/Logo.png" />;
@@ -25,17 +27,18 @@ export default function ArtworkDetails() {
   const { user, Coins, FirestoreUser } = useAuth();
   const router = useRouter();
   const { artworkId } = router.query;
-  const [Loading, setLoading] = React.useState(false);
+  const [Loading, setLoading] = useState(false);
   const [Artwork, setArtwork] = useState(null);
   const [ArtworkImage, setArtworkImage] = useState();
-  const [IsOwner, setIsOwner] = useState(false);
+  const [IsOwner, setIsOwner] = useState(true);
   const [IsFavorite, setIsFavorite] = useState(false);
   const [IsAnimating, setIsAnimating] = useState(false);
   const [Variations, setVariations] = useState([]);
   const variationsRef = React.useRef(null);
 
-  // create a useEffect that will get the artwork with the id of artworkId from the firestore database in realtime
+  // create a useEffect that will the artwork with the id of artworkId from the firestore database in realtime
   useEffect(() => {
+    setLoading(true);
     const artworkRef = doc(db, "artworks", artworkId);
     const unsub = onSnapshot(artworkRef, (doc) => {
       const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
@@ -43,7 +46,10 @@ export default function ArtworkDetails() {
       setArtwork(doc.data());
       setArtworkImage(doc.data().url);
       if (user) setIsOwner(doc.data().owner === user.email);
+
+      setLoading(false);
     });
+
     return () => {
       // clean up the listener
       unsub();
@@ -99,7 +105,8 @@ export default function ArtworkDetails() {
   // create a function called handleBuy
   const handleBuy = async () => {
     setLoading(true);
-    if (Coins >= Artwork.price && !Artwork.purchased) {
+    // if (Coins >= Artwork.price && !Artwork.purchased) {
+    if (Coins >= Artwork.price) {
       // update the artwork to have the purchased property set to true that is on the artworks firestore collection
       const artworkRef = doc(db, "artworks", artworkId);
       await updateDoc(artworkRef, {
@@ -109,15 +116,15 @@ export default function ArtworkDetails() {
 
       // add the artwork to the user's collection of purchased artworks
       const userRef = doc(db, "users", user.email);
-      console.log("firestore user", FirestoreUser.data().purchasedArtworks);
+      // console.log("firestore user", FirestoreUser.purchasedArtworks);
       await updateDoc(userRef, {
-        purchasedArtworks: [
-          ...FirestoreUser.data().purchasedArtworks,
-          artworkId,
-        ],
+        purchasedArtworks: [...FirestoreUser.purchasedArtworks, artworkId],
+        coins: Coins - Artwork.price,
       }).catch((err) => console.log(err));
 
       // setLoading(false);
+    } else {
+      alert("You don´t have enough coins");
     }
   };
 
@@ -125,25 +132,78 @@ export default function ArtworkDetails() {
   const handleAddFavorite = async () => {
     // add the artwork to the user's collection of favorites
     const userRef = doc(db, "users", user.email);
+    console.log("FirestoreUser", FirestoreUser);
     await updateDoc(userRef, {
-      favorites: [...FirestoreUser.favorites, artworkId],
+      favorites: [...FirestoreUser?.favorites, artworkId],
     }).catch((err) => console.log(err));
   };
 
   const promptStyles = useSpring({
     opacity: IsAnimating ? 1 : 0,
     transform: IsAnimating ? "translateX(0%) " : "translateX(50%) ",
+    delay: 500,
+    // config: { duration: 500, tension: 100, friction: 200, mass: 1 },
+    config: config.molasses,
   });
 
   const variationsAnimation = useSpring({
     opacity: IsAnimating ? 1 : 0,
     transform: IsAnimating ? "translateX(0%) " : "translateX(-50%) ",
+    delay: 500,
+    config: config.molasses,
+    // config: { duration: 500, tension: 100, friction: 200, mass: 1 },
   });
 
+  console.log("IsOwner", IsOwner);
+
+  // create a useSpring hook with a config with a delay of 2000
+  // const logoAnimation = useSpring({
+  //   opacity: IsAnimating ? 1 : 0,
+  //   transform: IsAnimating ? "translateX(0%) " : "translateX(50%) ",
+  //   config: { delay: 2000 },
+
   const artworkAnimation = useSpring({
+    opacity: IsAnimating ? 1 : 0,
+
     scale: IsAnimating ? 1 : 0.5,
-    // config: { duration: 1000 }
+    delay: 1000,
+    config: config.molasses,
   });
+
+  const promptAnimation = useSpring({
+    opacity: IsOwner ? 1 : 0,
+    fontSize: "0.9rem",
+    delay: 500,
+    config: config.molasses,
+  });
+
+  const placeholderAnimation = useSpring({
+    opacity: !IsOwner ? 1 : 0,
+    fontSize: "0.9rem",
+    config: config.molasses,
+    paddingLeft: "0.5rem",
+  });
+
+  const buyBtnAnimation = useSpring({
+    opacity: IsOwner ? 0 : 1,
+  });
+
+  const downloadBtnAnimation = useSpring({
+    opacity: IsOwner ? 1 : 0,
+    width: IsOwner ? "44%" : "0%",
+    config: config.molasses,
+    delay: 1000,
+  });
+
+  const promptProps = {
+    placeholderAnimation,
+    promptAnimation,
+    handleBuy,
+    buyBtnAnimation,
+    promptStyles,
+    Artwork,
+    IsOwner,
+  };
 
   if (Artwork && Variations)
     return (
@@ -163,28 +223,13 @@ export default function ArtworkDetails() {
           style={{
             display: "flex",
             justifyContent: "space-evenly",
-            alignItems: "center",
+            alignItems: "end",
             width: "100vw",
             height: "100%",
             position: "relative",
           }}
         >
-          <PromptContainer>
-            <PromptWrapper style={promptStyles}>
-              <ArtworkTitle>
-                {"PROMPT"}
-                <Underline />
-              </ArtworkTitle>
-              {!IsOwner ? (
-                <p style={{ fontSize: "0.9rem" }}>
-                  Buy this Artwork to unlock this prompt <br /> and it´s
-                  variations
-                </p>
-              ) : (
-                <p style={{ fontSize: "0.9rem" }}>{Artwork.prompt}</p>
-              )}
-            </PromptWrapper>
-          </PromptContainer>
+          <PromptSection {...promptProps} />
           <ArtworkContainer style={artworkAnimation}>
             <Image
               src={ArtworkImage}
@@ -214,9 +259,9 @@ export default function ArtworkDetails() {
             </Header>
             {/* </ArtworkDetailsWrapper> */}
 
-            <BuyBtnContainer>
-              {Artwork.owner !== user.email && (
-                <BuyBtn onClick={handleBuy}>
+            {/* <BuyBtnContainer > */}
+            {/* {Artwork.owner !== user.email && ( */}
+            {/* <BuyBtn style={buyBtnAnimation} onClick={handleBuy}>
                   BUY
                   <FlowPriceContainer>
                     {Artwork.price}
@@ -233,9 +278,21 @@ export default function ArtworkDetails() {
                       <Logo />
                     </div>
                   </FlowPriceContainer>
-                </BuyBtn>
-              )}
-            </BuyBtnContainer>
+                </BuyBtn> */}
+            {/* )} */}
+            {/* </BuyBtnContainer> */}
+            <Overlay />
+            {IsOwner && (
+              <DownloadWrapper
+                target="_blank"
+                href={ArtworkImage}
+                download
+                style={downloadBtnAnimation}
+              >
+                <div>Download</div>
+                <Iconify size="1.6rem" icon="ant-design:download-outlined" />
+              </DownloadWrapper>
+            )}
           </ArtworkContainer>
           <VariationsWrapper>
             <VariationsContainer style={variationsAnimation}>
@@ -266,24 +323,42 @@ export default function ArtworkDetails() {
               </div>
             </VariationsContainer>
           </VariationsWrapper>
-          <AuthorContainer>
-            <h2>{Artwork.author.toUpperCase()}</h2>
-            <div style={{ width: "1rem" }}></div>
-            <Avatar>
-              <Image
-                style={{ borderRadius: "50px", border: "2px solid black" }}
-                src={Artwork.authorUrl}
-                width={100}
-                height={100}
-                layout="fill"
-                alt="avatar"
-              />
-            </Avatar>
-          </AuthorContainer>
         </div>
+        <AuthorContainer>
+          <AuthorName>{Artwork.author.toUpperCase()}</AuthorName>
+          <div style={{ width: "1rem" }}></div>
+          <Avatar>
+            <Image
+              style={{ borderRadius: "50px", border: "2px solid black" }}
+              src={Artwork.authorUrl}
+              width={100}
+              height={100}
+              layout="fill"
+              alt="avatar"
+            />
+          </Avatar>
+        </AuthorContainer>
       </MainWrapper>
     );
 }
+
+const DownloadWrapper = styled(animated.a)`
+  position: absolute;
+  z-index: 1;
+  cursor: pointer;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 12rem;
+  height: 3.4rem;
+  border-top-right-radius: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-top: 2.6px solid lightgrey;
+  border-right: 1px solid lightgrey;
+  text-transform: uppercase;
+`;
 
 const MainWrapper = styled.div`
   position: relative;
@@ -297,17 +372,35 @@ const MainWrapper = styled.div`
   padding: 0;
 `;
 
-const PromptWrapper = styled(animated.div)`
-  position: relative;
-  background: rgba(130, 132, 135, 0.23);
-  padding: 0rem 1rem;
-  width: 60%;
+const Overlay = styled(animated.div)`
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.3) 20%,
+    rgba(0, 0, 0, 0) 100%
+  );
   height: 100%;
+  width: 100%;
+  position: absolute;
+  border-radius: 0.8rem;
+  bottom: 0;
+  z-index: 1;
+`;
+
+// create a styled component called AuthorName that has a rotation of -90deg the the is vertical
+const AuthorName = styled.div`
+  font-size: 1.5rem;
+  font-weight: bold;
   color: white;
-  border-radius: 0.5rem;
+  transform: rotate(-90deg);
+  text-align: center;
+  height: 20%;
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  padding: 0;
+  margin: 0;
 `;
 
 const VariationsContainer = styled(animated.div)`
@@ -330,17 +423,20 @@ const Avatar = styled.div`
   border-radius: 50%;
   background: grey;
   margin-right: 0.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.1);
 `;
 
 // create a styled component called AuthorContainer that has a height of 20% and a width of 100% and  a right alignment
 const AuthorContainer = styled.div`
   position: absolute;
   bottom: 0;
+  right: 10px;
   color: white;
-  height: 10%;
-  width: 100%;
+  height: 19%;
+  width: 2%;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  justify-content: space-around;
   align-items: center;
   margin-top: 1rem;
   font-size: 0.8rem;
@@ -422,11 +518,11 @@ const ArtworkContainer = styled(animated.div)`
   justify-content: space-between;
   align-items: left;
   transform: scale(0.5);
-  height: 90%;
+  height: 86%;
   width: 30rem;
   position: relative;
   margin-bottom: 1rem;
-  margin-top: 1rem;
+  margin-top: 0rem;
   @media (max-width: 768px) {
     height: auto;
     width: 100vw;
@@ -520,6 +616,7 @@ const ArtworkTitle = styled.h1`
 // create header component that has a row
 const Header = styled.div`
   display: flex;
+  z-index: 2;
   flex-direction: column;
   justify-content: start;
   align-items: center;
@@ -577,143 +674,13 @@ const BackButton = styled.div`
   }
 `;
 
-// create a component called BuyBtnContainer that has a height of 30% and a width of 100% a center alignment and a display flex
-const BuyBtnContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  height: 30%;
-  width: 100%;
-  @media (max-width: 768px) {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    height: 30%;
-    width: 100%;
-  }
-  @media (max-width: 480px) {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    height: 30%;
-    width: 100%;
-  }
-`;
-
-// create a component called BuyBtn that has a white background a border radius us 50 px and a center alignment
-const BuyBtn = styled.div`
-  display: flex;
-  position: relative;
-  background-color: black;
-  border-radius: 50px;
-  align-items: center;
-  justify-content: start;
-  padding-left: 0.8rem;
-  font-size: 1.5rem;
-  font-weight: bold;
-  height: 2.6rem;
-  width: 12rem;
-  border: 2px solid #b6b6b6;
-  // padding-: 0.5rem;
-
-  &:hover {
-    cursor: pointer;
-  }
-  @media (max-width: 768px) {
-    background-color: white;
-    border-radius: 50%;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-    padding: 0.5rem;
-  }
-  @media (max-width: 480px) {
-    background-color: white;
-    border-radius: 50%;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-    padding: 0.5rem;
-  }
-`;
-
-// create PromptContainer component that has a 50% height text align to left
-const PromptContainer = animated(styled.div`
- 
-  height: 60%;
-  position: relative;
-  z-index: 1;
-  width: 40%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center
-  padding-top: 1rem;
-  text-align: left;
-  border-radius: 50px;
-  @media (max-width: 768px) {
-    height: 50%;
-    text-align: left;
-    background-color: white;
-    border-radius: 50px;
-  }
-  @media (max-width: 480px) {
-    height: 50%;
-    text-align: left;
-    background-color: white;
-    border-radius: 50px;
-  }
-`);
-
-// create a component called FlowPriceContainer that has a white background a border radius us 50 px a border of 2px solid #b6b6b6 color black and a position absolute a top of 0 a left of 0 a width of 100% a height of 30%
-const FlowPriceContainer = styled.div`
-  position: absolute;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  top: 0;
-  right: 0;
-  padding-left: 0.6rem;
-  width: 54%;
-  height: 100%;
-  background-color: white;
-  border-radius: 50px;
-  color: black;
-  border: 1px solid #b6b6b6;
-  @media (max-width: 768px) {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 30%;
-    background-color: white;
-    border-radius: 50px;
-    border: 2px solid #b6b6b6;
-  }
-  @media (max-width: 480px) {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 30%;
-    background-color: white;
-    border-radius: 50px;
-    border: 2px solid #b6b6b6;
-  }
-`;
-
 {
   /* <text y='216%' x='-70%'></text> */
 }
 // create a styled component called VariationsWrapper that aligns all the items to the left side and has a width of 100% and a height of 20%
 const VariationsWrapper = styled.div`
   curson: pointer;
-
+  margin-bottom: 3rem;
   display: flex;
   flex-direction: column;
   z-index: 0;

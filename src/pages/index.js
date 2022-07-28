@@ -6,9 +6,8 @@ import { useNFTs } from "../contexts/NftsContext";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import { collection, onSnapshot } from "firebase/firestore";
-
-import { categories } from "../categories";
 import { db } from "../firebase";
+import { categories } from "../categories";
 
 import Navbar from "../components/Navbar";
 import ArtgridComponent from "../components/ArtgridComponent";
@@ -24,6 +23,15 @@ export default function Home() {
   const [SelectedArtwork, setSelectedArtwork] = useState(null);
 
   const router = useRouter();
+
+  const DAY_IN_MS = 1 * 24 * 60 * 60 * 1000;
+  // console.log("DAY_IN_MS", DAY_IN_MS);
+
+  // get the date of the next day
+  // console log the next day in a readable format
+  // console.log(nextDay.toLocaleDateString());
+
+
 
   useEffect(() => {
     const colRef = collection(db, "artworks");
@@ -124,7 +132,7 @@ export default function Home() {
     return (
       <>
         <Wrapper style={{}}>
-          <Navbar />
+          {/* <Navbar /> */}
           {ShowDialog && SelectedArtwork && (
             <DialogSection
               handleArtworkSelection={handleArtworkSelection}
@@ -232,16 +240,18 @@ const BackButton = styled.div`
 const Wrapper = styled.main`
   position: relative;
   width: 100%;
-  height: 100vh;
-  max-height: 100vh;
+  height: 100%;
+  max-height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   background-color: white;
   padding: 0;
+  margin: 0;
+  overflowX: hidden;
   overflow: hidden;
-
+  
   .mainContent {
     width: 100%;
     background: lighten(#fafafa, 10%);
@@ -254,6 +264,12 @@ const Wrapper = styled.main`
     width: 20%;
     background: lighten(#fafafa, 10%);
     border-right: 1.5px solid lightgrey;
+  }
+
+  ::-webkit-scrollbar {
+    width: 0rem;
+    background: rgba(130, 132, 135, 0.23);
+
   }
 `;
 
@@ -292,7 +308,7 @@ position: relative;
   align-items: start;
   justify-content: center;
   width: 100%;
-  height: 4rem%;
+  height: 4rem;
   background-color: ${(props) => props.color};
   border-radius: 10px;
   margin: 10px;
