@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Iconify from './Iconify';
 import CountdownTimer from './CountdownTimer';
-
+import Image from "next/image"
 
 // const THREE_DAYS_IN_MS = 3 * 24 * 60 * 60 * 1000;
 // const DAY_IN_MS = 1 * 24 * 60 * 60 * 1000;
@@ -16,7 +16,7 @@ export default function TimerComponent({nextDay}) {
     return (
         <TimerWrapper>
             <CountdownTimer targetDate={nextDay} />
-            <Iconify size={"2rem"} icon="mdi:timer-sand" />
+                  <Image height={40} width={40} src="/assets/coin.png" />
         </TimerWrapper>
     )
 }
@@ -30,8 +30,10 @@ const TimerWrapper = styled.div`
     transform: translate(-50%, -50%);
     width: 10rem;
     height: 3rem;
-    border: 2px solid lightgrey;
+    border: 2px solid black;
     border-radius: 0.5rem;
+    background: white;
+    color: black;
 
     display: flex;
     flex-direction: row;

@@ -6,7 +6,7 @@ import Image from "next/image";
 import Iconify from "../components/Iconify";
 
 export default function Layout({ children, windowDimensions }) {
-  const [Show, setShow] = useState(true);
+  const [Show, setShow] = useState(false);
 
   const handleDrawer = () => {
     console.log("handling");

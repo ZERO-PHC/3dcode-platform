@@ -90,22 +90,11 @@ const Navbar = ({ handleDrawer }) => {
         <>
 
           {<> <section className="navbar-section" >
-            <div >
-              <div
-                onClick={handleNavigation}
-                className="addressBox"
-              >
-                {Coins}
-                <div className="avatarBox">
-                  <Image height={50} width={50} src="/assets/coin.png" />
-                </div>
-
-              </div>
-            </div>
+            
 
             <div className="avatarBox" onClick={() => router.push("/favorites")}>
               <Iconify
-                size={"1.5rem"}
+                size={"1.2rem"}
                 color="black"
                 icon="akar-icons:heart"
               />
@@ -119,7 +108,7 @@ const Navbar = ({ handleDrawer }) => {
             </div>
 
           </section>
-            <section onClick={handleDrawer}
+            {/* <section onClick={handleDrawer}
             >
               <Iconify
                 size={"2rem"}
@@ -128,7 +117,7 @@ const Navbar = ({ handleDrawer }) => {
                 onClick={handleDrawer}
               />
 
-            </section>
+            </section> */}
           </>
           }
         </>
@@ -160,8 +149,8 @@ const HeaderWrapper = styled.header`
   width: 100%;
   color:${(props) => props.width > 768 ? "black" : "white"};
   z-index: 20;
-  padding-left: "3rem"};
-  padding-right:"3rem" : "0.5rem"};
+  padding-left: 3rem;
+  padding-right:3rem;
   background-color: rgba(255, 255, 255, 0.5);
   filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.5));
   backdrop-filter: blur(10px); /* blur effect to the backdrop */
@@ -191,9 +180,9 @@ const HeaderWrapper = styled.header`
   display: flex;
   justify-content: end;
 
-  @media (max-width: 768px) {
-    visibility: hidden;
-  }
+  // @media (max-width: 768px) {
+  //   visibility: hidden;
+  // }
 }
   
 
@@ -286,14 +275,15 @@ const HeaderWrapper = styled.header`
   .avatarBox {
   height: 2.3rem;
   width: 2.3rem;
-  border - radius: 50 %;
-  background - color: #ffff;
-  border: 2px solid #b6b6b6;
+  border-radius:50%;
+  background-color: white;
+  color:white;
+  border: 2px solid black;
   display: flex;
-  justify - content: center;
-  align - items: center;
-  margin - left: 0.5rem;
-  margin - right: -0.2rem;
+  justify-content: center;
+  align-items: center;
+  margin-left: 0.5rem;
+  margin-right: -0.2rem;
 }
 
   .addressBox {
