@@ -18,12 +18,13 @@ import { db } from "../../firebase";
 import { doc, updateDoc, onSnapshot, collection } from "firebase/firestore";
 import PromptSection from "../../sections/PromptSection";
 import { TwitterAuthProvider } from "firebase/auth";
+import PromptVariations from "../../sections/PromptVariations";
 
 const Logo = () => {
   return <Image layout="fill" src="/Logo.png" />;
 };
 
-export default function ArtworkDetails() {
+export default function ArtworkDetails({ windowDimensions }) {
   const { user, Coins, FirestoreUser } = useAuth();
   const router = useRouter();
   const { artworkId } = router.query;
@@ -35,6 +36,9 @@ export default function ArtworkDetails() {
   const [IsAnimating, setIsAnimating] = useState(false);
   const [Variations, setVariations] = useState([]);
   const variationsRef = React.useRef(null);
+
+  const width = windowDimensions.width;
+  const mobile = width < 768;
 
   // create a useEffect that will the artwork with the id of artworkId from the firestore database in realtime
   useEffect(() => {
@@ -205,128 +209,159 @@ export default function ArtworkDetails() {
     IsOwner,
   };
 
+  const variationsProps = {
+    variationsRef,
+    Variations,
+    handleArtworkSelection,
+    artworkId,
+    IsOwner,
+    variationsAnimation,
+  };
+
   if (Artwork && Variations)
     return (
       <MainWrapper>
-        <Navbar />
-        <Image
-          style={{ filter: "blur(12px)", opacity: 0.5 }}
-          src={ArtworkImage}
-          layout="fill"
-          objectFit="cover"
-          objectPosition="center"
-          placeholder="blur"
-          blurDataURL="/assets/placeholder.png"
-          alt="artwork"
-        />
+        <div
+          style={{
+            height: "100%",
+            width: "100%",
+            position: "fixed",
+            top: "0",
+            background: "black",
+          }}
+        >
+          <Image
+            style={{
+              filter: "blur(12px)",
+              opacity: 0.5,
+              position: "sticky",
+              top: "0",
+            }}
+            src={ArtworkImage}
+            layout="fill"
+            objectFit="cover"
+            objectPosition="center"
+            placeholder="blur"
+            blurDataURL="/assets/placeholder.png"
+            alt="artwork"
+          />
+        </div>
+
         <div
           style={{
             display: "flex",
-            justifyContent: "space-evenly",
-            alignItems: "end",
+            flexDirection: `${mobile ? "column" : "row"}`,
+            justifyContent: `${!mobile ? "space-evenly" : null}`,
+            alignItems: `${!mobile ? "end" : "center"}`,
             width: "100vw",
-            height: "100%",
+            height: `${!mobile ? "100%" : null}`,
             position: "relative",
           }}
         >
-          <PromptSection {...promptProps} />
-          <ArtworkContainer style={artworkAnimation}>
-            <Image
-              src={ArtworkImage}
-              layout="fill"
-              objectFit="cover"
-              objectPosition="center"
-              placeholder="blur"
-              blurDataURL="/assets/placeholder.png"
-              alt="artwork"
-            />
-            {/* <ArtworkDetailsWrapper> */}
-            <Header>
-              <FavoriteWrapper onClick={handleAddFavorite}>
-                <Iconify
-                  icon={
-                    !IsFavorite
-                      ? "ant-design:heart-outlined"
-                      : "ant-design:heart-filled"
-                  }
+          {mobile ? (
+            <>
+              <div style={{ height: "6rem" }}></div>
+              <ArtworkContainer mobile={mobile} style={artworkAnimation}>
+                <Image
+                  src={ArtworkImage}
+                  layout="fill"
+                  objectFit="cover"
+                  objectPosition="center"
+                  placeholder="blur"
+                  blurDataURL="/assets/placeholder.png"
+                  alt="artwork"
                 />
-              </FavoriteWrapper>
+                {/* <ArtworkDetailsWrapper> */}
+                <Header>
+                  <FavoriteWrapper onClick={handleAddFavorite}>
+                    <Iconify
+                      icon={
+                        !IsFavorite
+                          ? "ant-design:heart-outlined"
+                          : "ant-design:heart-filled"
+                      }
+                    />
+                  </FavoriteWrapper>
 
-              <ArtworkTitle>
-                {Artwork.name.toUpperCase()}
-                <Underline />
-              </ArtworkTitle>
-            </Header>
-            {/* </ArtworkDetailsWrapper> */}
+                  <ArtworkTitle>
+                    {Artwork.name.toUpperCase()}
+                    <Underline />
+                  </ArtworkTitle>
+                </Header>
 
-            {/* <BuyBtnContainer > */}
-            {/* {Artwork.owner !== user.email && ( */}
-            {/* <BuyBtn style={buyBtnAnimation} onClick={handleBuy}>
-                  BUY
-                  <FlowPriceContainer>
-                    {Artwork.price}
-                    <div
-                      style={{
-                        height: "2.6rem",
-                        width: "2.6rem",
-                        position: "relative",
-                        border: "2px solid #b6b6b6",
-                        borderRadius: "50px",
-                        marginRight: "-0.1rem",
-                      }}
-                    >
-                      <Logo />
-                    </div>
-                  </FlowPriceContainer>
-                </BuyBtn> */}
-            {/* )} */}
-            {/* </BuyBtnContainer> */}
-            <Overlay />
-            {IsOwner && (
-              <DownloadWrapper
-                target="_blank"
-                href={ArtworkImage}
-                download
-                style={downloadBtnAnimation}
-              >
-                <div>Download</div>
-                <Iconify size="1.6rem" icon="ant-design:download-outlined" />
-              </DownloadWrapper>
-            )}
-          </ArtworkContainer>
-          <VariationsWrapper>
-            <VariationsContainer style={variationsAnimation}>
-              <div style={{ paddingLeft: "1rem" }}>
-                <ArtworkTitle>
-                  {"VARIATIONS"}
-                  <Underline />
-                </ArtworkTitle>
-              </div>
-
-              <div
-                ref={variationsRef}
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "100%",
-                }}
-              >
-                <ArtgridComponent
-                  variations={Variations}
-                  currentWrapper={"details"}
-                  handleArtworkSelection={handleArtworkSelection}
-                  columns={"2"}
-                  artworkId={artworkId}
-                  isOwner={IsOwner}
+                <Overlay />
+                {IsOwner && (
+                  <DownloadWrapper
+                    target="_blank"
+                    href={ArtworkImage}
+                    download
+                    style={downloadBtnAnimation}
+                  >
+                    <div>Download</div>
+                    <Iconify
+                      size="1.6rem"
+                      icon="ant-design:download-outlined"
+                    />
+                  </DownloadWrapper>
+                )}
+              </ArtworkContainer>
+              <PromptSection mobile={mobile} {...promptProps} />
+            </>
+          ) : (
+            <>
+              <PromptSection {...promptProps} />
+              <ArtworkContainer mobile={mobile} style={artworkAnimation}>
+                <Image
+                  src={ArtworkImage}
+                  layout="fill"
+                  objectFit="cover"
+                  objectPosition="center"
+                  placeholder="blur"
+                  blurDataURL="/assets/placeholder.png"
+                  alt="artwork"
                 />
-              </div>
-            </VariationsContainer>
-          </VariationsWrapper>
+                {/* <ArtworkDetailsWrapper> */}
+                <Header>
+                  <FavoriteWrapper onClick={handleAddFavorite}>
+                    <Iconify
+                      icon={
+                        !IsFavorite
+                          ? "ant-design:heart-outlined"
+                          : "ant-design:heart-filled"
+                      }
+                    />
+                  </FavoriteWrapper>
+
+                  <ArtworkTitle>
+                    {Artwork.name.toUpperCase()}
+                    <Underline />
+                  </ArtworkTitle>
+                </Header>
+
+                <Overlay />
+                {IsOwner && (
+                  <DownloadWrapper
+                    target="_blank"
+                    href={ArtworkImage}
+                    download
+                    style={downloadBtnAnimation}
+                  >
+                    <div>Download</div>
+                    <Iconify
+                      size="1.6rem"
+                      icon="ant-design:download-outlined"
+                    />
+                  </DownloadWrapper>
+                )}
+              </ArtworkContainer>
+            </>
+          )}
+
+          <PromptVariations {...variationsProps} />
         </div>
         <AuthorContainer>
           <AuthorName>{Artwork.author.toUpperCase()}</AuthorName>
-          <div style={{ width: "1rem" }}></div>
+          <div style={{ width: "rem" }}></div>
           <Avatar>
             <Image
               style={{ borderRadius: "50px", border: "2px solid black" }}
@@ -367,7 +402,6 @@ const MainWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
   background-color: black;
   padding: 0;
 `;
@@ -403,18 +437,6 @@ const AuthorName = styled.div`
   margin: 0;
 `;
 
-const VariationsContainer = styled(animated.div)`
-  background: rgba(130, 132, 135, 0.23);
-  padding: 0rem 0rem;
-  width: 60%;
-  height: 100%;
-  color: white;
-  border-radius: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-`;
-
 // create a styled component called Avatar that is a circle with a background image
 const Avatar = styled.div`
   position: relative;
@@ -424,6 +446,18 @@ const Avatar = styled.div`
   background: grey;
   margin-right: 0.5rem;
   border: 2px solid rgba(255, 255, 255, 0.1);
+
+    @media (max-width: 768px) {
+      width: 1.8rem;
+      height: 1.8rem;
+    }
+
+@media (max-width: 480px) {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+
 `;
 
 // create a styled component called AuthorContainer that has a height of 20% and a width of 100% and  a right alignment
@@ -442,6 +476,29 @@ const AuthorContainer = styled.div`
   font-size: 0.8rem;
   font-family: "Monument", sans-serif;
   text-align: right;
+
+  @media (max-width: 768px) {
+    height: 100%;
+    width: 100%;
+
+    position: sticky;
+    bottom: 0;
+    right: 0;
+  }
+
+  @media (max-width: 480px)
+   {
+      height: 100%;
+      width: 100%;
+      position: -webkit-sticky;
+      position: sticky;
+      bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      right: 10px;
+      justify-content: center;
+      align-items: self-end;
+  }
 `;
 
 // create a styled component called FavoriteWrapper that has a background color of white and a border radius of 50px with a height of 3 rem and a width of 3 rem
@@ -509,17 +566,14 @@ const fadeIn = keyframes`
 // create a styled component that implement the fadeIn animation and the scale animation
 
 const ArtworkContainer = styled(animated.div)`
-  // animation: ${scale} 1.3s ease-in-out;
-  // animation-fill-mode: forwards;
-  // animation-timing-function: ease-in-out;
   display: flex;
   color: white;
   flex-direction: column;
   justify-content: space-between;
   align-items: left;
   transform: scale(0.5);
-  height: 86%;
-  width: 30rem;
+  height: "86%";
+  width: "30rem";
   position: relative;
   margin-bottom: 1rem;
   margin-top: 0rem;
@@ -535,8 +589,8 @@ const ArtworkContainer = styled(animated.div)`
     display: flex;
     flex-direction: column;
     align-items: left;
-    height: 40rem;
-    width: 40rem;
+    height: 80%;
+    width: 10rem;
     position: relative;
     overflow: hidden;
   }
@@ -554,8 +608,7 @@ const ArtworkContainer = styled(animated.div)`
     display: flex;
     flex-direction: column;
     align-items: left;
-    height: 40rem;
-    width: 40rem;
+    width: 80%;
     position: relative;
     overflow: hidden;
   }
@@ -569,22 +622,16 @@ const Underline = styled.div`
   transform: skewX(-20deg);
   left: 0;
   @media (max-width: 768px) {
-    width: 100%;
+    width: 50%;
     height: 0.5rem;
     background-color: white;
     transform: skewX(-20deg);
-    position: absolute;
-    bottom: 0;
-    left: 0;
   }
   @media (max-width: 480px) {
-    width: 100%;
-    height: 0.5rem;
+    width: 50%;
+    height: 0.3rem;
     background-color: white;
     transform: skewX(-20deg);
-    position: absolute;
-    bottom: 0;
-    left: 0;
   }
 `;
 
@@ -678,30 +725,6 @@ const BackButton = styled.div`
   /* <text y='216%' x='-70%'></text> */
 }
 // create a styled component called VariationsWrapper that aligns all the items to the left side and has a width of 100% and a height of 20%
-const VariationsWrapper = styled.div`
-  curson: pointer;
-  margin-bottom: 3rem;
-  display: flex;
-  flex-direction: column;
-  z-index: 0;
-  align-items: center;
-  width: 40%;
-  height: 60%;
-  @media (max-width: 768px) {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    height: 20%;
-  }
-  @media (max-width: 480px) {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    height: 20%;
-  }
-`;
 
 // create a styled component called ArtworkDetailsWrapper that has a width of 40% a max--width of 40% and a black gradient background color from left to right
 const ArtworkDetailsWrapper = styled.div`

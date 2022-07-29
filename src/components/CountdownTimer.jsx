@@ -4,7 +4,7 @@ import { useCountdown } from '../hooks/useCountdown';
 
 
 export default function CountdownTimer({ targetDate }) {
-    console.log("targetDate", targetDate);
+    // console.log("targetDate", targetDate);
     const [days, hours, minutes, seconds] = useCountdown(targetDate);
 
 

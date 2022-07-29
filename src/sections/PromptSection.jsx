@@ -15,7 +15,7 @@ const Logo = () => {
 // array of 2 elements called images
 const images = [0, 1]
 
-export default function PromptSection({ placeholderAnimation, promptAnimation, handleBuy, buyBtnAnimation, promptStyles, Artwork, IsOwner }) {
+export default function PromptSection({ mobile, placeholderAnimation, promptAnimation, handleBuy, buyBtnAnimation, promptStyles, Artwork, IsOwner }) {
   const [Hovered, setHovered] = useState(false);
   const [SelectedIdx, setSelectedIdx] = useState(0);
   const [TooltipText, setTooltipText] = useState("Click to copy");
@@ -80,8 +80,8 @@ export default function PromptSection({ placeholderAnimation, promptAnimation, h
 
 
   return (
-    <PromptContainer >
-      <PromptWrapper ref={promptRef} style={promptStyles}>
+    <PromptContainer mobile={mobile} >
+      <PromptWrapper mobile={mobile} ref={promptRef} style={promptStyles}>
 
         <div style={{ height: IsOwner ? "100%" : "70%" }}>
 
@@ -100,12 +100,12 @@ export default function PromptSection({ placeholderAnimation, promptAnimation, h
                   <Iconify icon="bx:text" />
                 </IconWrapper>
                 <IconWrapper onClick={() => handleIconClick("bottom")}>
-                    <svg width="9" height="10" viewBox="0 0 9 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect width="4" height="4" fill="#D9D9D9" />
-                      <rect x="5" width="4" height="4" fill="#D9D9D9" />
-                      <rect y="6" width="4" height="4" fill="#D9D9D9" />
-                      <rect x="5" y="6" width="4" height="4" fill="#D9D9D9" />
-                    </svg>
+                  <svg width="9" height="10" viewBox="0 0 9 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="4" height="4" fill="#D9D9D9" />
+                    <rect x="5" width="4" height="4" fill="#D9D9D9" />
+                    <rect y="6" width="4" height="4" fill="#D9D9D9" />
+                    <rect x="5" y="6" width="4" height="4" fill="#D9D9D9" />
+                  </svg>
 
                 </IconWrapper>
                 <IconWrapper onClick={() => handleIconClick("bottom")}>
@@ -180,7 +180,7 @@ const PromptWrapper = styled(animated.div)`
   overflow: scroll;
   overflow-x: hidden;
   background: rgba(130, 132, 135, 0.23);
-  width: 60%;
+  width: ${props => props.mobile ? "100%" : "60%"};
   height: 100%;
   color: white;
   border-radius: 0.5rem;
@@ -352,22 +352,18 @@ const Underline = styled.div`
   transform: skewX(-20deg);
   left: 0;
   @media (max-width: 768px) {
-    width: 100%;
+    width: 50%;
     height: 0.5rem;
     background-color: white;
     transform: skewX(-20deg);
-    position: absolute;
-    bottom: 0;
-    left: 0;
+    
   }
   @media (max-width: 480px) {
-    width: 100%;
-    height: 0.5rem;
+    width: 50%;
+    height: 0.3rem;
     background-color: white;
     transform: skewX(-20deg);
-    position: absolute;
-    bottom: 0;
-    left: 0;
+    
   }
 `;
 
@@ -418,7 +414,7 @@ const PromptContainer = animated(styled.div`
   height: 60%;
   position: relative;
   z-index: 1;
-  width: 40%;
+  width: ${props => props.mobile ? "80%" : "40%"};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -427,16 +423,10 @@ const PromptContainer = animated(styled.div`
   text-align: left;
   border-radius: 50px;
   @media (max-width: 768px) {
-    height: 50%;
+    // height: 50%;
     text-align: left;
-    background-color: white;
-    border-radius: 50px;
   }
   @media (max-width: 480px) {
-    height: 50%;
-    text-align: left;
-    background-color: white;
-    border-radius: 50px;
   }
 `);
 

@@ -10,7 +10,8 @@ export default function ArtworkComponent({
   handleArtworkSelection,
   currentWrapper,
   isOwner,
-  idx
+  idx,
+  mobile
 }) {
 
   const [Hovered, setHovered] = useState();
@@ -31,19 +32,7 @@ export default function ArtworkComponent({
 
   })
 
-  const Artwork = styled.div`
-  cursor: pointer;
-  position: relative;
-  transform: ${(props) => props.transform};
-  width: ${(props) => props.width};
-  height: ${(props) => props.height};
-  border - radius: 0.7rem;
-  // box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease -in -out;
-    &:hover {
-    box - shadow: 0 0.6rem 1rem rgba(0, 0, 0, 0.4);
-  }
-  `;
+
 
   // console.log("isOwner", isOwner)
 
@@ -54,7 +43,11 @@ export default function ArtworkComponent({
       case "details":
         return "6rem"
       case "main":
-        return "16rem"
+        if (!mobile) {
+          return "16rem"
+        } else {
+          return "8rem"
+        }
 
       default:
         break;
@@ -67,9 +60,12 @@ export default function ArtworkComponent({
         return "10rem"
       case "details":
         return "10rem"
-      case "main":
-
-        return "26rem"
+        case "main":
+          if (!mobile) {
+            return "26rem"
+          } else {
+            return "13rem"
+          }
 
       default:
         break;
@@ -106,6 +102,7 @@ export default function ArtworkComponent({
           width={resolveWidth()}
           height={resolveHeight()}
           isOwner={isOwner}
+          mobile={width > 768 ? false : true}
           margin={resolveTransform(idx)}
         >
           <Image
@@ -154,7 +151,23 @@ export default function ArtworkComponent({
   }
 }
 
-// linear gradient from bottom black to top transparent 
+const Artwork = styled.div`
+cursor: pointer;
+position: relative;
+transform: ${(props) => props.transform};
+width: ${(props) => props.width};
+height: ${(props) => props.height};
+border-radius: 0.7rem;
+transition: all 0.3s ease -in -out;
+  &:hover {
+  box-shadow: 0 0.6rem 1rem rgba(0, 0, 0, 0.4);
+}
+
+  @media (max-width: 768px) {
+    width: ${(props) => props.width / 2};
+    height: ${(props) => props.height / 2};
+`;
+
 
 const Overlay = styled(animated.div)`
 background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);

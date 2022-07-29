@@ -13,7 +13,8 @@ import Navbar from "../components/Navbar";
 import ArtgridComponent from "../components/ArtgridComponent";
 import DialogSection from "../sections/DialogSection";
 
-export default function Home() {
+export default function Home({ windowDimensions }) {
+  // alert(windowDimensions.width);
   const { user } = useAuth();
   const { getSamplers, SelectedRarity, Samplers } = useNFTs();
   const [Categories, setCategories] = useState(categories);
@@ -23,15 +24,7 @@ export default function Home() {
   const [SelectedArtwork, setSelectedArtwork] = useState(null);
 
   const router = useRouter();
-
-  const DAY_IN_MS = 1 * 24 * 60 * 60 * 1000;
-  // console.log("DAY_IN_MS", DAY_IN_MS);
-
-  // get the date of the next day
-  // console log the next day in a readable format
-  // console.log(nextDay.toLocaleDateString());
-
-
+  const width = windowDimensions.width;
 
   useEffect(() => {
     const colRef = collection(db, "artworks");
@@ -128,19 +121,15 @@ export default function Home() {
     );
   };
 
+  // function called handleDrawer that updates the show state to true
+  
+ 
+
   if (Artworks)
     return (
       <>
-        <Wrapper style={{}}>
-          {/* <Navbar /> */}
-          {ShowDialog && SelectedArtwork && (
-            <DialogSection
-              handleArtworkSelection={handleArtworkSelection}
-              handleNavigation={handleNavigation}
-              SelectedArtwork={SelectedArtwork}
-              setShowDialog={setShowDialog}
-            />
-          )}
+       
+        <Wrapper>
           <main className="mainContent">
             <section className="sidebar">
               {Categories.map((category) => (
@@ -157,9 +146,10 @@ export default function Home() {
             </section>
             <ArtgridContainer>
               <ArtgridComponent
+                mobile={width < 768 ? true : false}
                 artworks={Artworks}
                 currentWrapper={"main"}
-                columns={"4"}
+                columns={width < 768 ? "2" : "4"}
                 handleArtworkSelection={handleArtworkSelection}
               />
             </ArtgridContainer>
@@ -242,6 +232,7 @@ const Wrapper = styled.main`
   width: 100%;
   height: 100%;
   max-height: 100%;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -249,14 +240,15 @@ const Wrapper = styled.main`
   background-color: white;
   padding: 0;
   margin: 0;
-  overflowX: hidden;
+  overflowx: hidden;
   overflow: hidden;
-  
+
   .mainContent {
     width: 100%;
     background: lighten(#fafafa, 10%);
     height: 100%;
     display: flex;
+    overflowx: hidden;
   }
 
   .sidebar {
@@ -264,12 +256,16 @@ const Wrapper = styled.main`
     width: 20%;
     background: lighten(#fafafa, 10%);
     border-right: 1.5px solid lightgrey;
+
+    @media (max-width: 768px) {
+      visibility: hidden;
+      width: 0px;
+    }
   }
 
   ::-webkit-scrollbar {
     width: 0rem;
     background: rgba(130, 132, 135, 0.23);
-
   }
 `;
 

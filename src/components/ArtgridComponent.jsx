@@ -10,13 +10,13 @@ export default function ArtgridComponent({
   artworks,
   handleArtworkSelection,
   artworkId,
-  isOwner
+  isOwner,
+  mobile
 }) {
 
-  console.log("isOwner", isOwner)
 
 
-  const Artgrid= styled.div`
+  const Artgrid = styled.div`
 padding-top: ${(props) => props.paddingTop};} ;
 width: 80%;
 display: grid;
@@ -35,6 +35,7 @@ height: 100%;
           currentWrapper={currentWrapper}
           isOwner={true}
           idx={i}
+          mobile={mobile}
         />
       );
     });
@@ -61,8 +62,8 @@ height: 100%;
   return (
     <div>
       <Artgrid
-      gridGap={currentWrapper === "dialog" || currentWrapper === "details" ? "1rem 2rem" : "4rem  2rem" }
-      columns={columns} paddingTop={currentWrapper === "dialog" || currentWrapper === "details" ? "0rem" : "3rem"}>
+        gridGap={currentWrapper === "dialog" || currentWrapper === "details" ? "1rem 2rem" : "4rem  2rem"}
+        columns={columns} paddingTop={currentWrapper === "dialog" || currentWrapper === "details" ? "0rem" : "3rem"}>
         {currentWrapper === "dialog" || currentWrapper === "details" ? renderVariations() : renderArtworks()}
       </Artgrid>
     </div>
