@@ -12,6 +12,15 @@ import { categories } from "../categories";
 import Navbar from "../components/Navbar";
 import ArtgridComponent from "../components/ArtgridComponent";
 import DialogSection from "../sections/DialogSection";
+import Iconify from "../components/Iconify";
+import FAB from "../components/FAB/FAB";
+
+const actions = [
+  { label: "About", icon: <Iconify icon="mdi-plus" />, onClick: console.log },
+  { label: "Profile", icon: <Iconify icon="mdi-plus" />, onClick: console.log },
+  { label: "Picture", icon: <Iconify icon="mdi-plus" />, onClick: console.log },
+  { label: "Trash", icon: <Iconify icon="mdi-plus" />, onClick: console.log },
+];
 
 export default function Home({ windowDimensions }) {
   // alert(windowDimensions.width);
@@ -122,13 +131,10 @@ export default function Home({ windowDimensions }) {
   };
 
   // function called handleDrawer that updates the show state to true
-  
- 
 
   if (Artworks)
     return (
       <>
-       
         <Wrapper>
           <main className="mainContent">
             <section className="sidebar">
@@ -154,6 +160,7 @@ export default function Home({ windowDimensions }) {
               />
             </ArtgridContainer>
           </main>
+          <FAB />
         </Wrapper>
       </>
     );

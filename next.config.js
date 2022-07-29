@@ -6,6 +6,7 @@ const nextConfig = {
       "media.discordapp.net",
       "firebasestorage.googleapis.com",
       "i.mj.run",
+      "pbs.twimg.com"
     ],
   },
 };
