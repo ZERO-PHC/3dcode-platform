@@ -84,27 +84,48 @@ const Navbar = ({ handleDrawer }) => {
         </Link>
       </div>
 
-      {!IsLoading && NextDay ? <TimerComponent nextDay={NextDay} /> : <div>loading</div>}
+      {/* {!IsLoading && NextDay ? <TimerComponent nextDay={NextDay} /> : <div>loading</div>} */}
 
       {user ? (
         <>
 
           {<> <section className="navbar-section" >
-            
+            <main className="navbar-main">
+              <div>
+                1365
+              </div>
+              <div style={{width:"0.5rem"}}></div>
+              <Image height={36} width={36} src="/assets/coin.png" />
+
+            </main>
 
             <div className="avatarBox" onClick={() => router.push("/favorites")}>
-              <Iconify
+              {/* <Iconify
                 size={"1.2rem"}
-                color="black"
+                color="white"
                 icon="akar-icons:heart"
-              />
+              /> */}
+              <div className="avatar">
+
+                <svg width="2.4rem" height="2.4rem" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fillRule="evenodd" clipRule="evenodd" d="M36 72C16.1177 72 0 55.8823 0 36C0 16.1177 16.1177 0 36 0C55.8823 0 72 16.1177 72 36C72 55.8823 55.8823 72 36 72ZM51.0347 43.0816C51.1028 43.1644 51.1714 43.2479 51.2408 43.3315C51.5842 43.7463 51.8015 44.2508 51.8669 44.7853C51.9323 45.3198 51.8432 45.8618 51.6099 46.3472C51.1143 47.3834 50.0684 48.0288 48.8721 48.0288H24.1367C22.9348 48.0288 21.8817 47.3826 21.3877 46.3416C21.1554 45.8564 21.0671 45.3147 21.1331 44.7809C21.1991 44.247 21.4166 43.7432 21.76 43.3291C21.8764 43.186 21.991 43.0478 22.1038 42.9119L22.1516 42.8542C23.9149 40.7257 24.9792 39.4397 24.9792 33.405C24.9792 27.9276 27.1733 24.3618 31.6881 22.5031C31.7125 22.4895 31.7344 22.4719 31.753 22.4511C32.4488 20.1232 34.3523 18.5625 36.5 18.5625C38.6477 18.5625 40.552 20.1232 41.2478 22.4535C41.2664 22.4751 41.2886 22.4933 41.3135 22.5071C43.2482 23.3031 44.716 24.3802 45.8019 25.8C47.2745 27.7218 48.0216 30.2843 48.0216 33.4074C48.0216 39.4365 49.0864 40.7244 50.8465 42.8533L50.8492 42.8566C50.9105 42.9305 50.9723 43.0058 51.0347 43.0816ZM39.7856 53.5285C38.7925 54.1225 37.6572 54.4366 36.5 54.4375C35.343 54.4364 34.2078 54.1222 33.2149 53.5283C32.2219 52.9343 31.4083 52.0827 30.8601 51.0638C30.8342 51.0149 30.8215 50.9602 30.8231 50.9049C30.8247 50.8496 30.8405 50.7956 30.8692 50.7483C30.8978 50.701 30.9382 50.6619 30.9864 50.6348C31.0346 50.6077 31.0891 50.5936 31.1444 50.5938H41.8572C41.9125 50.5937 41.9668 50.6079 42.0149 50.6351C42.063 50.6622 42.1033 50.7013 42.1318 50.7486C42.1604 50.796 42.1762 50.8498 42.1777 50.9051C42.1793 50.9603 42.1665 51.015 42.1407 51.0638C41.5925 52.0829 40.7787 52.9345 39.7856 53.5285Z" fill="#D9D9D9" />
+                </svg>
+              </div>
+
             </div>
             <div className="avatarBox" onClick={() => router.push("/profile")}>
-              <Iconify
+              <div className="avatar">
+                <svg width="2.4rem" height="2.4rem" viewBox="0 0 72 67" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fillRule="evenodd" clipRule="evenodd" d="M55.3199 66.382L55.3201 66.285C55.3201 53.8012 46.6457 43.6812 35.9454 43.6812C25.245 43.6812 16.5707 53.8012 16.5707 66.285L16.5707 66.312C6.60339 59.91 0 48.7261 0 36C0 16.1177 16.1177 0 36 0C55.8823 0 72 16.1177 72 36C72 48.7727 65.3483 59.9917 55.3199 66.382ZM22.7484 31.3223C23.8232 37.6715 29.349 42.5069 36.0041 42.5069C43.4295 42.5069 49.449 36.4874 49.449 29.062C49.449 21.6366 43.4295 15.6172 36.0041 15.6172C30.8627 15.6172 26.3953 18.5031 24.1335 22.7434C25.1523 22.0953 25.948 23.3626 25.9292 25.6566C25.9098 28.0236 25.0305 30.5872 23.9653 31.3827C23.5002 31.73 23.0765 31.6828 22.7484 31.3223ZM28.1133 27.0044C28.092 29.5983 29.3989 31.4914 31.0322 31.2327C32.6655 30.974 34.0068 28.6615 34.0281 26.0676C34.0494 23.4736 32.7426 21.5806 31.1092 21.8393C29.4759 22.0979 28.1346 24.4105 28.1133 27.0044Z" fill="#D9D9D9" />
+                </svg>
+
+
+              </div>
+              {/* <Iconify
                 size={"1.5rem"}
-                color="black"
+                color="white"
                 icon="mdi-account-circle-outline"
-              />
+              /> */}
             </div>
 
           </section>
@@ -176,9 +197,24 @@ const HeaderWrapper = styled.header`
   
 
   .navbar-section {
-  width: 20 %;
+  width: 30 %;
   display: flex;
   justify-content: end;
+
+  .navbar-main{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 2.4rem;
+    border-radius: 0.5rem;
+    background-color: #D9D9D9;
+    color: black;
+    padding:0rem 0.5rem;
+    
+
+  }
 
   // @media (max-width: 768px) {
   //   visibility: hidden;
@@ -276,14 +312,16 @@ const HeaderWrapper = styled.header`
   height: 2.3rem;
   width: 2.3rem;
   border-radius:50%;
-  background-color: white;
-  color:white;
-  border: 2px solid black;
-  display: flex;
+  background: rgba(108, 108, 108, 0.3);  color:white;
+  border: 2px solid rgba(171, 171, 171, 0.5);  display: flex;
   justify-content: center;
   align-items: center;
   margin-left: 0.5rem;
   margin-right: -0.2rem;
+
+
+
+  
 }
 
   .addressBox {

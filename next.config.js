@@ -6,9 +6,11 @@ const nextConfig = {
       "media.discordapp.net",
       "firebasestorage.googleapis.com",
       "i.mj.run",
-      "pbs.twimg.com"
+      "pbs.twimg.com",
     ],
   },
+
+  experimental: { images: { layoutRaw: true } },
 };
 
 // create the config for a network image that can be used in the src property of an image tag

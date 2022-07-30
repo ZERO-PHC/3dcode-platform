@@ -59,13 +59,21 @@ export default function ArtworkComponent({
       case "dialog":
         return "10rem"
       case "details":
-        return "10rem"
-        case "main":
-          if (!mobile) {
+        if (artwork.AspectRatio === "portrait") {
+          return "10rem"
+        } else {
+          return "2rem"
+        }
+      case "main":
+        if (!mobile) {
+          if (artwork.AspectRatio === "portrait") {
             return "26rem"
           } else {
-            return "13rem"
+            return "12rem"
           }
+        } else {
+          return "13rem"
+        }
 
       default:
         break;
@@ -98,7 +106,7 @@ export default function ArtworkComponent({
       }}>
         <Artwork
           onClick={() => handleArtworkSelection(artwork)}
-          key={artwork.url}
+          key={idx}
           width={resolveWidth()}
           height={resolveHeight()}
           isOwner={isOwner}
@@ -107,8 +115,8 @@ export default function ArtworkComponent({
         >
           <Image
             style={{ borderRadius: "0.8rem" }}
-            src={artwork.url}
-            alt={"artwork.url"}
+            src={artwork.ArtworkImg}
+            alt={artwork.ArtworkImg}
             layout="fill"
           />
 
@@ -125,7 +133,7 @@ export default function ArtworkComponent({
           onPointerEnter={() => setHovered(true)}
           onPointerLeave={() => setHovered(false)}
           onClick={() => handleArtworkSelection(artwork)}
-          key={artwork.url}
+          key={idx}
           width={resolveWidth()}
           height={resolveHeight()}
           isOwner={isOwner}
@@ -133,9 +141,9 @@ export default function ArtworkComponent({
 
         >
           <Image
-            style={{ borderRadius: "0.8rem" }}
-            src={artwork.url}
-            alt={"artwork.url"}
+            style={{ borderRadius: "0.5rem" }}
+            src={artwork.ArtworkImg}
+            alt={artwork.ArtworkImg}
             // placeholder="blur"
             // blurDataURL="/assets/placeholder.png"
             layout="fill"
@@ -143,6 +151,13 @@ export default function ArtworkComponent({
           <ArtworkName style={nameAnimation}>
             {artwork.name}
           </ArtworkName>
+          <EngineName style={nameAnimation}>
+            {artwork.SelectedEngine === "mid" ? <main style={{ position:"relative", borderRadius: "50px", height: "2rem", width: "2rem", border: "2px solid black",  }}>
+              <Image src="https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg" layout="fill" alt="mid"               style={{ borderRadius: "50px" }}
+ />
+            </main> : <Image src="https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg" height={100} width={100}
+              alt="low" />}
+          </EngineName>
           <Underline style={underlineAnimation} />
           <Overlay style={overlayAnimation} />
         </Artwork>
@@ -157,8 +172,8 @@ position: relative;
 transform: ${(props) => props.transform};
 width: ${(props) => props.width};
 height: ${(props) => props.height};
-border-radius: 0.7rem;
-transition: all 0.3s ease -in -out;
+// border-radius: 0.2rem;
+transition: all 0.3s ease-in-out;
   &:hover {
   box-shadow: 0 0.6rem 1rem rgba(0, 0, 0, 0.4);
 }
@@ -170,11 +185,11 @@ transition: all 0.3s ease -in -out;
 
 
 const Overlay = styled(animated.div)`
-background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+background: linear-gradient(to top, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 100%);
   height: 100%;
   width: 100%;
   position: absolute;
-  border-radius: 0.8rem;
+  // border-radius: 0.2rem;
   bottom: 0;
   z-index:1;
   `
@@ -183,6 +198,16 @@ const ArtworkName = styled(animated.div)`
   position: absolute;
   bottom: 0.6rem;
   left: 0.5rem;
+  font - size: 1.2rem;
+  color: white;
+  z-index: 2;
+
+  `;
+
+const EngineName = styled(animated.div)`
+  position: absolute;
+  bottom: 0.6rem;
+  right: 0.5rem;
   font - size: 1.2rem;
   color: white;
   z-index: 2;

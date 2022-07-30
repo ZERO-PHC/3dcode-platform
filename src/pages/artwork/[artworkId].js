@@ -19,10 +19,9 @@ import { doc, updateDoc, onSnapshot, collection } from "firebase/firestore";
 import PromptSection from "../../sections/PromptSection";
 import { TwitterAuthProvider } from "firebase/auth";
 import PromptVariations from "../../sections/PromptVariations";
-
-const Logo = () => {
-  return <Image layout="fill" src="/Logo.png" />;
-};
+import AnimatedEmoticon from "../../components/AnimatedEmoticon";
+import CommentComponent from "../../components/CommentComponent";
+import CommentsSection from "../../sections/CommentsSection";
 
 export default function ArtworkDetails({ windowDimensions }) {
   const { user, Coins, FirestoreUser } = useAuth();
@@ -31,10 +30,8 @@ export default function ArtworkDetails({ windowDimensions }) {
   const [Loading, setLoading] = useState(false);
   const [Artwork, setArtwork] = useState(null);
   const [ArtworkImage, setArtworkImage] = useState();
-  const [IsOwner, setIsOwner] = useState(true);
   const [IsFavorite, setIsFavorite] = useState(false);
   const [IsAnimating, setIsAnimating] = useState(false);
-  const [Variations, setVariations] = useState([]);
   const variationsRef = React.useRef(null);
 
   const width = windowDimensions.width;
@@ -48,9 +45,7 @@ export default function ArtworkDetails({ windowDimensions }) {
       const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
       // console.log(source, " data: ", doc.data());
       setArtwork(doc.data());
-      setArtworkImage(doc.data().url);
-      if (user) setIsOwner(doc.data().owner === user.email);
-
+      setArtworkImage(doc.data().ArtworkImg);
       setLoading(false);
     });
 
@@ -61,29 +56,7 @@ export default function ArtworkDetails({ windowDimensions }) {
   }, [user]);
 
   useEffect(() => {
-    if (artworkId) {
-      const subColRef = collection(db, "artworks", artworkId, "variations");
-      const unsub = onSnapshot(subColRef, (snapshot) => {
-        let variations = [];
-
-        snapshot.docs.forEach((doc, i) => {
-          const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
-          console.log(source, " variation data: ", i, doc.data());
-
-          variations.push(doc.data());
-        });
-
-        setVariations(variations);
-      });
-      return () => {
-        // clean up the listener
-        unsub();
-      };
-    }
-  }, []);
-
-  useEffect(() => {
-    checkFavorites(FirestoreUser.favorites);
+    // checkFavorites(FirestoreUser.favorites);
   }, [FirestoreUser]);
 
   useEffect(() => {
@@ -91,20 +64,16 @@ export default function ArtworkDetails({ windowDimensions }) {
   }, []);
 
   // create a function called checkFavorites that will check if the artwork is in the favorites array of the user
-  const checkFavorites = (favorites) => {
-    console.log("favorites", favorites);
-    if (favorites) {
-      if (favorites.includes(artworkId)) {
-        setIsFavorite(true);
-      } else {
-        setIsFavorite(false);
-      }
-    }
-  };
-
-  const handleArtworkSelection = (artwork) => {
-    setArtworkImage(artwork.url);
-  };
+  // const checkFavorites = (favorites) => {
+  //   console.log("favorites", favorites);
+  //   if (favorites) {
+  //     if (favorites.includes(artworkId)) {
+  //       setIsFavorite(true);
+  //     } else {
+  //       setIsFavorite(false);
+  //     }
+  //   }
+  // };
 
   // create a function called handleBuy
   const handleBuy = async () => {
@@ -158,8 +127,6 @@ export default function ArtworkDetails({ windowDimensions }) {
     // config: { duration: 500, tension: 100, friction: 200, mass: 1 },
   });
 
-  console.log("IsOwner", IsOwner);
-
   // create a useSpring hook with a config with a delay of 2000
   // const logoAnimation = useSpring({
   //   opacity: IsAnimating ? 1 : 0,
@@ -175,50 +142,31 @@ export default function ArtworkDetails({ windowDimensions }) {
   });
 
   const promptAnimation = useSpring({
-    opacity: IsOwner ? 1 : 0,
+    opacity: true ? 1 : 0,
     fontSize: "0.9rem",
     delay: 500,
     config: config.molasses,
   });
 
   const placeholderAnimation = useSpring({
-    opacity: !IsOwner ? 1 : 0,
+    opacity: !true ? 1 : 0,
     fontSize: "0.9rem",
     config: config.molasses,
     paddingLeft: "0.5rem",
   });
 
   const buyBtnAnimation = useSpring({
-    opacity: IsOwner ? 0 : 1,
+    opacity: true ? 0 : 1,
   });
 
   const downloadBtnAnimation = useSpring({
-    opacity: IsOwner ? 1 : 0,
-    width: IsOwner ? "44%" : "0%",
+    opacity: true ? 1 : 0,
+    width: true ? "44%" : "0%",
     config: config.molasses,
     delay: 1000,
   });
 
-  const promptProps = {
-    placeholderAnimation,
-    promptAnimation,
-    handleBuy,
-    buyBtnAnimation,
-    promptStyles,
-    Artwork,
-    IsOwner,
-  };
-
-  const variationsProps = {
-    variationsRef,
-    Variations,
-    handleArtworkSelection,
-    artworkId,
-    IsOwner,
-    variationsAnimation,
-  };
-
-  if (Artwork && Variations)
+  if (Artwork)
     return (
       <MainWrapper>
         <div
@@ -258,114 +206,133 @@ export default function ArtworkDetails({ windowDimensions }) {
             position: "relative",
           }}
         >
-          {mobile ? (
-            <>
-              <div style={{ height: "6rem" }}></div>
-              <ArtworkContainer mobile={mobile} style={artworkAnimation}>
-                <Image
-                  src={ArtworkImage}
-                  layout="fill"
-                  objectFit="cover"
-                  objectPosition="center"
-                  placeholder="blur"
-                  blurDataURL="/assets/placeholder.png"
-                  alt="artwork"
-                />
-                {/* <ArtworkDetailsWrapper> */}
-                <Header>
-                  <FavoriteWrapper onClick={handleAddFavorite}>
-                    <Iconify
-                      icon={
-                        !IsFavorite
-                          ? "ant-design:heart-outlined"
-                          : "ant-design:heart-filled"
-                      }
-                    />
-                  </FavoriteWrapper>
-
-                  <ArtworkTitle>
-                    {Artwork.name.toUpperCase()}
-                    <Underline />
-                  </ArtworkTitle>
-                </Header>
-
-                <Overlay />
-                {IsOwner && (
-                  <DownloadWrapper
-                    target="_blank"
-                    href={ArtworkImage}
-                    download
-                    style={downloadBtnAnimation}
+          <main
+            style={{
+              height: "100%",
+              width: "30%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              marginTop: "10rem",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "80%",
+                height: "100%",
+                justifyContent: "end",
+                marginBottom: "6rem",
+                alignItems: "center",
+              }}
+            >
+              <animated.div
+                style={{
+                  height: "70%",
+                  width: "100%",
+                  background: "rgba(130, 132, 135, 0.23)",
+                  borderRadius: "0.5rem",
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  color: "white",
+                  position: "relative",
+                }}
+              >
+                <PromptOverlay>
+                  <section
+                    style={{
+                      position: "absolute",
+                      top: "3px",
+                      left: "10px",
+                      height: "2.8rem",
+                      zIndex: "1",
+                    }}
                   >
-                    <div>Download</div>
-                    <Iconify
-                      size="1.6rem"
-                      icon="ant-design:download-outlined"
-                    />
-                  </DownloadWrapper>
-                )}
-              </ArtworkContainer>
-              <PromptSection mobile={mobile} {...promptProps} />
-            </>
-          ) : (
-            <>
-              <PromptSection {...promptProps} />
-              <ArtworkContainer mobile={mobile} style={artworkAnimation}>
-                <Image
-                  src={ArtworkImage}
-                  layout="fill"
-                  objectFit="cover"
-                  objectPosition="center"
-                  placeholder="blur"
-                  blurDataURL="/assets/placeholder.png"
-                  alt="artwork"
-                />
-                {/* <ArtworkDetailsWrapper> */}
-                <Header>
-                  <FavoriteWrapper onClick={handleAddFavorite}>
-                    <Iconify
-                      icon={
-                        !IsFavorite
-                          ? "ant-design:heart-outlined"
-                          : "ant-design:heart-filled"
-                      }
-                    />
-                  </FavoriteWrapper>
-
-                  <ArtworkTitle>
-                    {Artwork.name.toUpperCase()}
+                    <ReactionsTitle>REACTIONS</ReactionsTitle>
                     <Underline />
-                  </ArtworkTitle>
-                </Header>
+                  </section>
+                  <section style={{ display: "flex", width: "100%" }}>
+                    <div style={{ width: "50%" }}>
+                      <AnimatedEmoticon />
+                      <AnimatedEmoticon />
+                      <AnimatedEmoticon />
+                    </div>
 
-                <Overlay />
-                {IsOwner && (
-                  <DownloadWrapper
-                    target="_blank"
-                    href={ArtworkImage}
-                    download
-                    style={downloadBtnAnimation}
-                  >
-                    <div>Download</div>
-                    <Iconify
-                      size="1.6rem"
-                      icon="ant-design:download-outlined"
-                    />
-                  </DownloadWrapper>
-                )}
-              </ArtworkContainer>
-            </>
-          )}
+                    <div style={{ width: "50%" }}>
+                      <AnimatedEmoticon />
+                      <AnimatedEmoticon />
+                      <AnimatedEmoticon />
+                    </div>
+                  </section>
+                </PromptOverlay>
+              </animated.div>
+            </div>
+          </main>
+          <ArtworkContainer mobile={mobile} style={artworkAnimation}>
+            <Image
+              src={ArtworkImage}
+              layout="fill"
+              objectFit="cover"
+              objectPosition="center"
+              placeholder="blur"
+              blurDataURL="/assets/placeholder.png"
+              alt="artwork"
+            />
+            {/* <ArtworkDetailsWrapper> */}
+            <Header>
+              <FavoriteWrapper onClick={handleAddFavorite}>
+                <Iconify
+                  icon={
+                    !IsFavorite
+                      ? "ant-design:heart-outlined"
+                      : "ant-design:heart-filled"
+                  }
+                />
+              </FavoriteWrapper>
 
-          <PromptVariations {...variationsProps} />
+              <ArtworkTitle>
+                {Artwork.name.toUpperCase()}
+                <Underline />
+              </ArtworkTitle>
+            </Header>
+
+            <Overlay />
+          </ArtworkContainer>
+          <CommentsSection />
         </div>
         <AuthorContainer>
           <AuthorName>{Artwork.author.toUpperCase()}</AuthorName>
-          <div style={{ width: "rem" }}></div>
+          <div style={{ height: "3.5rem" }}></div>
+          <div style={{ position: "absolute", bottom: "1.7rem", zIndex: "2" }}>
+            <Avatar>
+              <svg
+                width="2.2rem"
+                height="2.2rem"
+                viewBox="0 0 72 67"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M55.3199 66.382L55.3201 66.285C55.3201 53.8012 46.6457 43.6812 35.9454 43.6812C25.245 43.6812 16.5707 53.8012 16.5707 66.285L16.5707 66.312C6.60339 59.91 0 48.7261 0 36C0 16.1177 16.1177 0 36 0C55.8823 0 72 16.1177 72 36C72 48.7727 65.3483 59.9917 55.3199 66.382ZM22.7484 31.3223C23.8232 37.6715 29.349 42.5069 36.0041 42.5069C43.4295 42.5069 49.449 36.4874 49.449 29.062C49.449 21.6366 43.4295 15.6172 36.0041 15.6172C30.8627 15.6172 26.3953 18.5031 24.1335 22.7434C25.1523 22.0953 25.948 23.3626 25.9292 25.6566C25.9098 28.0236 25.0305 30.5872 23.9653 31.3827C23.5002 31.73 23.0765 31.6828 22.7484 31.3223ZM28.1133 27.0044C28.092 29.5983 29.3989 31.4914 31.0322 31.2327C32.6655 30.974 34.0068 28.6615 34.0281 26.0676C34.0494 23.4736 32.7426 21.5806 31.1092 21.8393C29.4759 22.0979 28.1346 24.4105 28.1133 27.0044Z"
+                  fill="#D9D9D9"
+                />
+              </svg>
+            </Avatar>
+          </div>
+
           <Avatar>
             <Image
               style={{ borderRadius: "50px", border: "2px solid black" }}
-              src={Artwork.authorUrl}
+              src={
+                Artwork.SelectedEngine === "mid"
+                  ? "https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg"
+                  : "https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg"
+              }
               width={100}
               height={100}
               layout="fill"
@@ -376,24 +343,6 @@ export default function ArtworkDetails({ windowDimensions }) {
       </MainWrapper>
     );
 }
-
-const DownloadWrapper = styled(animated.a)`
-  position: absolute;
-  z-index: 1;
-  cursor: pointer;
-  bottom: 0;
-  left: 0;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  width: 12rem;
-  height: 3.4rem;
-  border-top-right-radius: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.6);
-  border-top: 2.6px solid lightgrey;
-  border-right: 1px solid lightgrey;
-  text-transform: uppercase;
-`;
 
 const MainWrapper = styled.div`
   position: relative;
@@ -406,6 +355,17 @@ const MainWrapper = styled.div`
   padding: 0;
 `;
 
+const PromptOverlay = styled.div`
+  position: sticky;
+  top: 0px;
+  z-index: 1;
+  width: 100%;
+  height: 80%;
+  background: linear-gradient(180deg, black 10%, rgba(130, 132, 135, 0) 100%);
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+`;
+
 const Overlay = styled(animated.div)`
   background: linear-gradient(
     to bottom,
@@ -415,19 +375,19 @@ const Overlay = styled(animated.div)`
   height: 100%;
   width: 100%;
   position: absolute;
-  border-radius: 0.8rem;
+  // border-radius: 0.8rem;
   bottom: 0;
   z-index: 1;
 `;
 
 // create a styled component called AuthorName that has a rotation of -90deg the the is vertical
 const AuthorName = styled.div`
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: bold;
   color: white;
   transform: rotate(-90deg);
   text-align: center;
-  height: 20%;
+  // height: 20%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -440,6 +400,11 @@ const AuthorName = styled.div`
 // create a styled component called Avatar that is a circle with a background image
 const Avatar = styled.div`
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
   width: 2.4rem;
   height: 2.4rem;
   border-radius: 50%;
@@ -447,26 +412,24 @@ const Avatar = styled.div`
   margin-right: 0.5rem;
   border: 2px solid rgba(255, 255, 255, 0.1);
 
-    @media (max-width: 768px) {
-      width: 1.8rem;
-      height: 1.8rem;
-    }
+  @media (max-width: 768px) {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
 
-@media (max-width: 480px) {
-  width: 1.6rem;
-  height: 1.6rem;
-}
-
-
+  @media (max-width: 480px) {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
 `;
 
 // create a styled component called AuthorContainer that has a height of 20% and a width of 100% and  a right alignment
 const AuthorContainer = styled.div`
   position: absolute;
-  bottom: 0;
+  bottom: 0.5rem;
   right: 10px;
   color: white;
-  height: 19%;
+  // height: 19%;
   width: 2%;
   display: flex;
   flex-direction: column;
@@ -486,18 +449,17 @@ const AuthorContainer = styled.div`
     right: 0;
   }
 
-  @media (max-width: 480px)
-   {
-      height: 100%;
-      width: 100%;
-      position: -webkit-sticky;
-      position: sticky;
-      bottom: 10px;
-      display: flex;
-      flex-direction: column;
-      right: 10px;
-      justify-content: center;
-      align-items: self-end;
+  @media (max-width: 480px) {
+    height: 100%;
+    width: 100%;
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    right: 10px;
+    justify-content: center;
+    align-items: self-end;
   }
 `;
 
@@ -572,8 +534,8 @@ const ArtworkContainer = styled(animated.div)`
   justify-content: space-between;
   align-items: left;
   transform: scale(0.5);
-  height: "86%";
-  width: "30rem";
+  height: 86%;
+  width: 30rem;
   position: relative;
   margin-bottom: 1rem;
   margin-top: 0rem;
@@ -641,6 +603,29 @@ const ArtworkTitle = styled.h1`
   letter-spacing: 0.1rem;
   position: relative;
   font-size: 1.2rem;
+  text-align: left;
+  width: 100%;
+  height: 10%;
+  @media (max-width: 768px) {
+    font-size: 1.6rem;
+    font-weight: bold;
+    text-align: left;
+    width: 100%;
+    height: 30%;
+  }
+  @media (max-width: 480px) {
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-align: left;
+    width: 100%;
+    height: 30%;
+  }
+`;
+const ReactionsTitle = styled.h1`
+  font-family: "Monument", sans-serif;
+  letter-spacing: 0.1rem;
+  position: relative;
+  font-size: 1rem;
   text-align: left;
   width: 100%;
   height: 10%;

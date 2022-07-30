@@ -60,7 +60,7 @@ height: 100%;
   }
 
   return (
-    <div>
+    <div style={{margin:"3rem 0rem"}}>
       <Artgrid
         gridGap={currentWrapper === "dialog" || currentWrapper === "details" ? "1rem 2rem" : "4rem  2rem"}
         columns={columns} paddingTop={currentWrapper === "dialog" || currentWrapper === "details" ? "0rem" : "3rem"}>

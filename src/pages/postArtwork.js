@@ -9,27 +9,46 @@ import Navbar from "../components/Navbar";
 import { useAuth } from "../contexts/AuthContext";
 import Iconify from "../components/Iconify";
 
-import { collection, onSnapshot, getDoc, doc } from "firebase/firestore";
+import { collection, doc, addDoc, updateDoc } from "firebase/firestore";
+
+// import useImage from the hooks folder
+import { useImage } from "../hooks/useImage";
+
 import { db } from "../firebase";
 import ArtgridComponent from "../components/ArtgridComponent";
+
+const tags = [
+  { id: 1, name: "Abstract", selected: false },
+  { id: 2, name: "Landscape", selected: false },
+  { id: 3, name: "Portrait", selected: false },
+  { id: 4, name: "Realistic", selected: false },
+  { id: 5, name: "Vintage", selected: false },
+  { id: 6, name: "Digital", selected: false },
+  { id: 7, name: "Futuristic", selected: false },
+];
 
 export default function PostArtwork() {
   const router = useRouter();
   const [Loading, setLoading] = React.useState(false);
-  const { user, FirestoreUser, logout } = useAuth();
-  const [PurchasedArtworks, setPurchasedArtworks] = useState([]);
+  const { user, FirestoreUser } = useAuth();
+  const [ArtworkImg, setArtworkImg] = useState("");
+  const [SelectedEngine, setSelectedEngine] = useState("mid");
+  const [Tags, setTags] = useState(tags);
+  const [Artwork, setArtwork] = useState({ ArtworkImg, SelectedEngine, Tags });
+  const { hasLoaded, hasError, AspectRatio } = useImage(ArtworkImg);
+  console.log("hasLoaded", hasLoaded, AspectRatio);
+
+  const imgRef = React.useRef(null);
 
   useEffect(() => {
-    if (FirestoreUser) {
-      // get the artworks from the ids of the user's purchased artworks
-      // setPurchasedArtworks();
-    }
-  }, [FirestoreUser]);
+    console.log("imgRef", imgRef.current);
+    // get the dimensions of the image from the url
+  }, [ArtworkImg]);
 
   // create a function that returns a log out icon
   const LogoutIcon = () => {
     // import the iconify component with an logout icon prop
-    return <Iconify icon="mdi-logout" />;
+    return <Iconify icon="mdi-upload" />;
   };
 
   const handleArtworkSelection = (artwork) => {
@@ -37,6 +56,120 @@ export default function PostArtwork() {
     // setSelectedArtwork(artwork);
     // setShowDialog(true);
     router.push(`/artwork/${artwork.id}`);
+  };
+
+  const handleEngineSelection = (engine) => {
+    setSelectedEngine(engine);
+  };
+
+  // function that updates the tags array to selected or not selected
+
+  const handleTagSelection = (tag) => {
+    const newTags = Tags.map((t) => {
+      if (t.id === tag.id) {
+        t.selected = !t.selected;
+      }
+      return t;
+    });
+    setTags(newTags);
+  };
+
+  const handleUrlInput = (e) => {
+    // get the first 6 characterts of the event.target.value
+
+    // check if the e.target.value includes labs.openai.com in the url
+    // if it does, then set the artworkImg to the e.target.value
+    // if it doesn't, then set the artworkImg to the e.target.value
+    // if the e.target.value is empty, then set the artworkImg to the default image
+    if (e.target.value.includes("labs.openai.com")) {
+      setSelectedEngine("openai");
+      setArtworkImg(e.target.value);
+    } else if (e.target.value.includes("i.mj.run")) {
+      setSelectedEngine("mid");
+      setArtworkImg(e.target.value);
+    } else {
+      setArtworkImg(e.target.value);
+      setSelectedEngine("");
+    }
+
+    const characters = e.target.value.substring(8, 16);
+    console.log("first six characters: ", characters);
+  };
+
+  // function called handlePost that takes in the artwork object and sends it to the database
+  const handlePost = async () => {
+    setLoading(true);
+
+    const artwork = {
+      Tags,
+      ArtworkImg,
+      SelectedEngine,
+      AspectRatio,
+      active: true,
+    };
+
+    try {
+      const docRef = await addDoc(collection(db, "artworks"), artwork);
+
+      console.log("Document written with ID: ", docRef.id);
+
+      // update the artwork using the updateDoc function
+      // const newDocRef = doc(db, "artworks", docRef.id); // set the loading state to false
+      setLoading(false);
+    } catch (error) {
+      console.log("error: ", error);
+      setLoading(false);
+    }
+
+    // redirect the user to the home page
+    router.push("/");
+  };
+
+  const EngineDisplay = () => {
+    if (SelectedEngine === "mid") {
+      return (
+        <section
+          className={
+            SelectedEngine === "mid" ? "ai-selected-container" : "ai-container"
+          }
+          onClick={() => handleEngineSelection("mid")}
+        >
+          <div className="avatar-box">
+            <Image
+              src={
+                "https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg"
+              }
+              layout="fill"
+              alt="avatar"
+              style={{ borderRadius: "50px" }}
+            />
+          </div>
+          <div style={{ marginLeft: "1rem" }}>Midjourney</div>
+        </section>
+      );
+    } else if (SelectedEngine === "openai") {
+      return (
+        <section
+          className={
+            SelectedEngine !== "mid" ? "ai-selected-container" : "ai-container"
+          }
+          onClick={() => handleEngineSelection("open")}
+        >
+          <div className="avatar-box">
+            <svg
+              id="openai-symbol"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 51 51"
+            >
+              <path d="M47.21,20.92a12.65,12.65,0,0,0-1.09-10.38A12.78,12.78,0,0,0,32.36,4.41,12.82,12.82,0,0,0,10.64,9a12.65,12.65,0,0,0-8.45,6.13,12.78,12.78,0,0,0,1.57,15A12.64,12.64,0,0,0,4.84,40.51a12.79,12.79,0,0,0,13.77,6.13,12.65,12.65,0,0,0,9.53,4.25A12.8,12.8,0,0,0,40.34,42a12.66,12.66,0,0,0,8.45-6.13A12.8,12.8,0,0,0,47.21,20.92ZM28.14,47.57a9.46,9.46,0,0,1-6.08-2.2l.3-.17,10.1-5.83a1.68,1.68,0,0,0,.83-1.44V23.69l4.27,2.47a.15.15,0,0,1,.08.11v11.8A9.52,9.52,0,0,1,28.14,47.57ZM7.72,38.85a9.45,9.45,0,0,1-1.13-6.37l.3.18L17,38.49a1.63,1.63,0,0,0,1.65,0L31,31.37V36.3a.17.17,0,0,1-.07.13L20.7,42.33A9.51,9.51,0,0,1,7.72,38.85Zm-2.66-22a9.48,9.48,0,0,1,5-4.17v12a1.62,1.62,0,0,0,.82,1.43L23.17,33.2,18.9,35.67a.16.16,0,0,1-.15,0L8.54,29.78A9.52,9.52,0,0,1,5.06,16.8ZM40.14,25,27.81,17.84l4.26-2.46a.16.16,0,0,1,.15,0l10.21,5.9A9.5,9.5,0,0,1,41,38.41v-12A1.67,1.67,0,0,0,40.14,25Zm4.25-6.39-.3-.18L34,12.55a1.64,1.64,0,0,0-1.66,0L20,19.67V14.74a.14.14,0,0,1,.06-.13L30.27,8.72a9.51,9.51,0,0,1,14.12,9.85ZM17.67,27.35,13.4,24.89a.17.17,0,0,1-.08-.12V13a9.51,9.51,0,0,1,15.59-7.3l-.3.17-10.1,5.83a1.68,1.68,0,0,0-.83,1.44Zm2.32-5,5.5-3.17L31,22.35v6.34l-5.49,3.17L20,28.69Z"></path>
+            </svg>
+          </div>
+          <div style={{ marginLeft: "1rem" }}>DALL·E 2</div>
+        </section>
+      );
+    } else {
+      return <section></section>;
+    }
   };
 
   // if (Loading) {
@@ -59,74 +192,100 @@ export default function PostArtwork() {
             <LogoutIcon />
           </PrimaryBtn> */}
         </div>
-        <section style={{ height: "10%" }}>
-          <ArtworkTitle>USED A.I.</ArtworkTitle>
-          <Underline />
-        </section>
+
         <div
           style={{
             display: "flex",
-            width: "100%",
+            width: "80%",
             justifyContent: "space-evenly",
           }}
-        >
-          <section className="ai-selected-container" onClick={logout}>
-            <div className="avatar-box">
-              <Image
-                src={
-                  "https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg"
-                }
-                layout="fill"
-                alt="avatar"
-                style={{ borderRadius: "50px" }}
-              />
-            </div>
-            <div style={{ marginLeft: "1rem" }}>Midjourney</div>{" "}
-          </section>
-          <div style={{ width: "0.5rem" }}></div>
-
-          <section className="ai-container" onClick={logout}>
-            <div className="avatar-box">
-             
-
-              <svg
-                id="openai-symbol"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 51 51"
-              >
-                <path d="M47.21,20.92a12.65,12.65,0,0,0-1.09-10.38A12.78,12.78,0,0,0,32.36,4.41,12.82,12.82,0,0,0,10.64,9a12.65,12.65,0,0,0-8.45,6.13,12.78,12.78,0,0,0,1.57,15A12.64,12.64,0,0,0,4.84,40.51a12.79,12.79,0,0,0,13.77,6.13,12.65,12.65,0,0,0,9.53,4.25A12.8,12.8,0,0,0,40.34,42a12.66,12.66,0,0,0,8.45-6.13A12.8,12.8,0,0,0,47.21,20.92ZM28.14,47.57a9.46,9.46,0,0,1-6.08-2.2l.3-.17,10.1-5.83a1.68,1.68,0,0,0,.83-1.44V23.69l4.27,2.47a.15.15,0,0,1,.08.11v11.8A9.52,9.52,0,0,1,28.14,47.57ZM7.72,38.85a9.45,9.45,0,0,1-1.13-6.37l.3.18L17,38.49a1.63,1.63,0,0,0,1.65,0L31,31.37V36.3a.17.17,0,0,1-.07.13L20.7,42.33A9.51,9.51,0,0,1,7.72,38.85Zm-2.66-22a9.48,9.48,0,0,1,5-4.17v12a1.62,1.62,0,0,0,.82,1.43L23.17,33.2,18.9,35.67a.16.16,0,0,1-.15,0L8.54,29.78A9.52,9.52,0,0,1,5.06,16.8ZM40.14,25,27.81,17.84l4.26-2.46a.16.16,0,0,1,.15,0l10.21,5.9A9.5,9.5,0,0,1,41,38.41v-12A1.67,1.67,0,0,0,40.14,25Zm4.25-6.39-.3-.18L34,12.55a1.64,1.64,0,0,0-1.66,0L20,19.67V14.74a.14.14,0,0,1,.06-.13L30.27,8.72a9.51,9.51,0,0,1,14.12,9.85ZM17.67,27.35,13.4,24.89a.17.17,0,0,1-.08-.12V13a9.51,9.51,0,0,1,15.59-7.3l-.3.17-10.1,5.83a1.68,1.68,0,0,0-.83,1.44Zm2.32-5,5.5-3.17L31,22.35v6.34l-5.49,3.17L20,28.69Z"></path>
-              </svg>
-            </div>
-            <div style={{ marginLeft: "1rem" }}>DALL·E 2</div>
-          </section>
-        </div>
-        <section style={{ height: "10%" }}>
+        ></div>
+        <section style={{ height: "6%" }}>
           <ArtworkTitle>ARTWORK LINK</ArtworkTitle>
           <Underline />
         </section>
+
         <div>
-          <input placeholder="https://i.mj.run/..."></input>
+          <input
+            onChange={handleUrlInput}
+            value={ArtworkImg}
+            placeholder="https://i.mj.run/..."
+          ></input>
           <div style={{ width: "0.5rem" }}></div>
-          {/* <PrimaryBtn onClick={logout}>
-            Logout
-            <LogoutIcon />
-          </PrimaryBtn> */}
         </div>
+        <section
+          style={{
+            height: "10%",
+            display: "flex",
+            alignItems: "center",
+            width: "80%",
+            justifyContent: "end",
+          }}
+        >
+          <EngineDisplay />
+        </section>
+        <section style={{ height: "10%" }}>
+          <ArtworkTitle>TAGS (OPTIONAL)</ArtworkTitle>
+          <Underline />
+        </section>
+        <section className="tags-section">
+          {Tags.map((tag, index) => (
+            <div
+              key={index}
+              className={
+                tag.selected ? "selected-tag-container" : "tag-container"
+              }
+              onClick={() => handleTagSelection(tag)}
+            >
+              {tag.name}
+            </div>
+          ))}
+        </section>
       </div>
       <div className="right-side">
-        <ArtworkTitle>PREVIEW</ArtworkTitle>
-        <Underline />
-        <section style={{ border: "2px solid black" }}>image</section>
+        <main
+          style={{
+            width: "100%",
+            textAlign: "left",
+            padding: "0rem 2rem",
+            margin: "3rem 0rem",
+          }}
+        >
+          <ArtworkTitle>PREVIEW</ArtworkTitle>
+          <Underline />
+        </main>
+        <section
+          style={{
+            // border: "2px solid black",
+            height: "50%",
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+          }}
+        >
+          {ArtworkImg && SelectedEngine ? (
+            <div style={{height:"100%"}} >
+              <img
+                ref={imgRef}
+                style={{ border: "4px solid black", width: "100%", height: "100%" }}
+                src={ArtworkImg}
+                alt="img"
+              />
+            </div>
+          ) : (
+            <Iconify size="16rem" icon={"fa-image"} />
+          )}
+        </section>
+        <section style={{ margin: "2rem 0rem" }}>
+          <PrimaryBtn onClick={handlePost}>
+            POST
+            <div style={{ width: "0.5rem" }}></div>
+            <LogoutIcon />
+          </PrimaryBtn>
+        </section>
       </div>
-      {/* <PacksWrapper>
-          <div
-            style={{ height: "20%", marginTop: "2rem", marginBottom: "1rem" }}
-          >
-            <ArtworkTitle>{"Your ".toUpperCase()}</ArtworkTitle>
-            <Underline />
-          </div>
-        </PacksWrapper> */}
-      {/* </Container> */}
     </MainWrapper>
   );
 }
@@ -169,17 +328,13 @@ const PrimaryBtn = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
-  width: 10rem;
   background-color: black;
   color: white;
-  margin-right: 0.5rem;
-  margin-top: 0.5rem;
+  padding: 0.5rem 2.4rem;
   font-family: "Monument";
   text-transform: uppercase;
 
-  font-size: 1rem;
-  height: 2.3rem;
-  padding-left: 0.8rem;
+  font-size: 1.4rem;
   border: 2px solid #b6b6b6;
   border-radius: 40px;
 
@@ -278,6 +433,47 @@ const MainWrapper = styled.div`
   align-items: center;
   background-color: white;
 
+  .tags-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    width: 100%;
+    height: 20%;
+    flex-wrap: wrap;
+  }
+
+  .selected-tag-container {
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 7rem;
+    height: 2rem;
+    background-color: black;
+    color: white;
+    border-radius: 50px;
+    margin: 0.5rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+  }
+  .tag-container {
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 7rem;
+    height: 2rem;
+    color: black;
+    border: 2px solid black;
+    border-radius: 50px;
+    margin: 0.5rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+  }
+
   //   padding: 0;
 
   .left-side {
@@ -294,7 +490,7 @@ const MainWrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: start;
     width: 50%;
     height: 100%;
   }
@@ -311,6 +507,7 @@ const MainWrapper = styled.div`
     margin-right: 0.5rem;
     font-family: "Monument";
     text-transform: uppercase;
+    cursor: pointer;
 
     font-size: 1rem;
     height: 2.3rem;
@@ -324,6 +521,7 @@ const MainWrapper = styled.div`
     position: relative;
     z-index: 100;
     display: flex;
+    cursor: pointer;
     justify-content: space-between;
     align-items: center;
     // width: 80%;

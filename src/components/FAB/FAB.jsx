@@ -28,10 +28,17 @@ const FAB = ({ actions }) => {
         <FabWrapper
             className="fab-container"
             onClick={() => handleClick()}
-            // onMouseEnter={mouseEnter}
-            // onMouseLeave={mouseLeave}
+        // onMouseEnter={mouseEnter}
+        // onMouseLeave={mouseLeave}
         >
-            <Iconify size="3.6em" color="white" icon="mdi-plus" />
+            {/* <Iconify size="3.6em" color="white" icon="mdi-plus" /> */}
+            <svg width="41" height="63" viewBox="0 0 41 63" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="1" y="1" width="38.5" height="61" stroke="white" strokeOpacity="0.8" strokeWidth="2"/>
+<rect x="17.5856" y="21" width="5.32895" height="21" rx="2.66447" fill="white"/>
+<rect x="31.4408" y="29" width="5" height="22.3816" rx="2.5" transform="rotate(90 31.4408 29)" fill="white"/>
+</svg>
+
+
 
         </FabWrapper>
     );
@@ -44,6 +51,7 @@ display: flex;
 justify-content: center;
 align-items: center;
 right: 2em;
+padding: 2rem 1.3rem;
 bottom: 2em;
 height: 4.6em;
 width: 4.6em;
