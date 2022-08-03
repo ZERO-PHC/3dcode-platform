@@ -4,9 +4,11 @@ import styled, { keyframes } from "styled-components";
 import { loadStripe } from "@stripe/stripe-js";
 import { useRouter } from "next/router";
 import { animated, useSpring, config } from "react-spring";
+// import "@tensorflow/tfjs";
+import * as toxicity from "@tensorflow-models/toxicity";
 
 import { useAuth } from "../../contexts/AuthContext";
-import { useNFTs } from "../../contexts/NftsContext";
+import { useTransaction } from "../../contexts/TransactionContext";
 
 import Iconify from "../../components/Iconify";
 import Navbar from "../../components/Navbar";
@@ -15,15 +17,23 @@ import ArtworkPrompt from "../../components/ArtworkPrompt";
 import ArtgridComponent from "../../components/ArtgridComponent";
 
 import { db } from "../../firebase";
-import { doc, updateDoc, onSnapshot, collection } from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  onSnapshot,
+  collection,
+  addDoc,
+} from "firebase/firestore";
 import PromptSection from "../../sections/PromptSection";
 import { TwitterAuthProvider } from "firebase/auth";
 import PromptVariations from "../../sections/PromptVariations";
 import AnimatedEmoticon from "../../components/AnimatedEmoticon";
 import CommentComponent from "../../components/CommentComponent";
 import CommentsSection from "../../sections/CommentsSection";
+import SnackbarComponent from "../../components/SnackbarComponent";
 
 export default function ArtworkDetails({ windowDimensions }) {
+  const { setMessage, setIsProcessing } = useTransaction();
   const { user, Coins, FirestoreUser } = useAuth();
   const router = useRouter();
   const { artworkId } = router.query;
@@ -33,13 +43,65 @@ export default function ArtworkDetails({ windowDimensions }) {
   const [IsFavorite, setIsFavorite] = useState(false);
   const [IsAnimating, setIsAnimating] = useState(false);
   const variationsRef = React.useRef(null);
+  const [Comment, setComment] = useState();
+  const [Reaction, setReaction] = useState();
+  const [result, setResult] = useState("");
+  const [open, setOpen] = useState(true);
+
+  const threshold = 0.9;
+
+  useEffect(() => {
+    // setTimeout(() => {
+    //   toxicity.load(threshold).then((model) => {
+    //     getToxicity(model);
+    //   });
+    // }, 2000);
+  }, []);
+
+  const getToxicity = async (model) => {
+    setIsProcessing(true);
+    setLoading(false);
+
+    const sentences = [Comment];
+
+    model.classify(sentences).then((predictions) => {
+      // `predictions` is an array of objects, one for each prediction head,
+      // that contains the raw probabilities for each input along with the
+      // final prediction in `match` (either `true` or `false`).
+      // If neither prediction exceeds the threshold, `match` is `null`.
+
+      console.log("preds", predictions);
+
+      // loop over predictions
+      let toxicMatches = 0;
+      predictions.forEach((prediction) => {
+        // if prediction is true
+
+        if (prediction.results[0].match) {
+          console.log("toxic");
+          toxicMatches++;
+        } else {
+          console.log("not toxic");
+        }
+
+        if (toxicMatches > 0) {
+          setMessage("Toxic message");
+        } else {
+          setMessage("Posted Comment");
+        }
+
+        setTimeout(() => {
+          setIsProcessing(false);
+        }, 4000);
+      });
+    });
+  };
 
   const width = windowDimensions.width;
   const mobile = width < 768;
 
   // create a useEffect that will the artwork with the id of artworkId from the firestore database in realtime
   useEffect(() => {
-    setLoading(true);
     const artworkRef = doc(db, "artworks", artworkId);
     const unsub = onSnapshot(artworkRef, (doc) => {
       const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
@@ -63,6 +125,77 @@ export default function ArtworkDetails({ windowDimensions }) {
     setIsAnimating(true);
   }, []);
 
+  const handleCommentChange = (e) => {
+    setComment(e.target.value);
+  };
+
+  const handleCommentPost = async () => {
+    setLoading(true);
+    console.log("loading model");
+
+    // toxicity.load(threshold).then((model) => {
+    //       getToxicity(model);
+    //     });
+
+    const model = await toxicity.load(threshold);
+
+    console.log("loaded model");
+
+    getToxicity(model);
+
+    // const artworkRef = doc(db, "artworks", artworkId);
+
+    // const colRef = collection(artworkRef, "comments");
+
+    // // artwork.variations.forEach((variation) => {
+    // // add each variation to the artwork
+    // addDoc(colRef, { Comment }).catch((error) => {
+    //   console.log(error);
+    // });
+
+    // // });
+    // console.log("added doc");
+  };
+
+  const handleReactionPost = (reaction) => {
+    // add the reaction to the reactions collection
+    // const reactionRef = doc(db, "reactions", artworkId);
+    // addDoc(reactionRef, { Reaction: reaction }).catch((error) =>
+    //   console.log("err", error)
+    // );
+    setIsProcessing(true);
+    setMessage("loading");
+
+    // const artworkRef = doc(db, "artworks", artworkId);
+
+    const colRef = collection(db, "reactions");
+
+    // artwork.variations.forEach((variation) => {
+    // add each variation to the artwork
+    addDoc(colRef, { reaction, points: 3 })
+      .then(() => {
+        setMessage("You earned 3 points for reacting to this artwork!");
+        setTimeout(() => {
+          setIsProcessing(false);
+        }, 3000);
+        // set processing true
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    // });
+    console.log("added doc");
+  };
+
+  const inputProps = {
+    handleCommentChange,
+    handleCommentPost,
+    Comment,
+    Loading,
+    
+  };
+
   // create a function called checkFavorites that will check if the artwork is in the favorites array of the user
   // const checkFavorites = (favorites) => {
   //   console.log("favorites", favorites);
@@ -77,7 +210,7 @@ export default function ArtworkDetails({ windowDimensions }) {
 
   // create a function called handleBuy
   const handleBuy = async () => {
-    setLoading(true);
+    L(true);
     // if (Coins >= Artwork.price && !Artwork.purchased) {
     if (Coins >= Artwork.price) {
       // update the artwork to have the purchased property set to true that is on the artworks firestore collection
@@ -95,7 +228,7 @@ export default function ArtworkDetails({ windowDimensions }) {
         coins: Coins - Artwork.price,
       }).catch((err) => console.log(err));
 
-      // setLoading(false);
+      // L(false);
     } else {
       alert("You don´t have enough coins");
     }
@@ -168,111 +301,24 @@ export default function ArtworkDetails({ windowDimensions }) {
 
   if (Artwork)
     return (
-      <MainWrapper>
-        <div
-          style={{
-            height: "100%",
-            width: "100%",
-            position: "fixed",
-            top: "0",
-            background: "black",
-          }}
-        >
-          <Image
-            style={{
-              filter: "blur(12px)",
-              opacity: 0.5,
-              position: "sticky",
-              top: "0",
-            }}
-            src={ArtworkImage}
-            layout="fill"
-            objectFit="cover"
-            objectPosition="center"
-            placeholder="blur"
-            blurDataURL="/assets/placeholder.png"
-            alt="artwork"
-          />
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: `${mobile ? "column" : "row"}`,
-            justifyContent: `${!mobile ? "space-evenly" : null}`,
-            alignItems: `${!mobile ? "end" : "center"}`,
-            width: "100vw",
-            height: `${!mobile ? "100%" : null}`,
-            position: "relative",
-          }}
-        >
-          <main
+      <>
+        <MainWrapper>
+          <div
             style={{
               height: "100%",
-              width: "30%",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              marginTop: "10rem",
+              width: "100%",
+              position: "fixed",
+              top: "0",
+              background: "black",
             }}
           >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                width: "80%",
-                height: "100%",
-                justifyContent: "end",
-                marginBottom: "6rem",
-                alignItems: "center",
-              }}
-            >
-              <animated.div
-                style={{
-                  height: "70%",
-                  width: "100%",
-                  background: "rgba(130, 132, 135, 0.23)",
-                  borderRadius: "0.5rem",
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  color: "white",
-                  position: "relative",
-                }}
-              >
-                <PromptOverlay>
-                  <section
-                    style={{
-                      position: "absolute",
-                      top: "3px",
-                      left: "10px",
-                      height: "2.8rem",
-                      zIndex: "1",
-                    }}
-                  >
-                    <ReactionsTitle>REACTIONS</ReactionsTitle>
-                    <Underline />
-                  </section>
-                  <section style={{ display: "flex", width: "100%" }}>
-                    <div style={{ width: "50%" }}>
-                      <AnimatedEmoticon />
-                      <AnimatedEmoticon />
-                      <AnimatedEmoticon />
-                    </div>
-
-                    <div style={{ width: "50%" }}>
-                      <AnimatedEmoticon />
-                      <AnimatedEmoticon />
-                      <AnimatedEmoticon />
-                    </div>
-                  </section>
-                </PromptOverlay>
-              </animated.div>
-            </div>
-          </main>
-          <ArtworkContainer mobile={mobile} style={artworkAnimation}>
             <Image
+              style={{
+                filter: "blur(12px)",
+                opacity: 0.5,
+                position: "sticky",
+                top: "0",
+              }}
               src={ArtworkImage}
               layout="fill"
               objectFit="cover"
@@ -281,66 +327,145 @@ export default function ArtworkDetails({ windowDimensions }) {
               blurDataURL="/assets/placeholder.png"
               alt="artwork"
             />
-            {/* <ArtworkDetailsWrapper> */}
-            <Header>
-              <FavoriteWrapper onClick={handleAddFavorite}>
-                <Iconify
-                  icon={
-                    !IsFavorite
-                      ? "ant-design:heart-outlined"
-                      : "ant-design:heart-filled"
-                  }
-                />
-              </FavoriteWrapper>
-
-              <ArtworkTitle>
-                {Artwork.name.toUpperCase()}
-                <Underline />
-              </ArtworkTitle>
-            </Header>
-
-            <Overlay />
-          </ArtworkContainer>
-          <CommentsSection />
-        </div>
-        <AuthorContainer>
-          <AuthorName>{Artwork.author.toUpperCase()}</AuthorName>
-          <div style={{ height: "3.5rem" }}></div>
-          <div style={{ position: "absolute", bottom: "1.7rem", zIndex: "2" }}>
-            <Avatar>
-              <svg
-                width="2.2rem"
-                height="2.2rem"
-                viewBox="0 0 72 67"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M55.3199 66.382L55.3201 66.285C55.3201 53.8012 46.6457 43.6812 35.9454 43.6812C25.245 43.6812 16.5707 53.8012 16.5707 66.285L16.5707 66.312C6.60339 59.91 0 48.7261 0 36C0 16.1177 16.1177 0 36 0C55.8823 0 72 16.1177 72 36C72 48.7727 65.3483 59.9917 55.3199 66.382ZM22.7484 31.3223C23.8232 37.6715 29.349 42.5069 36.0041 42.5069C43.4295 42.5069 49.449 36.4874 49.449 29.062C49.449 21.6366 43.4295 15.6172 36.0041 15.6172C30.8627 15.6172 26.3953 18.5031 24.1335 22.7434C25.1523 22.0953 25.948 23.3626 25.9292 25.6566C25.9098 28.0236 25.0305 30.5872 23.9653 31.3827C23.5002 31.73 23.0765 31.6828 22.7484 31.3223ZM28.1133 27.0044C28.092 29.5983 29.3989 31.4914 31.0322 31.2327C32.6655 30.974 34.0068 28.6615 34.0281 26.0676C34.0494 23.4736 32.7426 21.5806 31.1092 21.8393C29.4759 22.0979 28.1346 24.4105 28.1133 27.0044Z"
-                  fill="#D9D9D9"
-                />
-              </svg>
-            </Avatar>
           </div>
 
-          <Avatar>
-            <Image
-              style={{ borderRadius: "50px", border: "2px solid black" }}
-              src={
-                Artwork.SelectedEngine === "mid"
-                  ? "https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg"
-                  : "https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg"
-              }
-              width={100}
-              height={100}
-              layout="fill"
-              alt="avatar"
-            />
-          </Avatar>
-        </AuthorContainer>
-      </MainWrapper>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: `${mobile ? "column" : "row"}`,
+              justifyContent: `${!mobile ? "space-evenly" : null}`,
+              alignItems: `${!mobile ? "end" : "center"}`,
+              width: "100vw",
+              height: `${!mobile ? "100%" : null}`,
+              position: "relative",
+            }}
+          >
+            <main
+              style={{
+                height: "100%",
+                width: "30%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "10rem",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "80%",
+                  height: "100%",
+                  justifyContent: "end",
+                  marginBottom: "6rem",
+                  alignItems: "center",
+                }}
+              >
+                <ReactionsWrapper style={promptStyles}>
+                  <PromptOverlay>
+                    <section
+                      style={{
+                        position: "absolute",
+                        top: "3px",
+                        left: "10px",
+                        height: "2.8rem",
+                        zIndex: "1",
+                      }}
+                    >
+                      <ReactionsTitle>REACTIONS</ReactionsTitle>
+                      <Underline />
+                    </section>
+                    <section style={{ display: "flex", width: "100%" }}>
+                      <div style={{ width: "50%" }}>
+                        <AnimatedEmoticon
+                          artboard={"Mindblown"}
+                          handleReactionPost={handleReactionPost}
+                        />
+                        <AnimatedEmoticon artboard={"joy"} />
+                        <AnimatedEmoticon artboard={"meh"} />
+                      </div>
+
+                      <div style={{ width: "50%" }}>
+                        <AnimatedEmoticon artboard={"Onfire"} />
+                        <AnimatedEmoticon artboard={"love"} />
+                        <AnimatedEmoticon artboard={"Onfire"} />
+                      </div>
+                    </section>
+                  </PromptOverlay>
+                </ReactionsWrapper>
+              </div>
+            </main>
+            <ArtworkContainer mobile={mobile} style={artworkAnimation}>
+              <Image
+                src={ArtworkImage}
+                layout="fill"
+                objectFit="cover"
+                objectPosition="center"
+                placeholder="blur"
+                blurDataURL="/assets/placeholder.png"
+                alt="artwork"
+              />
+              {/* <ArtworkDetailsWrapper> */}
+              <Header>
+                <FavoriteWrapper onClick={handleAddFavorite}>
+                  <Iconify
+                    icon={!IsFavorite ? "mdi-bookmark-outline" : "mdi-bookmark"}
+                  />
+                </FavoriteWrapper>
+
+                <ArtworkTitle>
+                  {Artwork.name.toUpperCase()}
+                  <Underline />
+                </ArtworkTitle>
+              </Header>
+
+              <Overlay />
+            </ArtworkContainer>
+            <CommentsSection animation={variationsAnimation} {...inputProps} />
+          </div>
+          <AuthorContainer>
+            {/* <AuthorName>{Artwork.author.toUpperCase()}</AuthorName> */}
+            <AuthorName>{"Username".toUpperCase()}</AuthorName>
+            <div style={{ height: "4.5rem" }}></div>
+            <div
+              style={{ position: "absolute", bottom: "1.7rem", zIndex: "2" }}
+            >
+              <Avatar>
+                <svg
+                  width="2.2rem"
+                  height="2.2rem"
+                  viewBox="0 0 72 67"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M55.3199 66.382L55.3201 66.285C55.3201 53.8012 46.6457 43.6812 35.9454 43.6812C25.245 43.6812 16.5707 53.8012 16.5707 66.285L16.5707 66.312C6.60339 59.91 0 48.7261 0 36C0 16.1177 16.1177 0 36 0C55.8823 0 72 16.1177 72 36C72 48.7727 65.3483 59.9917 55.3199 66.382ZM22.7484 31.3223C23.8232 37.6715 29.349 42.5069 36.0041 42.5069C43.4295 42.5069 49.449 36.4874 49.449 29.062C49.449 21.6366 43.4295 15.6172 36.0041 15.6172C30.8627 15.6172 26.3953 18.5031 24.1335 22.7434C25.1523 22.0953 25.948 23.3626 25.9292 25.6566C25.9098 28.0236 25.0305 30.5872 23.9653 31.3827C23.5002 31.73 23.0765 31.6828 22.7484 31.3223ZM28.1133 27.0044C28.092 29.5983 29.3989 31.4914 31.0322 31.2327C32.6655 30.974 34.0068 28.6615 34.0281 26.0676C34.0494 23.4736 32.7426 21.5806 31.1092 21.8393C29.4759 22.0979 28.1346 24.4105 28.1133 27.0044Z"
+                    fill="#D9D9D9"
+                  />
+                </svg>
+              </Avatar>
+            </div>
+
+            <Avatar>
+              <Image
+                style={{ borderRadius: "50px", border: "2px solid black" }}
+                src={
+                  Artwork.SelectedEngine === "mid"
+                    ? "https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg"
+                    : "https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg"
+                }
+                width={100}
+                height={100}
+                layout="fill"
+                alt="avatar"
+              />
+            </Avatar>
+          </AuthorContainer>
+        </MainWrapper>
+      </>
     );
 }
 
@@ -353,6 +478,18 @@ const MainWrapper = styled.div`
   align-items: center;
   background-color: black;
   padding: 0;
+`;
+
+const ReactionsWrapper = styled(animated.div)`
+  height: 70%;
+  width: 100%;
+  background: rgba(130, 132, 135, 0.23);
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  color: white;
+  position: relative;
 `;
 
 const PromptOverlay = styled.div`
@@ -382,9 +519,9 @@ const Overlay = styled(animated.div)`
 
 // create a styled component called AuthorName that has a rotation of -90deg the the is vertical
 const AuthorName = styled.div`
-  font-size: 1rem;
+  font-size: 0.7rem;
   font-weight: bold;
-  color: white;
+  color: lightgrey;
   transform: rotate(-90deg);
   text-align: center;
   // height: 20%;
@@ -404,7 +541,7 @@ const Avatar = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  
+
   width: 2.4rem;
   height: 2.4rem;
   border-radius: 50%;

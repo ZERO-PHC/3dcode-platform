@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import Spinner from '../atoms/Spinner';
 import CommentComponent from '../components/CommentComponent';
 import Iconify from '../components/Iconify';
+import { animated } from "react-spring";
 
-export default function CommentsSection() {
+export default function CommentsSection({ handleCommentPost, Comment, handleCommentChange, Loading , animation}) {
   return (
     <main
       style={{
@@ -30,15 +32,15 @@ export default function CommentsSection() {
         }}
       >
 
-        <CommentsWrapper>
+        <CommentsWrapper style={animation}>
           <PromptOverlay>
-            <section style={{ top: "3px", right: "10px", height: "20%", paddingLeft: "0.5rem", width:"100%", display:"flex", flexDirection:"column", alignItems:"end" }}>
+            <section style={{ top: "3px", right: "10px", height: "20%", paddingLeft: "0.5rem", width: "100%", display: "flex", flexDirection: "column", alignItems: "end" }}>
               <ReactionsTitle>
                 <div>
-                COMMENTS
-                  </div>
+                  COMMENTS
+                </div>
 
-              {/* <Underline /> */}
+                {/* <Underline /> */}
               </ReactionsTitle>
             </section>
           </PromptOverlay>
@@ -53,17 +55,17 @@ export default function CommentsSection() {
           </main>
         </CommentsWrapper>
         <InputWrapper>
-          <input placeholder='Something cool' />
-          <main  className='send-btn'>
-            <Iconify icon='fa-send' color="white" />
-          </main>
+          <input placeholder='Something cool' onChange={handleCommentChange} value={Comment} />
+          <main className='send-btn' onClick={handleCommentPost}>
+            {Loading ? <Spinner /> : <Iconify icon='fa-send' color="white" />
+            }          </main>
         </InputWrapper>
       </section>
     </main>)
 }
 
 
-const CommentsWrapper = styled.section`
+const CommentsWrapper = styled(animated.div)`
             position:relative;
             height: 60%;
             max-height: 60%;

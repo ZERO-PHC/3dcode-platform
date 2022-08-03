@@ -17,9 +17,11 @@ display:flex;
 width:100%;
 jusfify-content:center;
 align-items:center;
+padding:0rem 0.5rem;
 
 #loading {
-    display: inline-block;
+    display: flex;
+  
     width: 1.4rem;
     height: 1.4rem;
     border: 3px solid rgba(255,255,255,.3);

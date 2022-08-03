@@ -28,16 +28,19 @@ function countReducer(state, action) {
 export default function TransactionProvider({ children }) {
   const [TransactionStatus, setTransactionStatus] = useState("0");
   const [IsProcessing, setIsProcessing] = useState(false);
+  const [Message, setMessage] = useState("Message");
   const [state, dispatch] = useReducer(countReducer, {count: 0})
 
 
   const value = {
-    IsProcessing,
+    IsProcessing, 
     setIsProcessing,
     setTransactionStatus,
     TransactionStatus,
     state,
-    dispatch
+    dispatch,
+    setMessage,
+    Message
   };
 
   return (

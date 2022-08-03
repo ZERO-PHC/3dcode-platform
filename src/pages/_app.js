@@ -7,6 +7,7 @@ import AuthProvider from "../contexts/AuthContext";
 import NftsProvider from "../contexts/NftsContext";
 import TransactionProvider from "../contexts/TransactionContext";
 import Layout from "../sections/Layout";
+import SnackbarComponent from "../components/SnackbarComponent";
 
 function MyApp({ Component, pageProps }) {
   // get the dimensions of the window and store them in the state
@@ -25,6 +26,7 @@ function MyApp({ Component, pageProps }) {
         <NftsProvider>
           <AnimationProvider>
             <Layout windowDimensions={windowDimensions}>
+              <SnackbarComponent  />
               <Component {...pageProps} windowDimensions={windowDimensions} />
             </Layout>
           </AnimationProvider>

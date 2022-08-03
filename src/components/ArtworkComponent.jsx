@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import Image from "next/image";
 import { animated, config, useSpring } from "react-spring";
+import PrimaryBtnComponent from './PrimaryBtn';
 
 export default function ArtworkComponent({
   artwork,
@@ -44,7 +45,7 @@ export default function ArtworkComponent({
         return "6rem"
       case "main":
         if (!mobile) {
-          return "16rem"
+          return artwork.AspectRatio === "landscape" ? "32rem " : "16rem"
         } else {
           return "8rem"
         }
@@ -69,7 +70,7 @@ export default function ArtworkComponent({
           if (artwork.AspectRatio === "portrait") {
             return "26rem"
           } else {
-            return "12rem"
+            return "16rem"
           }
         } else {
           return "13rem"
@@ -82,16 +83,16 @@ export default function ArtworkComponent({
 
   const resolveTransform = () => {
     switch (idx) {
-      case 0:
-        return "TranslateY(10%)"
-      case 2:
-        return "TranslateY(10%)"
+      // case 0:
+      //   // return "TranslateY(10%)"
+      // case 2:
+      //   // return "TranslateY(10%)"
       case 4:
-        return "TranslateY(10%) TranslateX(30%)"
-      case 5:
-        return "TranslateX(30%)"
+        return "TranslateY(-38.5%) "
+      // case 5:
+      //   return "TranslateX(30%)"
       case 6:
-        return "TranslateY(10%) TranslateX(30%)"
+        return "TranslateY(-38.5%)"
 
       default:
         return "0rem 0rem"
@@ -99,47 +100,60 @@ export default function ArtworkComponent({
 
   }
 
-  if (!isOwner) {
-    return (
-      <div style={{
-        filter: "blur(6px)"
-      }}>
-        <Artwork
-          onClick={() => handleArtworkSelection(artwork)}
-          key={idx}
-          width={resolveWidth()}
-          height={resolveHeight()}
-          isOwner={isOwner}
-          mobile={width > 768 ? false : true}
-          margin={resolveTransform(idx)}
-        >
-          <Image
-            style={{ borderRadius: "0.8rem" }}
-            src={artwork.ArtworkImg}
-            alt={artwork.ArtworkImg}
-            layout="fill"
-          />
+  // if (!isOwner) {
 
-        </Artwork>
-      </div >
 
-    );
-  } else {
-    return (
-      <div style={{
-        filter: "blur(none)"
-      }}>
-        <Artwork
-          onPointerEnter={() => setHovered(true)}
-          onPointerLeave={() => setHovered(false)}
-          onClick={() => handleArtworkSelection(artwork)}
-          key={idx}
-          width={resolveWidth()}
-          height={resolveHeight()}
-          isOwner={isOwner}
-          transform={resolveTransform()}
+  //   return (
+  //     <div style={{
+  //       filter: "blur(6px)"
+  //     }}>
+  //       <Artwork
+  //         onClick={() => handleArtworkSelection(artwork)}
+  //         key={idx}
+  //         width={resolveWidth()}
+  //         height={resolveHeight()}
+  //         isOwner={isOwner}
+  //         mobile={width > 768 ? false : true}
+  //         margin={resolveTransform(idx)}
+  //         // margin={"2rem"}
+  //       >
+  //         <Image
+  //           style={{ borderRadius: "0.8rem" }}
+  //           src={artwork.ArtworkImg}
+  //           alt={artwork.ArtworkImg}
+  //           layout="fill"
+  //         />
 
-        >
+  //       </Artwork>
+  //     </div >
+
+  //   );
+  // } else {
+  // if (idx === 7) {
+  //   return <div style={{ height: "30rem" }}><video src="https://storage.googleapis.com/dream-machines-output/f4e5341a-d06c-42a9-8023-413d3b55fd47/video.mp4" style={{ height: "30rem" }} /></div>
+  // } else {
+
+  // 
+
+  return (
+    <div style={{
+      filter: "blur(none)"
+    }}>
+
+
+      <Artwork
+        onPointerEnter={() => setHovered(true)}
+        onPointerLeave={() => setHovered(false)}
+        onClick={() => handleArtworkSelection(artwork)}
+        key={idx}
+        width={resolveWidth()}
+        height={resolveHeight()}
+        isOwner={isOwner}
+        transform={resolveTransform()}
+
+
+      >
+        {idx !== 6 ?
           <Image
             style={{ borderRadius: "0.5rem" }}
             src={artwork.ArtworkImg}
@@ -147,28 +161,50 @@ export default function ArtworkComponent({
             // placeholder="blur"
             // blurDataURL="/assets/placeholder.png"
             layout="fill"
-          />
-          <ArtworkName style={nameAnimation}>
-            {artwork.name}
-          </ArtworkName>
-          <EngineName style={nameAnimation}>
-            {artwork.SelectedEngine === "mid" ? <main style={{ position:"relative", borderRadius: "50px", height: "2rem", width: "2rem", border: "2px solid black",  }}>
-              <Image src="https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg" layout="fill" alt="mid"               style={{ borderRadius: "50px" }}
- />
-            </main> : <Image src="https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg" height={100} width={100}
-              alt="low" />}
-          </EngineName>
-          <Underline style={underlineAnimation} />
-          <Overlay style={overlayAnimation} />
-        </Artwork>
-      </div>
-    );
-  }
+          /> :
+          //<video with au
+          <video autoPlay loop muted src="https://storage.googleapis.com/dream-machines-output/f4e5341a-d06c-42a9-8023-413d3b55fd47/video.mp4" style={{ height: "16rem", borderTopLeftRadius: "0.6rem", borderTopRightRadius: "0.6rem", borderBottom: "0.5px solid lightgrey" }} />
+        }
+        <ArtworkName style={nameAnimation}>
+          {artwork.name}
+        </ArtworkName>
+        <EngineName style={nameAnimation}>
+          {artwork.SelectedEngine === "mid" ? <main style={{ position: "relative", borderRadius: "50px", height: "2rem", width: "2rem", border: "2px solid black", }}>
+            <Image src="https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg" layout="fill" alt="mid" style={{ borderRadius: "50px" }}
+            />
+          </main> : <Image src="https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg" height={100} width={100}
+            alt="low" />}
+        </EngineName>
+        <Underline style={underlineAnimation} />
+        <Overlay style={overlayAnimation} />
+        {idx === 6 && <div style={{ height: "40%", width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}  >
+          <div style={{ width: "100%", textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <header style={{ fontSize: "small" }}>Created with</header>
+            <main style={{ position: "relative", borderRadius: "50px", height: "2rem", width: "2rem", border: "2px solid black", margin: "0.5rem" }}>
+              <Image src="https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg" layout="fill" alt="mid" style={{ borderRadius: "50px", marginLeft: "0.5rem" }}
+              />
+            </main>
+          </div>
+
+          <PrimaryBtnComponent label={"Get your free trial"} />
+        </div>}
+      </Artwork>
+    </div>
+  );
+
+
 }
+
+// }
 
 const Artwork = styled.div`
 cursor: pointer;
 position: relative;
+margin:0.5rem;
+color:white;
+background-color: black;
+border-radius:0.6rem;
+text-transform: uppercase;
 transform: ${(props) => props.transform};
 width: ${(props) => props.width};
 height: ${(props) => props.height};

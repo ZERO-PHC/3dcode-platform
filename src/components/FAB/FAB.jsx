@@ -52,6 +52,7 @@ justify-content: center;
 align-items: center;
 right: 2em;
 padding: 2rem 1.3rem;
+border:2px solid white;
 bottom: 2em;
 height: 4.6em;
 width: 4.6em;

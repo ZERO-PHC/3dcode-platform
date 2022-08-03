@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRive } from '@rive-app/react-canvas';
 
 
-export default function AnimatedEmoticon() {
+export default function AnimatedEmoticon({handleReactionPost, artboard }) {
     const [isPlaying, setIsPlaying] = useState(true);
     const [animationText, setAnimationText] = useState('');
 
@@ -15,8 +15,8 @@ export default function AnimatedEmoticon() {
         RiveComponent: RiveComponentPlayback
     } = useRive({
         src: '/assets/emojis.riv',
-        artboard: 'Onfire',
-        animations: ['idle'],
+        artboard,
+        animations: ['idle' ],
         autoplay: false,
 
         onPause: () => {
@@ -39,6 +39,8 @@ export default function AnimatedEmoticon() {
         // guard to prevent any unwanted errors.
         if (rive) {
             rive.play();
+
+            console.log("rive, ", rive);
         }
     }
 
@@ -49,7 +51,7 @@ export default function AnimatedEmoticon() {
     }
 
     return (
-        <div style={{   }}>
+        <div onClick={() => handleReactionPost("fire")} style={{}}>
             <RiveComponentPlayback style={{}} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} />
         </div>
     )

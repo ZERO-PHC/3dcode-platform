@@ -2,9 +2,15 @@ import React, { useState, useEffect } from "react";
 
 import styled, { keyframes } from "styled-components";
 import { useTransaction } from "../contexts/TransactionContext";
+import { useSpring, config, animated } from "react-spring";
 
 export default function TransactionComponent() {
   const { TransactionStatus, state, IsProcessing } = useTransaction();
+
+  const snackbarAnimation = useSpring({
+    scale: IsProcessing ? 1 : 0,
+    opacity: IsProcessing ? 1 : 0,
+  })
 
   const ProgressBar = styled.div`
     background: transparent;
@@ -23,7 +29,7 @@ export default function TransactionComponent() {
     border-radius: 5px;
   `;
 
-  const Main = styled.main`
+  const Main = styled(animated.main)`
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
@@ -80,17 +86,17 @@ export default function TransactionComponent() {
       break;
   }
 
-  if(IsProcessing)
+  // if (IsProcessing)
 
-  return (
-    <Main>
-      <kmd style={{ fontSize: "0.8rem", marginBottom:"10px" }}>{statusTitle}</kmd>
-      <small style={{ fontSize: "0.6rem", marginBottom:"10px" }}>{statusDisplay}</small>
-      <ProgressBar>
-        <ProgressBarInner progress={state.count} />
-      </ProgressBar>
-    </Main>
-  );
+    return (
+      <Main style={snackbarAnimation}>
+        <kmd style={{ fontSize: "0.8rem", marginBottom: "10px" }}>{statusTitle}</kmd>
+        <small style={{ fontSize: "0.6rem", marginBottom: "10px" }}>{statusDisplay}</small>
+        <ProgressBar>
+          <ProgressBarInner progress={state.count} />
+        </ProgressBar>
+      </Main>
+    );
 }
 
 // create transition animation for the component

@@ -17,12 +17,16 @@ export default function ArtgridComponent({
 
 
   const Artgrid = styled.div`
-padding-top: ${(props) => props.paddingTop};} ;
-width: 80%;
-display: grid;
-grid-template-columns: repeat(${(props) => props.columns} , 1fr);
-grid-gap: ${props => props.gridGap};
-height: 100%;
+          padding-top: ${(props) => props.paddingTop};} ;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          // align-items: center;
+          flex-wrap: wrap;
+          // display: grid;
+          // grid-template-columns: repeat(${(props) => props.columns} , 1fr);
+          // grid-gap: ${props => props.gridGap};
+          height: 100%;
 `;
 
   function renderArtworks() {
@@ -41,30 +45,12 @@ height: 100%;
     });
   }
 
-
-  function renderVariations() {
-    // const variations = getVariations(artworks);
-    console.log("variations", variations);
-    return variations.map((variation, i) => {
-      return (
-        // <div key={i}>w</div>
-        <ArtworkComponent
-          key={i}
-          artwork={variation}
-          handleArtworkSelection={handleArtworkSelection}
-          isOwner={isOwner}
-          currentWrapper={currentWrapper}
-        />
-      );
-    });
-  }
-
   return (
-    <div style={{margin:"3rem 0rem"}}>
+    <div style={{ margin: "3rem 0rem" }}>
       <Artgrid
         gridGap={currentWrapper === "dialog" || currentWrapper === "details" ? "1rem 2rem" : "4rem  2rem"}
         columns={columns} paddingTop={currentWrapper === "dialog" || currentWrapper === "details" ? "0rem" : "3rem"}>
-        {currentWrapper === "dialog" || currentWrapper === "details" ? renderVariations() : renderArtworks()}
+        {renderArtworks()}
       </Artgrid>
     </div>
   );

@@ -1,4 +1,5 @@
 export const categories = [
+    
     {
       name: "All",
       id: "all",

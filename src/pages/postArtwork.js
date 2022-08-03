@@ -31,6 +31,7 @@ export default function PostArtwork() {
   const router = useRouter();
   const [Loading, setLoading] = React.useState(false);
   const { user, FirestoreUser } = useAuth();
+  const [Description, setDescription] = useState();
   const [ArtworkImg, setArtworkImg] = useState("");
   const [SelectedEngine, setSelectedEngine] = useState("mid");
   const [Tags, setTags] = useState(tags);
@@ -105,7 +106,10 @@ export default function PostArtwork() {
       ArtworkImg,
       SelectedEngine,
       AspectRatio,
-      active: true,
+      name: Description,
+      state: "active",
+      author: user.uid,
+      timestamp: Date.now(),
     };
 
     try {
@@ -176,16 +180,21 @@ export default function PostArtwork() {
   //   return <div>Loading...</div>;
   // }
 
+  const handleDescriptionChange = (e) => {
+    setDescription(e.target.value);
+  }
+
+
   return (
     <MainWrapper>
       {/* <Container> */}
       <div className="left-side">
         <section style={{ height: "10%" }}>
-          <ArtworkTitle>NAME </ArtworkTitle>
+          <ArtworkTitle>DESCRIPTION</ArtworkTitle>
           <Underline />
         </section>
         <div>
-          <input placeholder="The name of my Artwork"></input>
+          <input value={Description} onChange={handleDescriptionChange} placeholder="Awesome artwork rendition"></input>
           <div style={{ width: "0.5rem" }}></div>
           {/* <PrimaryBtn onClick={logout}>
             Logout
