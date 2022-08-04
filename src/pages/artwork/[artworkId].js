@@ -47,16 +47,63 @@ export default function ArtworkDetails({ windowDimensions }) {
   const [Comment, setComment] = useState();
   const [Reaction, setReaction] = useState();
   const [result, setResult] = useState("");
+  const [Comments, setComments] = useState([]);
   const [open, setOpen] = useState(true);
 
   const threshold = 0.9;
 
+  useEffect(() => {}, []);
+
+  const width = windowDimensions.width;
+  const mobile = width < 768;
+
+  // create a useEffect that will the artwork with the id of artworkId from the firestore database in realtime
   useEffect(() => {
-    // setTimeout(() => {
-    //   toxicity.load(threshold).then((model) => {
-    //     getToxicity(model);
-    //   });
-    // }, 2000);
+    const artworkRef = doc(db, "artworks", artworkId);
+    const unsub = onSnapshot(artworkRef, (doc) => {
+      const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+      // console.log(source, " data: ", doc.data());
+      setArtwork(doc.data());
+      setArtworkImage(doc.data().ArtworkImg);
+      setLoading(false);
+    });
+
+    return () => {
+      // clean up the listener
+      unsub();
+    };
+  }, [user]);
+
+  useEffect(() => {
+    if (artworkId) {
+      let collectionRef = collection(db, "artworks", artworkId, "comments");
+
+      onSnapshot(collectionRef, (querySnapshot) => {
+        // const comments = querySnapshot.docs.filter(
+        //   (doc) => !doc.data().active
+        // );
+        const comments = querySnapshot.docs
+
+        const formattedComments = comments.map((doc) => {
+         
+          return {
+            id: doc.id,
+            ...doc.data(),
+          }
+        });
+
+        console.log("formattedComments", formattedComments);
+        setComments(formattedComments);
+      });
+    }
+  }, [artworkId]);
+
+  useEffect(() => {
+    checkFavorites(FirestoreUser.bookmarkedArtworks);
+  }, [FirestoreUser]);
+
+  useEffect(() => {
+    setIsAnimating(true);
   }, []);
 
   const getToxicity = async (model) => {
@@ -99,34 +146,6 @@ export default function ArtworkDetails({ windowDimensions }) {
       toxicMatches === 0 && postComment();
     });
   };
-
-  const width = windowDimensions.width;
-  const mobile = width < 768;
-
-  // create a useEffect that will the artwork with the id of artworkId from the firestore database in realtime
-  useEffect(() => {
-    const artworkRef = doc(db, "artworks", artworkId);
-    const unsub = onSnapshot(artworkRef, (doc) => {
-      const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
-      // console.log(source, " data: ", doc.data());
-      setArtwork(doc.data());
-      setArtworkImage(doc.data().ArtworkImg);
-      setLoading(false);
-    });
-
-    return () => {
-      // clean up the listener
-      unsub();
-    };
-  }, [user]);
-
-  useEffect(() => {
-    // checkFavorites(FirestoreUser.favorites);
-  }, [FirestoreUser]);
-
-  useEffect(() => {
-    setIsAnimating(true);
-  }, []);
 
   const handleCommentChange = (e) => {
     setComment(e.target.value);
@@ -225,7 +244,6 @@ export default function ArtworkDetails({ windowDimensions }) {
     //   console.log("err", error)
     // );
 
-
     // const artworkRef = doc(db, "artworks", artworkId);
 
     const colRef = collection(db, "reactions");
@@ -254,17 +272,16 @@ export default function ArtworkDetails({ windowDimensions }) {
     Loading,
   };
 
-  // create a function called checkFavorites that will check if the artwork is in the favorites array of the user
-  // const checkFavorites = (favorites) => {
-  //   console.log("favorites", favorites);
-  //   if (favorites) {
-  //     if (favorites.includes(artworkId)) {
-  //       setIsFavorite(true);
-  //     } else {
-  //       setIsFavorite(false);
-  //     }
-  //   }
-  // };
+  const checkFavorites = (favorites) => {
+    console.log("favorites", favorites);
+    if (favorites) {
+      if (favorites.includes(artworkId)) {
+        setIsFavorite(true);
+      } else {
+        setIsFavorite(false);
+      }
+    }
+  };
 
   // create a function called handleBuy
   const handleBuy = async () => {
@@ -298,7 +315,7 @@ export default function ArtworkDetails({ windowDimensions }) {
     const userRef = doc(db, "users", user.email);
     console.log("FirestoreUser", FirestoreUser);
     await updateDoc(userRef, {
-      favorites: [...FirestoreUser?.favorites, artworkId],
+      bookmarkedArtworks: [...FirestoreUser?.bookmarkedArtworks, artworkId],
     }).catch((err) => console.log(err));
   };
 
@@ -357,7 +374,7 @@ export default function ArtworkDetails({ windowDimensions }) {
     delay: 1000,
   });
 
-  if (Artwork)
+  if (Artwork && Comments !== [])
     return (
       <>
         <MainWrapper>
@@ -481,7 +498,11 @@ export default function ArtworkDetails({ windowDimensions }) {
 
               <Overlay />
             </ArtworkContainer>
-            <CommentsSection animation={variationsAnimation} {...inputProps} />
+            <CommentsSection
+              animation={variationsAnimation}
+              {...inputProps}
+              comments={Comments}
+            />
           </div>
           <AuthorContainer>
             {/* <AuthorName>{Artwork.author.toUpperCase()}</AuthorName> */}

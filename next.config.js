@@ -7,6 +7,7 @@ const nextConfig = {
       "firebasestorage.googleapis.com",
       "i.mj.run",
       "pbs.twimg.com",
+      "mj-gallery.com"
     ],
   },
 

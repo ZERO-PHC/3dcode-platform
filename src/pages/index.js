@@ -5,7 +5,7 @@ import { useNFTs } from "../contexts/NftsContext";
 
 import styled from "styled-components";
 import { useRouter } from "next/router";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
 import { categories } from "../categories";
 
@@ -59,7 +59,8 @@ export default function Home({ windowDimensions }) {
   const [MainCategories, setMainCategories] = useState(mainCategories);
   const [Artworks, setArtworks] = useState([]);
   const [ShowDialog, setShowDialog] = useState(false);
-  const [SelectedCategory, setSelectedCategory] = useState("2D");
+  const [SelectedCategory, setSelectedCategory] = useState("all");
+  const [MainCategory, setMainCategory] = useState("hot");
   const [SelectedArtwork, setSelectedArtwork] = useState(null);
 
   const router = useRouter();
@@ -73,78 +74,149 @@ export default function Home({ windowDimensions }) {
         return doc.data().state === "active";
       });
 
-      // order by timestamp
-      const orderedDocs = activeDocs.sort((a, b) => {
-        // return a.data().awesomeReactions - b.data().awesomeReactions;
-        return a.data().timestamp - b.data().timestamp;
-      });
-
-      // get the first 4 docs
-
-      const first7Docs = orderedDocs.slice(0, 8);
-
-      // get the doc that have portrait
-      const portraitDocs = first7Docs.filter((doc) => {
-        return doc.data().AspectRatio === "portrait";
-      });
-      const squareDocs = first7Docs.filter((doc) => {
-        return doc.data().AspectRatio === "square";
-      });
-      const landscapeDocs = first7Docs.filter((doc) => {
-        return doc.data().AspectRatio === "landscape";
-      });
-
-      console.log("orderedDocs", orderedDocs);
-
-      const portraitArtworks = portraitDocs.map((doc) => {
+      const formattedDocs = activeDocs.map((doc) => {
         return {
           id: doc.id,
           ...doc.data(),
         };
       });
+      // console.log("1formattedDocs", formattedDocs);
 
-      const landscapeArtworks = landscapeDocs.map((doc) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-        };
-      });
-      const squareArtworks = squareDocs.map((doc) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-        };
-      });
+      switch (MainCategory) {
+        case "hot":
+          // sort by reactionPoints
+          const sortedDocs = formattedDocs.sort((a, b) => {
+            return b.reactionPoints - a.reactionPoints;
+          });
 
-      const artworks = [
-        { ...squareArtworks[0] },
-        { ...portraitArtworks[1] },
-        { ...portraitArtworks[0] },
-        { ...squareArtworks[0] },
-        { ...portraitArtworks[0] },
-        { ...landscapeArtworks[0] },
-        { ...portraitArtworks[0] },
-      ];
+          console.log("sortedDocs", sortedDocs);
+          setArtworks(sortedDocs);
 
-      // const artworks = first7Docs.map((doc, i) => {
-      //   // console.log(source, " artwork data: ", i, doc.data());
+          break;
+        case "new":
+          //timestamp
+          // const orderedDocs = filteredDocs.sort((a, b) => {
+          //   return a.data().awesomeReactions - b.data().awesomeReactions;
+          // });
 
-      //   // return only artworks that are active
-      //   return {
-      //     id: doc.id,
-      //     ...doc.data(),
-      //   };
-      // });
+          break;
 
-      console.log("artworks", artworks);
-
-      setArtworks(artworks);
+        default:
+          break;
+      }
     });
+
     return () => {
       // clean up the listener
       unsub();
     };
   }, []);
+
+  const getArtworks = async () => {
+    const colRef = collection(db, "artworks");
+    // get the docs from the collection ref using the getDocs function
+    const qsnap = await getDocs(colRef);
+    console.log("docs", qsnap.docs);
+    const formattedDocs = qsnap.docs.map((doc) => {
+      return {
+        id: doc.id,
+        ...doc.data(),
+      };
+    });
+    console.log("formattedQDocs", formattedDocs);
+
+    setNewArtworks(formattedDocs);
+  };
+
+  const setNewArtworks = (artworks) => {
+    const filteredArtworks = artworks.filter((artwork) => {
+      return artwork.tags.includes(SelectedCategory);
+    });
+    console.log("filteredArtworks", filteredArtworks);
+    setArtworks(filteredArtworks);
+  };
+
+  useEffect(() => {
+    // getArtworks();
+  }, [SelectedCategory]);
+
+  // if SelectedCategory is not "All"
+  // if (SelectedCategory !== "all") {
+  //   console.log("Artworks", Artworks);
+  //   const filteredDocs = Artworks.filter((artwork) => {
+  //     console.log("artwork.category", artwork.tags);
+  //     return artwork.tags.includes(SelectedCategory);
+  //   });
+  //   console.log("filteredDocs", filteredDocs);
+
+  //   if (filteredDocs.length > 0) setArtworks(orderedDocs);
+  // } else {
+  // }
+
+  // if filteredDocs is not empty
+  // order by timestamp
+
+  // get the first 4 docs
+
+  // const first7Docs = orderedDocs.slice(0, 8);
+
+  // get the doc that have portrait
+  // const portraitDocs = first7Docs.filter((doc) => {
+  //   return doc.data().AspectRatio === "portrait";
+  // });
+  // const squareDocs = first7Docs.filter((doc) => {
+  //   return doc.data().AspectRatio === "square";
+  // });
+  // const landscapeDocs = first7Docs.filter((doc) => {
+  //   return doc.data().AspectRatio === "landscape";
+  // });
+
+  // console.log("orderedDocs", orderedDocs);
+
+  // const portraitArtworks = portraitDocs.map((doc) => {
+  //   return {
+  //     id: doc.id,
+  //     ...doc.data(),
+  //   };
+  // });
+
+  // const landscapeArtworks = landscapeDocs.map((doc) => {
+  //   return {
+  //     id: doc.id,
+  //     ...doc.data(),
+  //   };
+  // });
+  // const squareArtworks = squareDocs.map((doc) => {
+  //   return {
+  //     id: doc.id,
+  //     ...doc.data(),
+  //   };
+  // });
+
+  // { const artworks = [
+  //   // { ...squareArtworks[0] },
+  //   // { ...portraitArtworks[1] },
+  //   // { ...portraitArtworks[0] },
+  //   // { ...squareArtworks[0] },
+  //   // { ...portraitArtworks[0] },
+  //   // { ...landscapeArtworks[0] },
+  //   // { ...portraitArtworks[0] },
+  // ];
+  // }
+  // const artworks = first7Docs.map((doc, i) => {
+  //   // console.log(source, " artwork data: ", i, doc.data());
+
+  //   // return only artworks that are active
+  //   return {
+  //     id: doc.id,
+  //     ...doc.data(),
+  //   };
+  // });
+
+  // console.log("artworks", artworks);
+
+  // setArtworks(artworks);
+  // });
 
   // create a styled component that renders a skewed rectangle that is black if is active or grey if not
   const StyledRectangle = styled.div`
@@ -199,7 +271,7 @@ export default function Home({ windowDimensions }) {
   };
 
   const handleCategorySelection = (id, category) => {
-    setSelectedCategory(category);
+    setSelectedCategory(category.id);
     setCategories(
       Categories.map((category) => {
         if (category.id === id) {
@@ -213,15 +285,28 @@ export default function Home({ windowDimensions }) {
   };
 
   // function called handleDrawer that updates the show state to true
-  const MainCategoryIcon = ({idx}) => {
+  const MainCategoryIcon = ({ idx }) => {
     if (idx === 0) {
-      return <Iconify icon="fa6-solid:fire" />;
+      return (
+        <Iconify
+          icon="fa6-solid:fire"
+          color={MainCategory === "hot" ? "black" : "lightgrey"}
+        />
+      );
     } else if (idx === 1) {
-      return <Iconify icon="ant-design:rise-outlined" />;
-
+      return (
+        <Iconify
+          icon="ant-design:rise-outlined"
+          color={MainCategory === "new" ? "black" : "lightgrey"}
+        />
+      );
     } else {
-      return <Iconify icon="akar-icons:thunder" />;
-
+      return (
+        <Iconify
+          icon="akar-icons:thunder"
+          color={MainCategory === "rising" ? "black" : "lightgrey"}
+        />
+      );
     }
   };
 
@@ -241,12 +326,11 @@ export default function Home({ windowDimensions }) {
                     }
                   >
                     <MainCategoryIcon idx={idx} />
-                    <div style={{width:"0.5rem"}}></div>
+                    <div style={{ width: "0.5rem" }}></div>
                     <div>
-                    {category.name}
-                    <StyledRectangle active={category.active} />
+                      {category.name}
+                      <StyledRectangle active={category.active} />
                     </div>
-                   
                   </MainCategoryStyles>
                 ))}
               </div>

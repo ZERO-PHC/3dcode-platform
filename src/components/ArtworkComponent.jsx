@@ -87,12 +87,12 @@ export default function ArtworkComponent({
       //   // return "TranslateY(10%)"
       // case 2:
       //   // return "TranslateY(10%)"
-      case 4:
-        return "TranslateY(-38.5%) "
+      // case 4:
+      //   return "TranslateY(-38.5%) "
       // case 5:
       //   return "TranslateX(30%)"
-      case 6:
-        return "TranslateY(-38.5%)"
+      // case 6:
+      //   return "TranslateY(-38.5%)"
 
       default:
         return "0rem 0rem"

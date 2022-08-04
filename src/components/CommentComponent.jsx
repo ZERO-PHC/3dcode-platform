@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 
-export default function CommentComponent() {
+export default function CommentComponent({ comment }) {
     return (
         <CommentWrapper>
             <header>
@@ -20,7 +20,7 @@ export default function CommentComponent() {
             </header>
             <div style={{ height: "0.3rem" }}></div>
             <section>
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quia dolor, iste tenetur ipsam quos officia harum odio accusamus? Odit aliquid fuga aliquam ab laborum distinctio qui cumque molestiae fugit iusto.
+                {comment.Comment}
             </section>
 
         </CommentWrapper>

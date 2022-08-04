@@ -5,7 +5,9 @@ import CommentComponent from '../components/CommentComponent';
 import Iconify from '../components/Iconify';
 import { animated } from "react-spring";
 
-export default function CommentsSection({ handleCommentPost, Comment, handleCommentChange, Loading , animation}) {
+export default function CommentsSection({ comments, handleCommentPost, Comment, handleCommentChange, Loading, animation }) {
+
+  console.log(comments);
   return (
     <main
       style={{
@@ -36,11 +38,11 @@ export default function CommentsSection({ handleCommentPost, Comment, handleComm
           <PromptOverlay>
             <section style={{ top: "3px", right: "10px", height: "20%", paddingLeft: "0.5rem", width: "100%", display: "flex", flexDirection: "column", alignItems: "end" }}>
               <ReactionsTitle>
-                <div>
                   COMMENTS
-                </div>
+                  <div className='underline'></div>
+                                  {/* <Underline /> */}
 
-                {/* <Underline /> */}
+                
               </ReactionsTitle>
             </section>
           </PromptOverlay>
@@ -48,10 +50,7 @@ export default function CommentsSection({ handleCommentPost, Comment, handleComm
             style={{ width: "100%", height: "40%" }}
             className="comments-section"
           >
-            <CommentComponent />
-            <CommentComponent />
-            <CommentComponent />
-            <CommentComponent />
+            {comments ? comments.map(comment => <CommentComponent key={comment.id} comment={comment} />) : <Spinner />}
           </main>
         </CommentsWrapper>
         <InputWrapper>
@@ -139,7 +138,7 @@ const ReactionsTitle = styled.h1`
   position: relative;
   font-size: 1rem;
   text-align: right;
-  width: 100%;
+  width: 40%;
   height: 10%;
   @media (max-width: 768px) {
     font-size: 1.6rem;
@@ -155,6 +154,15 @@ const ReactionsTitle = styled.h1`
     width: 100%;
     height: 30%;
   }
+
+  .underline {
+    position: absolute
+    width: 10px;
+    height: 0.2rem;
+    background-color: white;
+    transform: skewX(-20deg);
+    right: 0px;
+  }
 `;
 
 const Underline = styled.div`
@@ -162,7 +170,6 @@ const Underline = styled.div`
   height: 0.2rem;
   background-color: white;
   transform: skewX(-20deg);
-  right: 0px;
   @media (max-width: 768px) {
     width: 50%;
     height: 0.5rem;

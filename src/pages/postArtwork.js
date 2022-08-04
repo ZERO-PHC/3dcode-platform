@@ -16,16 +16,17 @@ import { useImage } from "../hooks/useImage";
 
 import { db } from "../firebase";
 import ArtgridComponent from "../components/ArtgridComponent";
+import { categories } from "../categories";
 
-const tags = [
-  { id: 1, name: "Abstract", selected: false },
-  { id: 2, name: "Landscape", selected: false },
-  { id: 3, name: "Portrait", selected: false },
-  { id: 4, name: "Realistic", selected: false },
-  { id: 5, name: "Vintage", selected: false },
-  { id: 6, name: "Digital", selected: false },
-  { id: 7, name: "Futuristic", selected: false },
-];
+// const tags = [
+//   { id: 1, name: "Abstract", selected: false },
+//   { id: 2, name: "Landscape", selected: false },
+//   { id: 3, name: "Portrait", selected: false },
+//   { id: 4, name: "Realistic", selected: false },
+//   { id: 5, name: "Vintage", selected: false },
+//   { id: 6, name: "Digital", selected: false },
+//   { id: 7, name: "Futuristic", selected: false },
+// ];
 
 export default function PostArtwork() {
   const router = useRouter();
@@ -34,7 +35,7 @@ export default function PostArtwork() {
   const [Description, setDescription] = useState();
   const [ArtworkImg, setArtworkImg] = useState("");
   const [SelectedEngine, setSelectedEngine] = useState("mid");
-  const [Tags, setTags] = useState(tags);
+  const [Tags, setTags] = useState(categories);
   const [Artwork, setArtwork] = useState({ ArtworkImg, SelectedEngine, Tags });
   const { hasLoaded, hasError, AspectRatio } = useImage(ArtworkImg);
   console.log("hasLoaded", hasLoaded, AspectRatio);
@@ -85,7 +86,7 @@ export default function PostArtwork() {
     if (e.target.value.includes("labs.openai.com")) {
       setSelectedEngine("openai");
       setArtworkImg(e.target.value);
-    } else if (e.target.value.includes("i.mj.run")) {
+    } else if (e.target.value.includes("mj-gallery.com")) {
       setSelectedEngine("mid");
       setArtworkImg(e.target.value);
     } else {
@@ -97,18 +98,28 @@ export default function PostArtwork() {
     console.log("first six characters: ", characters);
   };
 
+  const getSelectedTags = () => {
+    const selectedTags = Tags.filter((tag) => tag.selected);
+
+    console.log("selected tags", selectedTags);
+    const selectedTagsIds= selectedTags.map((tag) => tag.id);
+
+    return selectedTagsIds;
+  };
+
   // function called handlePost that takes in the artwork object and sends it to the database
   const handlePost = async () => {
     setLoading(true);
 
     const artwork = {
-      Tags,
+      tags: getSelectedTags(),
       ArtworkImg,
       SelectedEngine,
       AspectRatio,
       name: Description,
       state: "active",
       author: user.uid,
+      reactionPoints: 0,
       timestamp: Date.now(),
     };
 
@@ -117,8 +128,15 @@ export default function PostArtwork() {
 
       console.log("Document written with ID: ", docRef.id);
 
-      // update the artwork using the updateDoc function
-      // const newDocRef = doc(db, "artworks", docRef.id); // set the loading state to false
+      // update the user's artworks array with the new artwork
+
+      const userRef = doc(db, "users", user.email);
+      console.log("FirestoreUser", FirestoreUser);
+      await updateDoc(userRef, {
+        postedArtworks: [...FirestoreUser?.postedArtworks, docRef.id],
+      }).catch((err) => console.log(err));
+      console.log("updated doc");
+
       setLoading(false);
     } catch (error) {
       console.log("error: ", error);
@@ -182,8 +200,7 @@ export default function PostArtwork() {
 
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
-  }
-
+  };
 
   return (
     <MainWrapper>
@@ -194,7 +211,11 @@ export default function PostArtwork() {
           <Underline />
         </section>
         <div>
-          <input value={Description} onChange={handleDescriptionChange} placeholder="Awesome artwork rendition"></input>
+          <input
+            value={Description}
+            onChange={handleDescriptionChange}
+            placeholder="Awesome artwork rendition"
+          ></input>
           <div style={{ width: "0.5rem" }}></div>
           {/* <PrimaryBtn onClick={logout}>
             Logout
@@ -275,10 +296,14 @@ export default function PostArtwork() {
           }}
         >
           {ArtworkImg && SelectedEngine ? (
-            <div style={{height:"100%"}} >
+            <div style={{ height: "100%" }}>
               <img
                 ref={imgRef}
-                style={{ border: "4px solid black", width: "100%", height: "100%" }}
+                style={{
+                  border: "4px solid black",
+                  width: "100%",
+                  height: "100%",
+                }}
                 src={ArtworkImg}
                 alt="img"
               />

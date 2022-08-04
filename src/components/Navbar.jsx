@@ -147,8 +147,8 @@ const Navbar = ({ handleDrawer }) => {
                         display: "flex", height: "2rem", width: "100%", justifyContent: "end", alignItems: "center", borderBottom: "1px solid lightgrey", background: "black"
                       }}>
                         <div
-                        onClick={updateNotifications}
-                        style={{ display: "flex", background: "black", height: "1.4rem", width: "1.4rem", justifyContent: "center", alignItems: "center", border: "2px solid lightgrey", borderRadius: "50px" }}>
+                          onClick={updateNotifications}
+                          style={{ display: "flex", background: "black", height: "1.4rem", width: "1.4rem", justifyContent: "center", alignItems: "center", border: "2px solid lightgrey", borderRadius: "50px" }}>
                           <Iconify icon="mdi-close" />
                         </div>
                       </section>

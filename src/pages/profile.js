@@ -3,7 +3,7 @@ import Image from "next/image";
 // imoport styled and keyframes from the styled-components library
 import styled from "styled-components";
 import { useRouter } from "next/router";
-import { loadStripe } from "@stripe/stripe-js";
+// import { loadStripe } from "@stripe/stripe-js";
 
 import Navbar from "../components/Navbar";
 import { useAuth } from "../contexts/AuthContext";
@@ -17,18 +17,18 @@ export default function Profile() {
   const router = useRouter();
   const [Loading, setLoading] = React.useState(false);
   const { user, FirestoreUser, logout } = useAuth();
-  const [PurchasedArtworks, setPurchasedArtworks] = useState([]);
+  const [PostedArtworks, setPostedArtworks] = useState([]);
+  const [BookmarkedArtworks, setBookmarkedArtworks] = useState([]);
+  const [Category, setCategory] = useState("posted");
 
   useEffect(() => {
     if (FirestoreUser) {
-      getPurchasedArtworks(FirestoreUser.purchasedArtworks);
-      // get the artworks from the ids of the user's purchased artworks
-        
-      // setPurchasedArtworks();
+      getPostedArtworks(FirestoreUser.postedArtworks);
+      getBookmarkedArtworks(FirestoreUser.bookmarkedArtworks);
     }
   }, [FirestoreUser]);
 
-  const getPurchasedArtworks = async (artworkIds) => {
+  const getPostedArtworks = async (artworkIds) => {
     // loop over the artworkIds and get the artwork for each one using the getDoc function
     setLoading(true);
 
@@ -46,12 +46,33 @@ export default function Profile() {
     setLoading(false);
 
     console.log("artworks", artworks);
-    setPurchasedArtworks(artworks);
+    setPostedArtworks(artworks);
+  };
+
+  const getBookmarkedArtworks = async (artworkIds) => {
+    // loop over the artworkIds and get the artwork for each one using the getDoc function
+    setLoading(true);
+
+    console.log(artworkIds, "artworkIds");
+
+    // loop over the artworkIds and get the artwork for each one using the getDoc function
+    if (artworkIds.length > 0) {
+      const artworks = await Promise.all(
+        artworkIds.map(async (artworkId) => {
+          const docRef = doc(db, "artworks", artworkId);
+          const docSnap = await getDoc(docRef);
+          return docSnap.data();
+        })
+      );
+      console.log("artworks", artworks);
+      setBookmarkedArtworks(artworks);
+    }
+
+    setLoading(false);
   };
 
   // create a function that returns a log out icon
   const LogoutIcon = () => {
-    // import the iconify component with an logout icon prop
     return <Iconify icon="mdi-logout" />;
   };
 
@@ -68,7 +89,6 @@ export default function Profile() {
 
   return (
     <MainWrapper>
-      <Navbar />
       <Container>
         <section style={{ height: "10%" }}>
           <ArtworkTitle>PROFILE</ArtworkTitle>
@@ -79,6 +99,7 @@ export default function Profile() {
           <div style={{ width: "0.5rem" }}></div>
           <PrimaryBtn onClick={logout}>
             Logout
+            <div style={{ width: "0.5rem" }}></div>
             <LogoutIcon />
           </PrimaryBtn>
         </BalanceWrapper>
@@ -89,9 +110,23 @@ export default function Profile() {
             <ArtworkTitle>{"Your Artworks".toUpperCase()}</ArtworkTitle>
             <Underline />
           </div>
-          {PurchasedArtworks && (
+          <section style={{ display: "flex" }}>
+            <PrimaryBtn onClick={() => setCategory("posted")}selected={Category === "posted"}>
+              Posted
+              <div style={{ width: "0.5rem" }}></div>
+              <Iconify icon="mdi-upload" />
+            </PrimaryBtn>
+            <PrimaryBtn onClick={() => setCategory("bookmarked")}selected={Category === "bookmarked"}>
+              Bookmarked
+              <div style={{ width: "0.5rem" }}></div>
+              <Iconify icon="mdi-bookmark" />
+            </PrimaryBtn>
+          </section>
+          {PostedArtworks && (
             <ArtgridComponent
-              artworks={PurchasedArtworks}
+              artworks={
+                Category === "posted" ? PostedArtworks : BookmarkedArtworks
+              }
               columns={"4"}
               currentWrapper={"main"}
               handleArtworkSelection={handleArtworkSelection}
@@ -141,9 +176,8 @@ const PrimaryBtn = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
-  width: 10rem;
-  background-color: black;
-  color: white;
+  background-color: ${(props) => (props.selected ? "black" : "transparent")};
+  color: ${(props) => (props.selected ? "white" : "black")};
   margin-right: 0.5rem;
   margin-top: 0.5rem;
   font-family: "Monument";
@@ -151,7 +185,7 @@ const PrimaryBtn = styled.div`
 
   font-size: 1rem;
   height: 2.3rem;
-  padding-left: 0.8rem;
+  padding: 0.5rem 0.8rem;
   border: 2px solid #b6b6b6;
   border-radius: 40px;
 
@@ -248,7 +282,7 @@ const MainWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   background-color: white;
-  padding: 0;
+  padding: 3.5rem 0rem;
 `;
 
 const Container = styled.div`
