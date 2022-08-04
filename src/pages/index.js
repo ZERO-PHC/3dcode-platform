@@ -90,7 +90,12 @@ export default function Home({ windowDimensions }) {
           });
 
           console.log("sortedDocs", sortedDocs);
-          setArtworks(sortedDocs);
+
+          const filteredArtworks = sortedDocs.filter((artwork) => {
+            return artwork.tags.includes(SelectedCategory);
+          });
+          console.log("filteredArtworks", filteredArtworks);
+          setArtworks(filteredArtworks);
 
           break;
         case "new":
@@ -110,35 +115,35 @@ export default function Home({ windowDimensions }) {
       // clean up the listener
       unsub();
     };
-  }, []);
-
-  const getArtworks = async () => {
-    const colRef = collection(db, "artworks");
-    // get the docs from the collection ref using the getDocs function
-    const qsnap = await getDocs(colRef);
-    console.log("docs", qsnap.docs);
-    const formattedDocs = qsnap.docs.map((doc) => {
-      return {
-        id: doc.id,
-        ...doc.data(),
-      };
-    });
-    console.log("formattedQDocs", formattedDocs);
-
-    setNewArtworks(formattedDocs);
-  };
-
-  const setNewArtworks = (artworks) => {
-    const filteredArtworks = artworks.filter((artwork) => {
-      return artwork.tags.includes(SelectedCategory);
-    });
-    console.log("filteredArtworks", filteredArtworks);
-    setArtworks(filteredArtworks);
-  };
-
-  useEffect(() => {
-    // getArtworks();
   }, [SelectedCategory]);
+
+  // const getArtworks = async () => {
+  //   const colRef = collection(db, "artworks");
+  //   // get the docs from the collection ref using the getDocs function
+  //   const qsnap = await getDocs(colRef);
+  //   console.log("docs", qsnap.docs);
+  //   const formattedDocs = qsnap.docs.map((doc) => {
+  //     return {
+  //       id: doc.id,
+  //       ...doc.data(),
+  //     };
+  //   });
+  //   console.log("formattedQDocs", formattedDocs);
+
+  //   setNewArtworks(formattedDocs);
+  // };
+
+  // const setNewArtworks = (artworks) => {
+  //   const filteredArtworks = artworks.filter((artwork) => {
+  //     return artwork.tags.includes(SelectedCategory);
+  //   });
+  //   console.log("filteredArtworks", filteredArtworks);
+  //   setArtworks(filteredArtworks);
+  // };
+
+  // useEffect(() => {
+  //   // getArtworks();
+  // }, [SelectedCategory]);
 
   // if SelectedCategory is not "All"
   // if (SelectedCategory !== "all") {
