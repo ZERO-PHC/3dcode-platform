@@ -31,6 +31,7 @@ import AnimatedEmoticon from "../../components/AnimatedEmoticon";
 import CommentComponent from "../../components/CommentComponent";
 import CommentsSection from "../../sections/CommentsSection";
 import SnackbarComponent from "../../components/SnackbarComponent";
+import Spinner from "../../atoms/Spinner";
 
 export default function ArtworkDetails({ windowDimensions }) {
   const { setMessage, setIsProcessing } = useTransaction();
@@ -94,6 +95,8 @@ export default function ArtworkDetails({ windowDimensions }) {
           setIsProcessing(false);
         }, 4000);
       });
+
+      toxicMatches === 0 && postComment();
     });
   };
 
@@ -157,14 +160,71 @@ export default function ArtworkDetails({ windowDimensions }) {
     // console.log("added doc");
   };
 
+  const postComment = async () => {
+    const artworkRef = doc(db, "artworks", artworkId);
+
+    const colRef = collection(artworkRef, "comments");
+
+    addDoc(colRef, { Comment, read: false }).catch((error) => {
+      console.log(error);
+    });
+    console.log("added doc");
+
+    const userRef = doc(db, "users", user.email);
+
+    const notifsRef = collection(userRef, "notifications");
+
+    addDoc(notifsRef, {
+      notification: "Someone commented your artwork!",
+      read: false,
+    }).catch((error) => {
+      console.log(error);
+    });
+    console.log("added notif doc");
+  };
+
+  // addUserPoints(FirestoreUser.points);
+  const addUserPoints = async () => {
+    const userRef = doc(db, "users", FirestoreUser.email);
+    const userData = {
+      coins: FirestoreUser.coins + 30,
+    };
+
+    try {
+      await updateDoc(userRef, userData);
+      console.log("added points");
+      setMessage("You earned 30 points for this reaction!");
+      setTimeout(() => {
+        setIsProcessing(false);
+      }, 3000);
+    } catch (error) {
+      console.log(error);
+      alert("Error adding points, try again later");
+    }
+  };
+
   const handleReactionPost = (reaction) => {
+    setIsProcessing(true);
+    setMessage("loading");
+
+    const userRef = doc(db, "users", user.email);
+
+    const notifsRef = collection(userRef, "notifications");
+
+    addDoc(notifsRef, {
+      notification: "Someone commented your artwork!",
+      read: false,
+    }).catch((error) => {
+      console.log(error);
+    });
+    console.log("added notif doc");
+
     // add the reaction to the reactions collection
     // const reactionRef = doc(db, "reactions", artworkId);
     // addDoc(reactionRef, { Reaction: reaction }).catch((error) =>
     //   console.log("err", error)
     // );
-    setIsProcessing(true);
-    setMessage("loading");
+
 
     // const artworkRef = doc(db, "artworks", artworkId);
 
@@ -174,10 +234,9 @@ export default function ArtworkDetails({ windowDimensions }) {
     // add each variation to the artwork
     addDoc(colRef, { reaction, points: 3 })
       .then(() => {
-        setMessage("You earned 3 points for reacting to this artwork!");
-        setTimeout(() => {
-          setIsProcessing(false);
-        }, 3000);
+        addUserPoints();
+        // setMessage("You earned 3 points for reacting to this artwork!");
+
         // set processing true
       })
       .catch((error) => {
@@ -193,7 +252,6 @@ export default function ArtworkDetails({ windowDimensions }) {
     handleCommentPost,
     Comment,
     Loading,
-    
   };
 
   // create a function called checkFavorites that will check if the artwork is in the favorites array of the user
@@ -376,6 +434,7 @@ export default function ArtworkDetails({ windowDimensions }) {
                       <ReactionsTitle>REACTIONS</ReactionsTitle>
                       <Underline />
                     </section>
+
                     <section style={{ display: "flex", width: "100%" }}>
                       <div style={{ width: "50%" }}>
                         <AnimatedEmoticon

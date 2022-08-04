@@ -7,7 +7,15 @@ import {
 } from "firebase/auth";
 import { auth, db } from "../firebase";
 import "../flow/config";
-import { doc, setDoc, getDoc, onSnapshot } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDoc,
+  onSnapshot,
+  collection,
+  getDocs,
+} from "firebase/firestore";
+import { contains } from "@firebase/util";
 
 export const AuthContext = createContext({});
 
@@ -17,6 +25,7 @@ export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [FirestoreUser, setFirestoreUser] = useState(null);
   const [Coins, setCoins] = useState(0);
+  const [Notifications, setNotifications] = useState();
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -46,6 +55,28 @@ export default function AuthProvider({ children }) {
         // clean up the listener
         unsub();
       };
+    }
+  }, [user]);
+
+  useEffect(() => {
+    // get the subcollection notification from the user
+    if (user) {
+      let collectionRef = collection(db, "users", user.email, "notifications");
+
+      onSnapshot(collectionRef, (querySnapshot) => {
+        const unreadedNotifs = querySnapshot.docs.filter(
+          (doc) => !doc.data().read
+        );
+
+        const formattedNotifs = unreadedNotifs.map((doc) => {
+          const data = doc.data();
+          data.id = doc.id;
+          return data;
+        });
+
+        console.log("formattedNotifs", formattedNotifs);
+        setNotifications(formattedNotifs);
+      });
     }
   }, [user]);
 
@@ -130,6 +161,7 @@ export default function AuthProvider({ children }) {
     user,
     Coins,
     FirestoreUser,
+    Notifications,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
