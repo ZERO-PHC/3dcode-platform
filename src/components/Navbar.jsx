@@ -132,33 +132,35 @@ const Navbar = ({ handleDrawer }) => {
                     <path fillRule="evenodd" clipRule="evenodd" d="M36 72C16.1177 72 0 55.8823 0 36C0 16.1177 16.1177 0 36 0C55.8823 0 72 16.1177 72 36C72 55.8823 55.8823 72 36 72ZM51.0347 43.0816C51.1028 43.1644 51.1714 43.2479 51.2408 43.3315C51.5842 43.7463 51.8015 44.2508 51.8669 44.7853C51.9323 45.3198 51.8432 45.8618 51.6099 46.3472C51.1143 47.3834 50.0684 48.0288 48.8721 48.0288H24.1367C22.9348 48.0288 21.8817 47.3826 21.3877 46.3416C21.1554 45.8564 21.0671 45.3147 21.1331 44.7809C21.1991 44.247 21.4166 43.7432 21.76 43.3291C21.8764 43.186 21.991 43.0478 22.1038 42.9119L22.1516 42.8542C23.9149 40.7257 24.9792 39.4397 24.9792 33.405C24.9792 27.9276 27.1733 24.3618 31.6881 22.5031C31.7125 22.4895 31.7344 22.4719 31.753 22.4511C32.4488 20.1232 34.3523 18.5625 36.5 18.5625C38.6477 18.5625 40.552 20.1232 41.2478 22.4535C41.2664 22.4751 41.2886 22.4933 41.3135 22.5071C43.2482 23.3031 44.716 24.3802 45.8019 25.8C47.2745 27.7218 48.0216 30.2843 48.0216 33.4074C48.0216 39.4365 49.0864 40.7244 50.8465 42.8533L50.8492 42.8566C50.9105 42.9305 50.9723 43.0058 51.0347 43.0816ZM39.7856 53.5285C38.7925 54.1225 37.6572 54.4366 36.5 54.4375C35.343 54.4364 34.2078 54.1222 33.2149 53.5283C32.2219 52.9343 31.4083 52.0827 30.8601 51.0638C30.8342 51.0149 30.8215 50.9602 30.8231 50.9049C30.8247 50.8496 30.8405 50.7956 30.8692 50.7483C30.8978 50.701 30.9382 50.6619 30.9864 50.6348C31.0346 50.6077 31.0891 50.5936 31.1444 50.5938H41.8572C41.9125 50.5937 41.9668 50.6079 42.0149 50.6351C42.063 50.6622 42.1033 50.7013 42.1318 50.7486C42.1604 50.796 42.1762 50.8498 42.1777 50.9051C42.1793 50.9603 42.1665 51.015 42.1407 51.0638C41.5925 52.0829 40.7787 52.9345 39.7856 53.5285Z" fill="black" />
                   </svg>
                 </div>
-                {Notifications?.length > 0 && <div style={{
+                {Notifications.length > 0 && <div style={{
                   height: "0.8rem", border: "1px solid black",
                   width: "0.8rem", background: "lightgreen",
                   borderRadius: "50px", position: "absolute",
-                  bottom: 0, right: 0
+                  bottom: 0, right: 0,
                 }}>
-                  {IsOpen && <NotifsWrapper >
-                    <main style={{ height: "100%", width: "100%", position: "relative" }}>
-                      <section style={{
-                        position: "sticky",
-                        top: "0rem",
-                        padding: "0rem 0.5rem",
-                        display: "flex", height: "2rem", width: "100%", justifyContent: "end", alignItems: "center", borderBottom: "1px solid lightgrey", background: "black"
-                      }}>
-                        <div
-                          onClick={updateNotifications}
-                          style={{ display: "flex", background: "black", height: "1.4rem", width: "1.4rem", justifyContent: "center", alignItems: "center", border: "2px solid lightgrey", borderRadius: "50px" }}>
-                          <Iconify icon="mdi-close" />
-                        </div>
-                      </section>
-                      <NotifComponent />
-                      <NotifComponent />
-                      <NotifComponent />
-                      <NotifComponent />
-                    </main>
-                  </NotifsWrapper>}
+
                 </div>}
+                {IsOpen && <NotifsWrapper >
+                  <main style={{ height: "100%", width: "100%", position: "relative" }}>
+                    <section style={{
+                      position: "sticky",
+                      top: "0rem",
+                      padding: "0rem 0.5rem",
+                      display: "flex", height: "2rem", width: "100%", justifyContent: "end", alignItems: "center", borderBottom: "1px solid lightgrey", background: "black"
+                    }}>
+                      <div
+                        onClick={updateNotifications}
+                        style={{ display: "flex", background: "black", height: "1.4rem", width: "1.4rem", justifyContent: "center", alignItems: "center", border: "2px solid lightgrey", borderRadius: "50px" }}>
+                        <Iconify icon="mdi-close" />
+                      </div>
+                    </section>
+
+                    {Notifications?.length > 0 ? Notifications.map(notif => <NotifComponent key={notif.id} {...notif} />)
+                      : <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%", height: "100%", textAlign:"center", fontSize:"1rem" }}> You don´t have new notifications  </div>}
+
+
+                  </main>
+                </NotifsWrapper>}
               </div>
               <div className="avatarBox" onClick={() => router.push("/profile")}>
                 <div className="avatar">

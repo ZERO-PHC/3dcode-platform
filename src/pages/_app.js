@@ -4,7 +4,7 @@ import React from "react";
 
 import AnimationProvider from "../contexts/animation/AnimationContext";
 import AuthProvider from "../contexts/AuthContext";
-import NftsProvider from "../contexts/NftsContext";
+import NftsProvider from "../contexts/ArtworksContext";
 import TransactionProvider from "../contexts/TransactionContext";
 import Layout from "../sections/Layout";
 import SnackbarComponent from "../components/SnackbarComponent";
@@ -24,12 +24,10 @@ function MyApp({ Component, pageProps }) {
     <AuthProvider>
       <TransactionProvider>
         <NftsProvider>
-          <AnimationProvider>
             <Layout windowDimensions={windowDimensions}>
               <SnackbarComponent  />
               <Component {...pageProps} windowDimensions={windowDimensions} />
             </Layout>
-          </AnimationProvider>
         </NftsProvider>
       </TransactionProvider>
     </AuthProvider>

@@ -1,10 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import styled from "styled-components";
 import Image from "next/image";
 import { animated, config, useSpring } from "react-spring";
 import PrimaryBtnComponent from './PrimaryBtn';
+import { useOnScreen } from '../hooks/useOnScreen';
+
 
 export default function ArtworkComponent({
   artwork,
@@ -12,11 +14,15 @@ export default function ArtworkComponent({
   currentWrapper,
   isOwner,
   idx,
-  mobile
+  mobile,
+  transform
+
 }) {
 
-  const [Hovered, setHovered] = useState();
 
+  const [Hovered, setHovered] = useState();
+  // const lastArtwork = useRef();
+  // const lastArtworkValue = useOnScreen(lastArtwork);
 
   const nameAnimation = useSpring({
     opacity: Hovered ? 1 : 0,
@@ -34,8 +40,6 @@ export default function ArtworkComponent({
   })
 
 
-
-  // console.log("isOwner", isOwner)
 
   const resolveWidth = () => {
     switch (currentWrapper) {
@@ -81,59 +85,31 @@ export default function ArtworkComponent({
     }
   }
 
-  const resolveTransform = () => {
-    switch (idx) {
-      // case 0:
-      //   // return "TranslateY(10%)"
-      // case 2:
-      //   // return "TranslateY(10%)"
-      // case 4:
-      //   return "TranslateY(-38.5%) "
-      // case 5:
-      //   return "TranslateX(30%)"
-      // case 6:
-      //   return "TranslateY(-38.5%)"
+  const resolveTransform = (idx) => {
 
-      default:
-        return "0rem 0rem"
-    }
+    // get the last and next artwork to be rendered with the idx
+
+    // switch (idx) {
+    //   // case 0:
+    //   //   // return "TranslateY(10%)"
+    //   // case 2:
+    //   //   // return "TranslateY(10%)"
+    //   case 4:
+    //     return "TranslateY(-38.5%) "
+    //   // case 5:
+    //   //   return "TranslateX(30%)"
+    //   case 6:
+      //     return "TranslateY(-38.5%)"
+    //   case 8:
+    //     return "TranslateY(-60%)"
+    //   case 7:
+    //     return "TranslateY(-60%)"
+
+      // default:
+      //   return "0rem 0rem"
+    // }
 
   }
-
-  // if (!isOwner) {
-
-
-  //   return (
-  //     <div style={{
-  //       filter: "blur(6px)"
-  //     }}>
-  //       <Artwork
-  //         onClick={() => handleArtworkSelection(artwork)}
-  //         key={idx}
-  //         width={resolveWidth()}
-  //         height={resolveHeight()}
-  //         isOwner={isOwner}
-  //         mobile={width > 768 ? false : true}
-  //         margin={resolveTransform(idx)}
-  //         // margin={"2rem"}
-  //       >
-  //         <Image
-  //           style={{ borderRadius: "0.8rem" }}
-  //           src={artwork.ArtworkImg}
-  //           alt={artwork.ArtworkImg}
-  //           layout="fill"
-  //         />
-
-  //       </Artwork>
-  //     </div >
-
-  //   );
-  // } else {
-  // if (idx === 7) {
-  //   return <div style={{ height: "30rem" }}><video src="https://storage.googleapis.com/dream-machines-output/f4e5341a-d06c-42a9-8023-413d3b55fd47/video.mp4" style={{ height: "30rem" }} /></div>
-  // } else {
-
-  // 
 
   return (
     <div style={{
@@ -149,8 +125,7 @@ export default function ArtworkComponent({
         width={resolveWidth()}
         height={resolveHeight()}
         isOwner={isOwner}
-        transform={resolveTransform()}
-
+        transform={transform}
 
       >
         {idx !== 6 ?
@@ -158,8 +133,9 @@ export default function ArtworkComponent({
             style={{ borderRadius: "0.5rem" }}
             src={artwork.ArtworkImg}
             alt={artwork.ArtworkImg}
-            // placeholder="blur"
-            // blurDataURL="/assets/placeholder.png"
+            loading="lazy"
+            placeholder="blur"
+            blurDataURL="/assets/placeholder.png"
             layout="fill"
           /> :
           //<video with au

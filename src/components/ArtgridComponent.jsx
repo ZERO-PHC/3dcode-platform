@@ -2,6 +2,7 @@ import React from "react";
 import { Image } from "next/image";
 import styled from "styled-components";
 import ArtworkComponent from "./ArtworkComponent";
+import { resolve } from "path";
 
 export default function ArtgridComponent({
   currentWrapper,
@@ -11,23 +12,49 @@ export default function ArtgridComponent({
   handleArtworkSelection,
   artworkId,
   isOwner,
-  mobile
+  mobile,
+  lastArtwork,
+  lastArtworkValue,
 }) {
 
 
 
+
+
+
   const Artgrid = styled.div`
-          padding-top: ${(props) => props.paddingTop};} ;
           width: 100%;
           display: flex;
           justify-content: center;
-          // align-items: center;
-          flex-wrap: wrap;
-          // display: grid;
-          // grid-template-columns: repeat(${(props) => props.columns} , 1fr);
-          // grid-gap: ${props => props.gridGap};
-          height: 100%;
+          flex-wrap: wrap;         
 `;
+
+  const resolveTransform = (i) => {
+    // the aspect ratio of the artwork in the index - 1
+    // get the aspect ratio of the artwork that is before the current artwork
+    // if the current artwork aspect ration is portrait and it isn´t the first artwork 
+    // if (artworks[i].AspectRatio === "portrait" && i !== 0) {
+    if (artworks[i].AspectRatio === "portrait" && i !== 0) {
+      // it the next artwork is landscape
+      if (artworks[i + 1].AspectRatio === "landscape") {
+        return "TranslateY(-38.5%)"
+      }
+    } else if (artworks[i].AspectRatio === "landscape") {
+      // if the current artwork is landscape and it isn´t the first artwork 
+      // and the next artwork is portrait
+      if (artworks[i + 1]?.AspectRatio === "landscape") {
+        return "TranslateY(-60%)"
+      } else if (artworks[i - 1]?.AspectRatio === "landscape" && i !== 0) {
+        return "TranslateY(-60%)"
+      }
+
+      else {
+        return null
+      }
+
+    }
+    // return artworks[(i - 1)].AspectRatio === "square" && artworks[i + 1] === "landscape" ? "TranslateY(-38.5%)" : null;
+  }
 
   function renderArtworks() {
     return artworks.map((artwork, i) => {
@@ -37,19 +64,18 @@ export default function ArtgridComponent({
           artwork={artwork}
           handleArtworkSelection={handleArtworkSelection}
           currentWrapper={currentWrapper}
-          isOwner={true}
           idx={i}
           mobile={mobile}
+          transform={resolveTransform(i)}
+
         />
       );
     });
   }
 
   return (
-    <div style={{ margin: "3rem 0rem" }}>
-      <Artgrid
-        gridGap={currentWrapper === "dialog" || currentWrapper === "details" ? "1rem 2rem" : "4rem  2rem"}
-        columns={columns} paddingTop={currentWrapper === "dialog" || currentWrapper === "details" ? "0rem" : "3rem"}>
+    <div style={{ margin: "0rem 0rem" }}>
+      <Artgrid>
         {renderArtworks()}
       </Artgrid>
     </div>

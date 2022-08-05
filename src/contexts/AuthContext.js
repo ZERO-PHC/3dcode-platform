@@ -25,7 +25,7 @@ export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [FirestoreUser, setFirestoreUser] = useState(null);
   const [Coins, setCoins] = useState(0);
-  const [Notifications, setNotifications] = useState();
+  const [Notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
