@@ -16,7 +16,6 @@ export default function ArtworkComponent({
   idx,
   mobile,
   transform
-
 }) {
 
 
@@ -131,8 +130,8 @@ export default function ArtworkComponent({
         {idx !== 6 ?
           <Image
             style={{ borderRadius: "0.5rem" }}
-            src={artwork.ArtworkImg}
-            alt={artwork.ArtworkImg}
+            src={artwork.ArtworkImg ? artwork.ArtworkImg : "/assets/images/coin.png"}
+            alt={"img"}
             loading="lazy"
             placeholder="blur"
             blurDataURL="/assets/placeholder.png"

@@ -3,6 +3,7 @@ import { useAuth } from "./AuthContext";
 import { db } from "../firebase";
 import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { categories } from "../categories";
+ import { useRouter } from "next/router";
 
 export const ArtworksContext = React.createContext("");
 export const useArtworks = () => useContext(ArtworksContext);
@@ -39,6 +40,7 @@ export default function ArtworksProvider({ children }) {
   const [Categories, setCategories] = useState(categories);
   const [MainCategories, setMainCategories] = useState(mainCategories);
   const [LoadedArtworks, setLoadedArtworks] = useState(0);
+  const router = useRouter();
 
   useEffect(() => {
     const colRef = collection(db, "artworks");
@@ -53,9 +55,9 @@ export default function ArtworksProvider({ children }) {
           const filteredArtworks = getFilteredDocs(sortedDocs);
           console.log("filteredArtworks", filteredArtworks);
 
-          const first9docs = filteredArtworks.slice(0, 10);
+          // const first9docs = filteredArtworks.slice(0, 10);
 
-          const mosaicArtworks = createArtworksMosaic(first9docs);
+          const mosaicArtworks = createArtworksMosaic(filteredArtworks);
           setArtworks(mosaicArtworks);
           break;
 
@@ -70,8 +72,10 @@ export default function ArtworksProvider({ children }) {
             return artwork.tags.includes(SelectedCategory);
           });
           console.log("newfilteredArtworks", newFilteredArtworks);
-          setArtworks(newFilteredArtworks);
-          setLoadedArtworks(LoadedArtworks + 9);
+          const newMosaicArtworks = createArtworksMosaic(newFilteredArtworks);
+
+          setArtworks(newMosaicArtworks);
+          // setLoadedArtworks(LoadedArtworks + 9);
 
           break;
 
@@ -151,14 +155,14 @@ export default function ArtworksProvider({ children }) {
 
     const artworksSet = [
       { ...squareArtworks[0] },
+      { ...portraitArtworks[0] },
       { ...portraitArtworks[1] },
-      { ...portraitArtworks[0] },
-      { ...squareArtworks[0] },
-      { ...portraitArtworks[0] },
+      { ...squareArtworks[1] },
+      { ...portraitArtworks[2] },
       { ...landscapeArtworks[0] },
-      { ...portraitArtworks[0] },
+      { ...portraitArtworks[3] },
       { ...landscapeArtworks[1] },
-      { ...landscapeArtworks[1] },
+      { ...landscapeArtworks[2] },
     ];
 
     return artworksSet;
@@ -227,8 +231,7 @@ export default function ArtworksProvider({ children }) {
 
   return (
     <ArtworksContext.Provider value={value}>
-      {" "}
-      {children}{" "}
+      {children}
     </ArtworksContext.Provider>
   );
 }

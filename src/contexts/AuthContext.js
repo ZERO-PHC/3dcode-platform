@@ -1,4 +1,3 @@
-import * as fcl from "@onflow/fcl";
 import { createContext, useContext, useEffect, useState } from "react";
 import {
   GoogleAuthProvider,
@@ -6,7 +5,6 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { auth, db } from "../firebase";
-import "../flow/config";
 import {
   doc,
   setDoc,
@@ -15,7 +13,7 @@ import {
   collection,
   getDocs,
 } from "firebase/firestore";
-import { contains } from "@firebase/util";
+import { pseudonyms } from "../pseudonyms";
 
 export const AuthContext = createContext({});
 
@@ -104,6 +102,11 @@ export default function AuthProvider({ children }) {
       });
   };
 
+  const getRandomPseudonym = () => {
+    const randomIndex = Math.floor(Math.random() * pseudonyms.length);
+    return pseudonyms[randomIndex];
+  };
+
   // create createFirestoreUser function
   const createFirestoreUser = async (user) => {
     const userRef = doc(db, "users", user.email);
@@ -116,6 +119,9 @@ export default function AuthProvider({ children }) {
       // photoURL: user.photoURL,
       uid: user.uid,
       createdAt: new Date(),
+      name: getRandomPseudonym(),
+      postedArtworks: [],
+      bookmarkedArtworks: [],
     };
     await setDoc(userRef, userObj);
     // }

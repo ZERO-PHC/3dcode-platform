@@ -29,6 +29,7 @@ export default function ArtgridComponent({
           flex-wrap: wrap;         
 `;
 
+
   const resolveTransform = (i) => {
     // the aspect ratio of the artwork in the index - 1
     // get the aspect ratio of the artwork that is before the current artwork

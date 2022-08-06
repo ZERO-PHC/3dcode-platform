@@ -1,8 +1,6 @@
 
 import React,{ useReducer } from 'react';
-import * as fcl from "@onflow/fcl";
 import { createContext, useContext, useEffect, useState } from "react";
-import "../flow/config";
 
 import useCounterSync from '../hooks/useCounterSync';
 

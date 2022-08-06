@@ -23,6 +23,7 @@ import {
   onSnapshot,
   collection,
   addDoc,
+  getDoc,
 } from "firebase/firestore";
 import PromptSection from "../../sections/PromptSection";
 import { TwitterAuthProvider } from "firebase/auth";
@@ -82,14 +83,13 @@ export default function ArtworkDetails({ windowDimensions }) {
         // const comments = querySnapshot.docs.filter(
         //   (doc) => !doc.data().active
         // );
-        const comments = querySnapshot.docs
+        const comments = querySnapshot.docs;
 
         const formattedComments = comments.map((doc) => {
-         
           return {
             id: doc.id,
             ...doc.data(),
-          }
+          };
         });
 
         console.log("formattedComments", formattedComments);
@@ -222,7 +222,7 @@ export default function ArtworkDetails({ windowDimensions }) {
     }
   };
 
-  const handleReactionPost = (reaction) => {
+  const handleReactionPost = async (reaction) => {
     setIsProcessing(true);
     setMessage("loading");
 
@@ -238,13 +238,26 @@ export default function ArtworkDetails({ windowDimensions }) {
     });
     console.log("added notif doc");
 
-    // add the reaction to the reactions collection
-    // const reactionRef = doc(db, "reactions", artworkId);
-    // addDoc(reactionRef, { Reaction: reaction }).catch((error) =>
-    //   console.log("err", error)
-    // );
+    // update the reaction on the reactions object of the ArtworkId
+    const artworkRef = doc(db, "artworks", artworkId);
+    // const reactionsRef = collection(artworkRef, "reactions");
 
-    // const artworkRef = doc(db, "artworks", artworkId);
+    const artworkReactions = await getArtworkReactions();
+    console.log("artworkReactions", artworkReactions);
+
+    const reactionData = {
+      reactions: [...artworkReactions, reaction],
+    };
+    updateDoc(artworkRef, reactionData)
+      .then(() => {
+        console.log("reaction added");
+        setTimeout(() => {
+          setIsProcessing(false);
+        }, 3000);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
     const colRef = collection(db, "reactions");
 
@@ -263,6 +276,19 @@ export default function ArtworkDetails({ windowDimensions }) {
 
     // });
     console.log("added doc");
+  };
+
+  const getArtworkReactions = async () => {
+    const artworkRef = doc(db, "artworks", artworkId);
+
+    try {
+      const doc = await getDoc(artworkRef);
+      console.log("doc", doc.data().reactions);
+      return doc.data().reactions;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
   };
 
   const inputProps = {
@@ -506,7 +532,7 @@ export default function ArtworkDetails({ windowDimensions }) {
           </div>
           <AuthorContainer>
             {/* <AuthorName>{Artwork.author.toUpperCase()}</AuthorName> */}
-            <AuthorName>{"Username".toUpperCase()}</AuthorName>
+            <AuthorName>{Artwork.author.toUpperCase()}</AuthorName>
             <div style={{ height: "4.5rem" }}></div>
             <div
               style={{ position: "absolute", bottom: "1.7rem", zIndex: "2" }}

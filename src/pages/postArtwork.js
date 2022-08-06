@@ -9,7 +9,7 @@ import Navbar from "../components/Navbar";
 import { useAuth } from "../contexts/AuthContext";
 import Iconify from "../components/Iconify";
 
-import { collection, doc, addDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, addDoc, updateDoc,  } from "firebase/firestore";
 
 // import useImage from the hooks folder
 import { useImage } from "../hooks/useImage";
@@ -17,6 +17,7 @@ import { useImage } from "../hooks/useImage";
 import { db } from "../firebase";
 import ArtgridComponent from "../components/ArtgridComponent";
 import { categories } from "../categories";
+import VerticalSpace from "../atoms/VerticalSpace";
 
 // const tags = [
 //   { id: 1, name: "Abstract", selected: false },
@@ -102,7 +103,7 @@ export default function PostArtwork() {
     const selectedTags = Tags.filter((tag) => tag.selected);
 
     console.log("selected tags", selectedTags);
-    const selectedTagsIds= selectedTags.map((tag) => tag.id);
+    const selectedTagsIds = selectedTags.map((tag) => tag.id);
 
     return selectedTagsIds;
   };
@@ -118,8 +119,9 @@ export default function PostArtwork() {
       AspectRatio,
       name: Description,
       state: "active",
-      author: user.uid,
+      author: FirestoreUser.name,
       reactionPoints: 0,
+      reactions:[],
       timestamp: Date.now(),
     };
 
@@ -127,6 +129,8 @@ export default function PostArtwork() {
       const docRef = await addDoc(collection(db, "artworks"), artwork);
 
       console.log("Document written with ID: ", docRef.id);
+
+      resetTags();
 
       // update the user's artworks array with the new artwork
 
@@ -145,6 +149,14 @@ export default function PostArtwork() {
 
     // redirect the user to the home page
     router.push("/");
+  };
+
+  const resetTags = () => {
+    const newTags = Tags.map((t) => {
+      t.selected = false;
+      return t;
+    });
+    setTags(newTags);
   };
 
   const EngineDisplay = () => {
@@ -230,7 +242,8 @@ export default function PostArtwork() {
             justifyContent: "space-evenly",
           }}
         ></div>
-        <section style={{ height: "6%" }}>
+        <VerticalSpace height={"1rem"} />
+        <section style={{ height: "9%" }}>
           <ArtworkTitle>ARTWORK LINK</ArtworkTitle>
           <Underline />
         </section>
@@ -239,7 +252,7 @@ export default function PostArtwork() {
           <input
             onChange={handleUrlInput}
             value={ArtworkImg}
-            placeholder="https://i.mj.run/..."
+            placeholder="https://mj-gallery.com/..."
           ></input>
           <div style={{ width: "0.5rem" }}></div>
         </div>
@@ -252,7 +265,7 @@ export default function PostArtwork() {
             justifyContent: "end",
           }}
         >
-          <EngineDisplay />
+          {/* <EngineDisplay /> */}
         </section>
         <section style={{ height: "10%" }}>
           <ArtworkTitle>TAGS (OPTIONAL)</ArtworkTitle>

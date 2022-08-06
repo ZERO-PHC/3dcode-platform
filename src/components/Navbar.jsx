@@ -4,19 +4,9 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { animated, config, useSpring } from "react-spring"
 
-import flowLogo from "../../public/assets/FlowLogo.png";
-
 import { useAuth } from "../contexts/AuthContext";
-
-import { Icon } from "@iconify/react";
 import styled from "styled-components";
-import LearnLoginComp from "./LearnLoginComp";
-import LearnMintComp from "./LearnMintComp";
-import NetworkSwitch from "./NetworkSwitch";
 import Iconify from "./Iconify";
-import TimerComponent from "./TimerComponent";
-import Drawer from 'react-modern-drawer'
-import 'react-modern-drawer/dist/index.css'
 
 
 import { collection, onSnapshot, doc, getDoc, updateDoc } from "firebase/firestore";

@@ -11,6 +11,7 @@ import ArtgridSection from "../sections/ArtgridSection";
 
 export default function Home({ windowDimensions }) {
   const { user } = useAuth();
+  const { router } = useRouter();
   const {
     Artworks,
     SelectedCategory,
@@ -70,19 +71,12 @@ export default function Home({ windowDimensions }) {
                     <div style={{ width: "0.5rem" }}></div>
                     <div>
                       {category.name}
-                      <StyledRectangle active={category.active} />
+                      <StyledRectangle active={category.selected} />
                     </div>
                   </MainCategoryStyles>
                 ))}
               </div>
-              <div
-                style={{
-                  height: "70%",
-                  maxHeight: "70%",
-                  overflow: "auto",
-                  overflowX: "hidden",
-                }}
-              >
+              <div className="categories-wrapper">
                 {Categories.map((category) => (
                   <CategoryStyles
                     key={category.id}
@@ -213,6 +207,18 @@ const Wrapper = styled.main`
   margin: 0;
   overflow-x: hidden;
   overflow: hidden;
+
+  .categories-wrapper {
+    height: 70%;
+    maxheight: 70%;
+    overflow: auto;
+    overflow-x: hidden;
+
+    ::-webkit-scrollbar {
+      width: 0rem;
+      background: rgba(130, 132, 135, 0.23);
+    }
+  }
 
   .main-categories {
     height: 30%;

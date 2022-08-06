@@ -12,6 +12,7 @@ import Iconify from "../components/Iconify";
 import { collection, onSnapshot, getDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
 import ArtgridComponent from "../components/ArtgridComponent";
+import ProfileArtworksModule from "../modules/ProfileArtworksModule";
 
 export default function Profile() {
   const router = useRouter();
@@ -95,6 +96,7 @@ export default function Profile() {
           <Underline />
         </section>
         <BalanceWrapper>
+          <div>{FirestoreUser && FirestoreUser.name.toUpperCase()}</div>
           <div>{user && user.email.toUpperCase()}</div>
           <div style={{ width: "0.5rem" }}></div>
           <PrimaryBtn onClick={logout}>
@@ -122,16 +124,8 @@ export default function Profile() {
               <Iconify icon="mdi-bookmark" />
             </PrimaryBtn>
           </section>
-          {PostedArtworks && (
-            <ArtgridComponent
-              artworks={
-                Category === "posted" ? PostedArtworks : BookmarkedArtworks
-              }
-              columns={"4"}
-              currentWrapper={"main"}
-              handleArtworkSelection={handleArtworkSelection}
-            />
-          )}
+          {PostedArtworks &&  <ProfileArtworksModule artworks={Category === "posted" ? PostedArtworks : BookmarkedArtworks} />}
+            
         </PacksWrapper>
       </Container>
     </MainWrapper>

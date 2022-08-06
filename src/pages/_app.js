@@ -1,10 +1,9 @@
 import "../../styles/globals.css";
-import "@stripe/stripe-js";
+// import "@stripe/stripe-js";
 import React from "react";
 
-import AnimationProvider from "../contexts/animation/AnimationContext";
 import AuthProvider from "../contexts/AuthContext";
-import NftsProvider from "../contexts/ArtworksContext";
+import ArtworkProvider from "../contexts/ArtworksContext";
 import TransactionProvider from "../contexts/TransactionContext";
 import Layout from "../sections/Layout";
 import SnackbarComponent from "../components/SnackbarComponent";
@@ -23,12 +22,12 @@ function MyApp({ Component, pageProps }) {
   return (
     <AuthProvider>
       <TransactionProvider>
-        <NftsProvider>
+        <ArtworkProvider>
             <Layout windowDimensions={windowDimensions}>
               <SnackbarComponent  />
               <Component {...pageProps} windowDimensions={windowDimensions} />
             </Layout>
-        </NftsProvider>
+        </ArtworkProvider>
       </TransactionProvider>
     </AuthProvider>
   );
