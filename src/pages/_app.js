@@ -1,6 +1,6 @@
 import "../../styles/globals.css";
 // import "@stripe/stripe-js";
-import React from "react";
+import React,{useEffect} from "react";
 
 import AuthProvider from "../contexts/AuthContext";
 import ArtworkProvider from "../contexts/ArtworksContext";
@@ -18,6 +18,14 @@ function MyApp({ Component, pageProps }) {
       height: window.innerHeight,
     });
   }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+            const loader = document.getElementById('globalLoader');
+        if (loader)
+            loader.style.display = 'none';
+    }
+}, []);
 
   return (
     <AuthProvider>

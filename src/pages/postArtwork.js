@@ -8,8 +8,9 @@ import { loadStripe } from "@stripe/stripe-js";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../contexts/AuthContext";
 import Iconify from "../components/Iconify";
+import Spinner from "../atoms/Spinner";
 
-import { collection, doc, addDoc, updateDoc,  } from "firebase/firestore";
+import { collection, doc, addDoc, updateDoc } from "firebase/firestore";
 
 // import useImage from the hooks folder
 import { useImage } from "../hooks/useImage";
@@ -19,15 +20,26 @@ import ArtgridComponent from "../components/ArtgridComponent";
 import { categories } from "../categories";
 import VerticalSpace from "../atoms/VerticalSpace";
 
-// const tags = [
-//   { id: 1, name: "Abstract", selected: false },
-//   { id: 2, name: "Landscape", selected: false },
-//   { id: 3, name: "Portrait", selected: false },
-//   { id: 4, name: "Realistic", selected: false },
-//   { id: 5, name: "Vintage", selected: false },
-//   { id: 6, name: "Digital", selected: false },
-//   { id: 7, name: "Futuristic", selected: false },
-// ];
+const images = [
+  {
+    id: 0,
+    src:
+      "https://mj-gallery.com/71fbcac0-0cd4-4f5e-b268-65f12b94b386/grid_0.png",
+    selected: false,
+  },
+  {
+    id: 1,
+    src:
+      "https://mj-gallery.com/9218c558-9d7a-4118-9df6-24f2de4d4ce6/grid_0.png",
+    selected: false,
+  },
+  {
+    id: 2,
+    src:
+      "https://mj-gallery.com/b0cf6b15-35a7-4a56-8b29-6a2dffd952ba/grid_0.png",
+    selected: false,
+  },
+];
 
 export default function PostArtwork() {
   const router = useRouter();
@@ -37,6 +49,7 @@ export default function PostArtwork() {
   const [ArtworkImg, setArtworkImg] = useState("");
   const [SelectedEngine, setSelectedEngine] = useState("mid");
   const [Tags, setTags] = useState(categories);
+  const [Images, setImages] = useState(images);
   const [Artwork, setArtwork] = useState({ ArtworkImg, SelectedEngine, Tags });
   const { hasLoaded, hasError, AspectRatio } = useImage(ArtworkImg);
   console.log("hasLoaded", hasLoaded, AspectRatio);
@@ -121,7 +134,7 @@ export default function PostArtwork() {
       state: "active",
       author: FirestoreUser.name,
       reactionPoints: 0,
-      reactions:[],
+      reactions: [],
       timestamp: Date.now(),
     };
 
@@ -214,12 +227,56 @@ export default function PostArtwork() {
     setDescription(e.target.value);
   };
 
+  const handleSelectedImage = (src) => {
+    setArtworkImg(src);
+    // update the Images array with the selected image
+    // const newImages = Images.map((i) => {
+    //   if (i.id === id) {
+    //     i.selected = true;
+    //   } else {
+    //     i.selected = false;
+    //   }
+    //   return i;
+    // });
+    // setImages(newImages);
+  };
+
+  const ImagesOptions = () => {
+    const { hasLoaded, hasError, AspectRatio } = useImage(images[0].src);
+
+    return Images.map((image, index) => {
+      return (
+        <div
+          onClick={() => handleSelectedImage(image.src)}
+          style={{ display: "flex" }}
+          key={index}
+        >
+          {hasLoaded ? (
+            <img
+              src={image.src}
+              style={{
+                objectFit: "contain",
+                height: "4rem",
+                border: "2px solid black",
+              }}
+              alt="artwork"
+            />
+          ) : (
+            <div style={{height:"100%"}}>
+              <Spinner />
+            </div>
+          )}
+        </div>
+      );
+    });
+  };
+
   return (
     <MainWrapper>
       {/* <Container> */}
       <div className="left-side">
         <section style={{ height: "10%" }}>
-          <ArtworkTitle>DESCRIPTION</ArtworkTitle>
+          <ArtworkTitle>NAME / DESCRIPTION</ArtworkTitle>
           <Underline />
         </section>
         <div>
@@ -244,18 +301,27 @@ export default function PostArtwork() {
         ></div>
         <VerticalSpace height={"1rem"} />
         <section style={{ height: "9%" }}>
-          <ArtworkTitle>ARTWORK LINK</ArtworkTitle>
+          <ArtworkTitle>ARTWORKS</ArtworkTitle>
           <Underline />
         </section>
+        <section
+          style={{
+            display: "flex",
+            width: "80%",
+            justifyContent: "space-around",
+          }}
+        >
+          <ImagesOptions />
+        </section>
 
-        <div>
+        {/* <div>
           <input
             onChange={handleUrlInput}
             value={ArtworkImg}
             placeholder="https://mj-gallery.com/..."
           ></input>
           <div style={{ width: "0.5rem" }}></div>
-        </div>
+        </div> */}
         <section
           style={{
             height: "10%",
@@ -327,7 +393,7 @@ export default function PostArtwork() {
         </section>
         <section style={{ margin: "2rem 0rem" }}>
           <PrimaryBtn onClick={handlePost}>
-            POST
+            {Loading ? <Spinner /> : "POST"}
             <div style={{ width: "0.5rem" }}></div>
             <LogoutIcon />
           </PrimaryBtn>

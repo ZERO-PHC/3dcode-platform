@@ -10,8 +10,8 @@ export const useArtworks = () => useContext(ArtworksContext);
 
 const mainCategories = [
   {
-    name: "Hot",
-    id: "hot",
+    name: "New",
+    id: "new",
     color: "#f5f5f5",
     background: "#f5f5f5",
     border: "#f5f5f5",
@@ -21,8 +21,8 @@ const mainCategories = [
     selected: true,
   },
   {
-    name: "New",
-    id: "new",
+    name: "Hot",
+    id: "hot",
     color: "#f5f5f5",
     background: "#f5f5f5",
     border: "#f5f5f5",
@@ -31,12 +31,13 @@ const mainCategories = [
     active: false,
     selected: false,
   },
+ 
 ];
 
 export default function ArtworksProvider({ children }) {
   const [Artworks, setArtworks] = useState([]);
   const [SelectedCategory, setSelectedCategory] = useState("all");
-  const [MainCategory, setMainCategory] = useState("hot");
+  const [MainCategory, setMainCategory] = useState("new");
   const [Categories, setCategories] = useState(categories);
   const [MainCategories, setMainCategories] = useState(mainCategories);
   const [LoadedArtworks, setLoadedArtworks] = useState(0);

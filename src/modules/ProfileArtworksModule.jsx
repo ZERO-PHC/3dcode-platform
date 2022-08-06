@@ -18,6 +18,11 @@ const icons = [
         emoji: "😍"
     },
     {
+        name: "fire",
+        src: "/static/fire.png",
+        emoji: "🔥"
+    },
+    {
         name: "lol",
         src: "/static/fire.png",
         emoji: "😂"
@@ -32,15 +37,11 @@ const icons = [
         src: "/static/trash.png",
         emoji: "🗑"
     },
-    {
-        name: "fire",
-        src: "/static/fire.png",
-        emoji: "🔥"
-    }
+
 ]
 
 export default function ProfileArtworksModule({ artworks }) {
-    
+
 
     const resolveWidth = (aspectRatio) => {
         switch (aspectRatio) {
@@ -68,23 +69,23 @@ export default function ProfileArtworksModule({ artworks }) {
         }
     }
 
-    const ReactionsTable = ({reactions}) => {
-        
+    const ReactionsTable = ({ reactions }) => {
+
         // get the times that the word fire is repeated in the reactions array
         const fireCount = reactions.filter(reaction => reaction === "fire").length
         const loveCount = reactions.filter(reaction => reaction === "love").length
+        const lolCount = reactions.filter(reaction => reaction === "lol").length
         const mehCount = reactions.filter(reaction => reaction === "meh").length
         const trashCount = reactions.filter(reaction => reaction === "trash").length
-        const mindBlownCount = reactions.filter(reaction => reaction === "mindBlown").length
+        const mindBlownCount = reactions.filter(reaction => reaction === "mindblown").length
 
-        const reactionsCount = [fireCount, loveCount, mehCount, trashCount, mindBlownCount]
+        const reactionsCount = [mindBlownCount, loveCount, fireCount, lolCount, mehCount, trashCount]
         console.log(reactionsCount)
-    
-        
 
-        
 
-        // return a table that maps they 6 types of reactions that are in the table cells in a horizontal display
+
+
+
         return <Table style={{ border: "2px solid black" }}>
             <tbody >
                 <tr style={{
@@ -93,7 +94,7 @@ export default function ProfileArtworksModule({ artworks }) {
                     {icons.map(icon => <td key={icon.name}>{icon.emoji}</td>)}
                 </tr>
                 <tr>
-                    {reactionsCount.map((count,i) => <td key={i}>{count}</td>)}
+                    {reactionsCount.map((count, i) => <td key={i}>{count}</td>)}
                 </tr>
             </tbody>
         </Table>

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
-export default function PrimaryBtnComponent({ label }) {
+export default function PrimaryBtnComponent({ label, onClick }) {
     return (
-        <PrimaryBtn>{label}</PrimaryBtn>
+        <PrimaryBtn onClick={onClick}>{label}</PrimaryBtn>
     )
 }
 

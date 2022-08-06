@@ -4,14 +4,19 @@ import { useAuth } from "../contexts/AuthContext";
 import { useArtworks } from "../contexts/ArtworksContext";
 import styled from "styled-components";
 import { useRouter } from "next/router";
-
+// import useSWR from "swr";
+import useSWR from "swr";
 import Iconify from "../components/Iconify";
 import FAB from "../components/FAB/FAB";
 import ArtgridSection from "../sections/ArtgridSection";
+import Image from "next/image";
+import PrimaryBtnComponent from "../components/PrimaryBtn";
+import VerticalSpace from "../atoms/VerticalSpace";
 
 export default function Home({ windowDimensions }) {
-  const { user } = useAuth();
+  const { user, login } = useAuth();
   const { router } = useRouter();
+  const [PageLoading, setPageLoading] = useState();
   const {
     Artworks,
     SelectedCategory,
@@ -25,21 +30,29 @@ export default function Home({ windowDimensions }) {
   } = useArtworks();
   const [ShowDialog, setShowDialog] = useState(false);
   const width = windowDimensions.width;
+  // const fetcher = (url) => fetch(url).then((res) => console.log(res.json())); // your main function export default function Profile() { //for relative and absolute paths const { data, error } = useSWR('/api/user', fetcher) if (error) return <div>failed to load</div> //for the loading you can create your custom component and insert instead of div, like this you keep same styling if (!data) return <div>loading...</div> if (data) return <div>hello {data.name}!</div> }
+  // const { data, error } = useSWR("/", fetcher);
+
+  useEffect(() => {}, [router]);
 
   // function called handleDrawer that updates the show state to true
   const MainCategoryIcon = ({ idx }) => {
     if (idx === 0) {
       return (
         <Iconify
-          icon="fa6-solid:fire"
-          color={MainCategory === "hot" ? "black" : "lightgrey"}
+          icon="akar-icons:thunder"
+          color={MainCategory === "new" ? "black" : "lightgrey"}
         />
       );
     } else if (idx === 1) {
       return (
+        // <Iconify
+        //   icon="ant-design:rise-outlined"
+        //   color={MainCategory === "new" ? "black" : "lightgrey"}
+        // />
         <Iconify
-          icon="ant-design:rise-outlined"
-          color={MainCategory === "new" ? "black" : "lightgrey"}
+          icon="fa6-solid:fire"
+          color={MainCategory === "hot" ? "black" : "lightgrey"}
         />
       );
     } else {
@@ -52,10 +65,38 @@ export default function Home({ windowDimensions }) {
     }
   };
 
+  // if (error) return <div>failed to load</div>;
+  // if (!data) return <div>loading...</div>;
+  // if (Artworks && data)
   if (Artworks)
     return (
       <>
         <Wrapper>
+         {!user && <Overlay>
+            <main
+              style={{
+                background: "white",
+                width: "28rem",
+                height: "14rem",
+                borderRadius: "1rem",
+                color: "black",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div>
+              <Image height={150} width={150} src="/assets/logo.png" />
+
+              </div>
+              <VerticalSpace height={"0rem"} />
+              <div>
+                <PrimaryBtnComponent label="Log in / Sign up" onClick={login}/>
+              </div>
+            </main>
+          </Overlay>}
+
           <main className="mainContent">
             <section className="sidebar">
               <div className="main-categories">
@@ -103,6 +144,21 @@ export default function Home({ windowDimensions }) {
       </>
     );
 }
+
+const Overlay = styled.div`
+  background-color: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  justify-content: center;
+  align-items: center;
+`;
 
 // create a component called CatefgoryTitle with  the text rotated in 90 degrees  aligned on the middle right side with an absolute position
 const CategoryTitle = styled.div`

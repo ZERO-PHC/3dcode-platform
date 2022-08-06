@@ -18,7 +18,7 @@ display: block;
     align-items: center;
 }
 .loader {
- --clr: #3498db;
+ --clr: black;
  /* color of spining  */
  width: 50px;
  height: 50px;

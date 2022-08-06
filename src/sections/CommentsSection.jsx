@@ -5,7 +5,7 @@ import CommentComponent from '../components/CommentComponent';
 import Iconify from '../components/Iconify';
 import { animated } from "react-spring";
 
-export default function CommentsSection({ comments, handleCommentPost, Comment, handleCommentChange, Loading, animation }) {
+export default function CommentsSection({ comments, handleCommentPost, handleKeyboardPost, Comment, handleCommentChange, Loading, animation }) {
 
   console.log(comments);
   return (
@@ -54,7 +54,7 @@ export default function CommentsSection({ comments, handleCommentPost, Comment, 
           </main>
         </CommentsWrapper>
         <InputWrapper>
-          <input placeholder='Something cool' onChange={handleCommentChange} value={Comment} />
+          <input placeholder='Something cool' onChange={handleCommentChange} onKeyUp={handleKeyboardPost} value={Comment} />
           <main className='send-btn' onClick={handleCommentPost}>
             {Loading ? <Spinner /> : <Iconify icon='fa-send' color="white" />
             }          </main>
@@ -99,6 +99,7 @@ const InputWrapper = styled.div`
   border-top: 1px solid rgba(130, 132, 135, 0.18);
 
   .send-btn  {
+    cursor: pointer;
     width: 2.4rem;
     height: 2.4rem;
     background: rgba(130, 132, 135, 0.18);
@@ -137,6 +138,7 @@ const ReactionsTitle = styled.h1`
   letter-spacing: 0.1rem;
   position: relative;
   font-size: 1rem;
+  margin:1rem 0.6rem;
   text-align: right;
   width: 40%;
   height: 10%;
