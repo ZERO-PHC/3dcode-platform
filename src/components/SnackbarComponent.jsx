@@ -12,7 +12,7 @@ export default function SnackbarComponent({ open, comment }) {
   if (IsProcessing)
 
     return (
-      <Main style={snackbarAnimation}>
+      <Main >
         {Message !== "loading" ? <span style={{ fontSize: "0.8rem" }}>{Message}</span>
           :
           <LoadingWrapper>
@@ -26,7 +26,7 @@ export default function SnackbarComponent({ open, comment }) {
     );
 }
 
- const opacity = keyframes`
+ const fadeIn = keyframes`
  from {
    opacity: 0;
    scale:0;
@@ -49,7 +49,6 @@ const ProgressBar = styled.div`
   margin-top: 10px;
   margin-bottom: 10px;
   overflow: hidden;
-  animation: ${opacity} 0.3s ease-in-out;
 `;
 
 const LoadingWrapper = styled.div`
@@ -77,5 +76,7 @@ const Main = styled.main`
   left: 4rem;
   z-index: 99;
   border-radius: 12px;
+  animation: ${fadeIn} 0.3s ease-in-out;
+
 `;
 
