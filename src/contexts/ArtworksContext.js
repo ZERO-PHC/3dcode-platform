@@ -2,8 +2,8 @@ import React, { useState, useContext, useEffect } from "react";
 import { useAuth } from "./AuthContext";
 import { db } from "../firebase";
 import { collection, getDocs, onSnapshot } from "firebase/firestore";
-import { categories } from "../categories";
- import { useRouter } from "next/router";
+import { categories } from "../data/categories";
+import { useRouter } from "next/router";
 
 export const ArtworksContext = React.createContext("");
 export const useArtworks = () => useContext(ArtworksContext);
@@ -31,7 +31,6 @@ const mainCategories = [
     active: false,
     selected: false,
   },
- 
 ];
 
 export default function ArtworksProvider({ children }) {
@@ -117,28 +116,30 @@ export default function ArtworksProvider({ children }) {
     // get the artworks from the firestore using the getDocs function
     // create the artworks ref
 
-    console.log("adding docs");
+    if (Artworks.length < 27) {
+      console.log("adding docs");
 
-    const colRef = collection(db, "artworks");
+      const colRef = collection(db, "artworks");
 
-    // get the docs from the colRef using the getDocs function
-    const qSnap = await getDocs(colRef);
-    // console.log("docs", qSnap.docs)
-    const docs = qSnap.docs;
-    const formattedDocs = getFormattedDocs(docs);
-    // console.log("formattedDocs2", formattedDocs)
+      // get the docs from the colRef using the getDocs function
+      const qSnap = await getDocs(colRef);
+      // console.log("docs", qSnap.docs)
+      const docs = qSnap.docs;
+      const formattedDocs = getFormattedDocs(docs);
+      // console.log("formattedDocs2", formattedDocs)
 
-    // filter out the artworks that are already in the Artworks array
-    const filteredDocs = formattedDocs.filter((artwork) => {
-      return !Artworks.some((art) => art.id === artwork.id);
-    });
-    console.log("filteredDocs2", filteredDocs);
+      // filter out the artworks that are already in the Artworks array
+      const filteredDocs = formattedDocs.filter((artwork) => {
+        return !Artworks.some((art) => art.id === artwork.id);
+      });
+      console.log("filteredDocs2", filteredDocs);
 
-    // create the mosaic artworks
-    const mosaicArtworks = createArtworksMosaic(filteredDocs);
+      // create the mosaic artworks
+      const mosaicArtworks = createArtworksMosaic(filteredDocs);
 
-    // add the mosaic artworks to the Artworks array
-    setArtworks([...Artworks, ...mosaicArtworks]);
+      // add the mosaic artworks to the Artworks array
+      setArtworks([...Artworks, ...mosaicArtworks]);
+    }
   };
 
   const createArtworksMosaic = (docs) => {
@@ -152,7 +153,12 @@ export default function ArtworksProvider({ children }) {
       return doc.AspectRatio === "landscape";
     });
 
-    console.log("artworksAspects", portraitArtworks, squareArtworks, landscapeArtworks)
+    console.log(
+      "artworksAspects",
+      portraitArtworks,
+      squareArtworks,
+      landscapeArtworks
+    );
 
     const artworksSet = [
       { ...squareArtworks[0] },

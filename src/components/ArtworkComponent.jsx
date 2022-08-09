@@ -1,11 +1,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import Image from "next/image";
-import { animated, config, useSpring } from "react-spring";
 import PrimaryBtnComponent from './PrimaryBtn';
-import { useOnScreen } from '../hooks/useOnScreen';
 
 
 export default function ArtworkComponent({
@@ -14,7 +11,6 @@ export default function ArtworkComponent({
   currentWrapper,
   isOwner,
   idx,
-  mobile,
   transform
 }) {
 
@@ -23,20 +19,21 @@ export default function ArtworkComponent({
   // const lastArtwork = useRef();
   // const lastArtworkValue = useOnScreen(lastArtwork);
 
-  const nameAnimation = useSpring({
-    opacity: Hovered ? 1 : 0,
-    transform: Hovered ? 'translate(0%)' : 'translate(-30%)',
-  })
-  const underlineAnimation = useSpring({
-    opacity: Hovered ? 0.5 : 0,
-    transform: Hovered ? 'translateX(0%) skewX(-20deg)' : 'translateX(-30%) skewX(-20deg)',
+  // const nameAnimation = useSpring({
+  //   opacity: Hovered ? 1 : 0,
+  //   transform: Hovered ? 'translate(0%)' : 'translate(-30%)',
+  // })
+  // const underlineAnimation = useSpring({
+  //   opacity: Hovered ? 0.5 : 0,
+  //   transform: Hovered ? 'translateX(0%) skewX(-20deg)' : 'translateX(-30%) skewX(-20deg)',
 
-  })
-  const overlayAnimation = useSpring({
-    opacity: Hovered ? 1 : 0,
-    // transform: Hovered ? 'translateY(0%)' : 'translateY(0%)',
+  // })
+  // const overlayAnimation = useSpring({
+  //   opacity: Hovered ? 1 : 0,
+  //   // transform: Hovered ? 'translateY(0%)' : 'translateY(0%)',
+  // })
 
-  })
+
 
 
 
@@ -47,11 +44,11 @@ export default function ArtworkComponent({
       case "details":
         return "6rem"
       case "main":
-        if (!mobile) {
-          return artwork.AspectRatio === "landscape" ? "32rem " : "16rem"
-        } else {
-          return "8rem"
-        }
+        // // if (!mobile) {
+        return artwork.AspectRatio === "landscape" ? "32rem " : "16rem"
+      // // // } else {
+      //   return "8rem"
+      // }
 
       default:
         break;
@@ -69,15 +66,15 @@ export default function ArtworkComponent({
           return "2rem"
         }
       case "main":
-        if (!mobile) {
-          if (artwork.AspectRatio === "portrait") {
-            return "26rem"
-          } else {
-            return "16rem"
-          }
+        // if (!mobile) {
+        if (artwork.AspectRatio === "portrait") {
+          return "26rem"
         } else {
-          return "13rem"
+          return "16rem"
         }
+      // } else {
+      //   return "13rem"
+      // }
 
       default:
         break;
@@ -98,88 +95,100 @@ export default function ArtworkComponent({
     //   // case 5:
     //   //   return "TranslateX(30%)"
     //   case 6:
-      //     return "TranslateY(-38.5%)"
+    //     return "TranslateY(-38.5%)"
     //   case 8:
     //     return "TranslateY(-60%)"
     //   case 7:
     //     return "TranslateY(-60%)"
 
-      // default:
-      //   return "0rem 0rem"
+    // default:
+    //   return "0rem 0rem"
     // }
 
   }
 
   return (
-    <div style={{
-      filter: "blur(none)"
-    }}>
+    // <div style={{
+    //   filter: "blur(none)"
+    // }}>
+    <Artwork
+      onPointerEnter={() => setHovered(true)}
+      onPointerLeave={() => setHovered(false)}
+      onClick={() => handleArtworkSelection(artwork)}
+      key={idx}
+      width={resolveWidth()}
+      height={resolveHeight()}
+      isOwner={isOwner}
+      transform={transform}
 
-
-      <Artwork
-        onPointerEnter={() => setHovered(true)}
-        onPointerLeave={() => setHovered(false)}
-        onClick={() => handleArtworkSelection(artwork)}
-        key={idx}
-        width={resolveWidth()}
-        height={resolveHeight()}
-        isOwner={isOwner}
-        transform={transform}
-
-      >
-        {idx !== 6 ?
-          <Image
-            style={{ borderRadius: "0.5rem" }}
-            src={artwork.ArtworkImg ? artwork.ArtworkImg : "/assets/images/coin.png"}
-            alt={"img"}
-            loading="lazy"
-            placeholder="blur"
-            blurDataURL="/assets/placeholder.png"
-            layout="fill"
-          /> :
-          //<video with au
-          <video autoPlay loop muted src="https://storage.googleapis.com/dream-machines-output/f4e5341a-d06c-42a9-8023-413d3b55fd47/video.mp4" style={{ height: "16rem", borderTopLeftRadius: "0.6rem", borderTopRightRadius: "0.6rem", borderBottom: "0.5px solid lightgrey" }} />
-        }
-        <ArtworkName style={nameAnimation}>
-          {artwork.name}
-        </ArtworkName>
-        <EngineName style={nameAnimation}>
-          {artwork.SelectedEngine === "mid" ? <main style={{ position: "relative", borderRadius: "50px", height: "2rem", width: "2rem", border: "2px solid black", }}>
-            <Image src="https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg" layout="fill" alt="mid" style={{ borderRadius: "50px" }}
+    >
+      {idx !== 6 ?
+        <Image
+          style={{ borderRadius: "0.5rem" }}
+          src={artwork.ArtworkImg ? artwork.ArtworkImg : "/assets/images/coin.png"}
+          alt={"img"}
+          loading="lazy"
+          placeholder="blur"
+          blurDataURL="/assets/placeholder.png"
+          layout="fill"
+        /> :
+        //<video with au
+        <video autoPlay loop muted src="https://storage.googleapis.com/dream-machines-output/f4e5341a-d06c-42a9-8023-413d3b55fd47/video.mp4" style={{ height: "16rem", borderTopLeftRadius: "0.6rem", borderTopRightRadius: "0.6rem", borderBottom: "0.5px solid lightgrey" }} />
+      }
+      {/* <ArtworkName style={nameAnimation}> */}
+      <ArtworkName isHovered={Hovered} >
+        {artwork.name}
+      </ArtworkName>
+      <EngineName isHovered={Hovered}  >
+        {artwork.SelectedEngine === "mid" ? <main style={{ position: "relative", borderRadius: "50px", height: "2rem", width: "2rem", border: "2px solid black", }}>
+          <Image src="https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg" layout="fill" alt="mid" style={{ borderRadius: "50px" }}
+          />
+        </main> : <Image src="https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg" height={100} width={100}
+          alt="low" />}
+      </EngineName>
+      <Underline isHovered={Hovered}  />
+      {/* <Overlay style={overlayAnimation} /> */}
+      <Overlay isHovered={Hovered} />
+      {idx === 6 && <div style={{ height: "40%", width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}  >
+        <div style={{ width: "100%", textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <header style={{ fontSize: "small" }}>Created with</header>
+          <main style={{ position: "relative", borderRadius: "50px", height: "2rem", width: "2rem", border: "2px solid black", margin: "0.5rem" }}>
+            <Image src="https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg" layout="fill" alt="mid" style={{ borderRadius: "50px", marginLeft: "0.5rem" }}
             />
-          </main> : <Image src="https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg" height={100} width={100}
-            alt="low" />}
-        </EngineName>
-        <Underline style={underlineAnimation} />
-        <Overlay style={overlayAnimation} />
-        {idx === 6 && <div style={{ height: "40%", width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}  >
-          <div style={{ width: "100%", textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center" }}>
-            <header style={{ fontSize: "small" }}>Created with</header>
-            <main style={{ position: "relative", borderRadius: "50px", height: "2rem", width: "2rem", border: "2px solid black", margin: "0.5rem" }}>
-              <Image src="https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg" layout="fill" alt="mid" style={{ borderRadius: "50px", marginLeft: "0.5rem" }}
-              />
-            </main>
-          </div>
+          </main>
+        </div>
 
-          <PrimaryBtnComponent label={"Get your free trial"} />
-        </div>}
-      </Artwork>
-    </div>
+        <PrimaryBtnComponent label={"Get your free trial"} />
+      </div>}
+    </Artwork>
+    // </div>
   );
 
 
 }
 
-// }
+
+const animationOne = keyframes`
+
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+`;
+
 
 const Artwork = styled.div`
-cursor: pointer;
 position: relative;
+cursor: pointer;
 margin:0.5rem;
 color:white;
 background-color: black;
 border-radius:0.6rem;
 text-transform: uppercase;
+z-index: 0;
 transform: ${(props) => props.transform};
 width: ${(props) => props.width};
 height: ${(props) => props.height};
@@ -195,46 +204,64 @@ transition: all 0.3s ease-in-out;
 `;
 
 
-const Overlay = styled(animated.div)`
+const Overlay = styled.div`
 background: linear-gradient(to top, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 100%);
   height: 100%;
   width: 100%;
   position: absolute;
-  // border-radius: 0.2rem;
+  border-radius: 0.2rem;
   bottom: 0;
-  z-index:1;
+  opacity: ${(props) => props.isHovered ? "1" : "0"};
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    animation: ${animationOne} 0.3s ease-in-out; 
+  }
   `
 
-const ArtworkName = styled(animated.div)`
+const ArtworkName = styled.div`
   position: absolute;
   bottom: 0.6rem;
   left: 0.5rem;
-  font - size: 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 300;
   color: white;
-  z-index: 2;
-
+  z-index: 4;
+  // animate the translateX when hovered
+  transform: ${(props) => props.isHovered ? "translateX(0rem)" : "translateX(-2rem)"};
+  opacity: ${(props) => props.isHovered ? "1" : "0"};
+  transition: all 0.3s ease-in-out;
   `;
 
-const EngineName = styled(animated.div)`
+// const EngineName = styled(animated.div)`
+const EngineName = styled.div`
   position: absolute;
   bottom: 0.6rem;
   right: 0.5rem;
   font - size: 1.2rem;
   color: white;
   z-index: 2;
+  // animate the translateX when hovered
+  transform: ${(props) => props.isHovered ? "translateX(0rem)" : "translateX(0.5rem)"};
+  opacity: ${(props) => props.isHovered ? "1" : "0"};
+  transition: all 0.9s ease-in-out;
 
   `;
 
-const Underline = styled(animated.div)`
+const Underline = styled.div`
   position: absolute;
   width: 20%;
   opacity: 0.5;
   z-index: 2;
   height: 0.2rem;
-  background-color: white;
-  transform: skewX(-20deg);
+  background-color: rgba(255, 255, 255, 0.5);
   left: 0.4rem;
   bottom: 0.5rem;
+  // animate the translateX when hovered
+  transform: ${(props) => props.isHovered ? "translateX(0rem) skewX(-30deg)" : "translateX(-1rem) skewX(-30deg)"};
+  opacity: ${(props) => props.isHovered ? "1" : "0"};
+  transition: all 0.6s ease-in-out;
+
   @media(max - width: 768px) {
     width: 100 %;
     height: 0.5rem;

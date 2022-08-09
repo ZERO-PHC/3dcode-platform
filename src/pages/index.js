@@ -12,6 +12,7 @@ import ArtgridSection from "../sections/ArtgridSection";
 import Image from "next/image";
 import PrimaryBtnComponent from "../components/PrimaryBtn";
 import VerticalSpace from "../atoms/VerticalSpace";
+import LogoWrapper from "../components/LogoWrapper";
 
 export default function Home({ windowDimensions }) {
   const { user, login } = useAuth();
@@ -72,30 +73,34 @@ export default function Home({ windowDimensions }) {
     return (
       <>
         <Wrapper>
-         {!user && <Overlay>
-            <main
-              style={{
-                background: "white",
-                width: "28rem",
-                height: "14rem",
-                borderRadius: "1rem",
-                color: "black",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <div>
-              <Image height={150} width={150} src="/assets/logo.png" />
-
-              </div>
-              <VerticalSpace height={"0rem"} />
-              <div>
-                <PrimaryBtnComponent label="Log in / Sign up" onClick={login}/>
-              </div>
-            </main>
-          </Overlay>}
+          {!user && (
+            <Overlay>
+              <main
+                style={{
+                  background: "white",
+                  width: "28rem",
+                  height: "14rem",
+                  borderRadius: "1rem",
+                  color: "black",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <div>
+                  <LogoWrapper />
+                </div>
+                <VerticalSpace height={"0rem"} />
+                <div>
+                  <PrimaryBtnComponent
+                    label="Log in / Sign up"
+                    onClick={login}
+                  />
+                </div>
+              </main>
+            </Overlay>
+          )}
 
           <main className="mainContent">
             <section className="sidebar">

@@ -1,11 +1,10 @@
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
-import { loadStripe } from "@stripe/stripe-js";
 import { useRouter } from "next/router";
 import { animated, useSpring, config } from "react-spring";
 // import "@tensorflow/tfjs";
-import * as toxicity from "@tensorflow-models/toxicity";
+// import * as toxicity from "@tensorflow-models/toxicity";
 
 import { useAuth } from "../../contexts/AuthContext";
 import { useTransaction } from "../../contexts/TransactionContext";
@@ -106,66 +105,6 @@ export default function ArtworkDetails({ windowDimensions }) {
     setIsAnimating(true);
   }, []);
 
-  // useEffect(() => {
-  //   const keyDownHandler = event => {
-  //     console.log('User pressed: ', event.key);
-
-  //     if (event.key === 'Enter') {
-  //       event.preventDefault();
-
-  //       // 👇️ your logic here
-  //       handleCommentPost()
-        
-  //     }
-  //   };
-
-  //   document.addEventListener('keydown', keyDownHandler);
-
-  //   return () => {
-  //     document.removeEventListener('keydown', keyDownHandler);
-  //   };
-  // }, []);
-  const getToxicity = async (model) => {
-    setIsProcessing(true);
-    setLoading(false);
-
-    const sentences = [Comment];
-
-    model.classify(sentences).then((predictions) => {
-      // `predictions` is an array of objects, one for each prediction head,
-      // that contains the raw probabilities for each input along with the
-      // final prediction in `match` (either `true` or `false`).
-      // If neither prediction exceeds the threshold, `match` is `null`.
-
-      console.log("preds", predictions);
-
-      // loop over predictions
-      let toxicMatches = 0;
-      predictions.forEach((prediction) => {
-        // if prediction is true
-
-        if (prediction.results[0].match) {
-          console.log("toxic");
-          toxicMatches++;
-        } else {
-          console.log("not toxic");
-        }
-
-        if (toxicMatches > 0) {
-          setMessage("Toxic message");
-        } else {
-          setMessage("Posted Comment");
-        }
-
-        setTimeout(() => {
-          setIsProcessing(false);
-        }, 4000);
-      });
-
-      toxicMatches === 0 && postComment();
-    });
-  };
-
   const handleCommentChange = (e) => {
     setComment(e.target.value);
   };
@@ -175,36 +114,13 @@ export default function ArtworkDetails({ windowDimensions }) {
       e.preventDefault();
       handleCommentPost();
     }
-  }
-
+  };
 
   const handleCommentPost = async () => {
     setLoading(true);
     console.log("loading model");
 
-    // toxicity.load(threshold).then((model) => {
-    //       getToxicity(model);
-    //     });
-
     postComment();
-    // const model = await toxicity.load(threshold);
-
-    // console.log("loaded model");
-
-    // getToxicity(model);
-
-    // const artworkRef = doc(db, "artworks", artworkId);
-
-    // const colRef = collection(artworkRef, "comments");
-
-    // // artwork.variations.forEach((variation) => {
-    // // add each variation to the artwork
-    // addDoc(colRef, { Comment }).catch((error) => {
-    //   console.log(error);
-    // });
-
-    // // });
-    // console.log("added doc");
   };
 
   const postComment = async () => {
@@ -227,7 +143,7 @@ export default function ArtworkDetails({ windowDimensions }) {
     addDoc(notifsRef, {
       notification: "You have a new comment!",
       read: false,
-      artworkId
+      artworkId,
     }).catch((error) => {
       console.log(error);
     });
@@ -265,7 +181,7 @@ export default function ArtworkDetails({ windowDimensions }) {
     addDoc(notifsRef, {
       notification: "Someone reacted to your artwork!",
       read: false,
-      artworkId
+      artworkId,
     }).catch((error) => {
       console.log(error);
     });
@@ -343,33 +259,6 @@ export default function ArtworkDetails({ windowDimensions }) {
     }
   };
 
-  // create a function called handleBuy
-  const handleBuy = async () => {
-    L(true);
-    // if (Coins >= Artwork.price && !Artwork.purchased) {
-    if (Coins >= Artwork.price) {
-      // update the artwork to have the purchased property set to true that is on the artworks firestore collection
-      const artworkRef = doc(db, "artworks", artworkId);
-      await updateDoc(artworkRef, {
-        purchased: true,
-        owner: user.email,
-      }).catch((err) => console.log(err));
-
-      // add the artwork to the user's collection of purchased artworks
-      const userRef = doc(db, "users", user.email);
-      // console.log("firestore user", FirestoreUser.purchasedArtworks);
-      await updateDoc(userRef, {
-        purchasedArtworks: [...FirestoreUser.purchasedArtworks, artworkId],
-        coins: Coins - Artwork.price,
-      }).catch((err) => console.log(err));
-
-      // L(false);
-    } else {
-      alert("You don´t have enough coins");
-    }
-  };
-
-  // create a function called handleAddFavorite that will add the artwork to the user's favorites
   const handleAddFavorite = async () => {
     // add the artwork to the user's collection of favorites
     const userRef = doc(db, "users", user.email);
@@ -497,7 +386,7 @@ export default function ArtworkDetails({ windowDimensions }) {
                   alignItems: "center",
                 }}
               >
-                <ReactionsWrapper style={promptStyles}>
+                <ReactionsWrapper>
                   <PromptOverlay>
                     <section
                       style={{
@@ -522,36 +411,22 @@ export default function ArtworkDetails({ windowDimensions }) {
                         />
                         <AnimatedEmoticon
                           artboard={"joy"}
-                          handleReactionPost={() =>
-                            handleReactionPost("lol")
-                          }
+                          handleReactionPost={() => handleReactionPost("lol")}
                         />
                         <AnimatedEmoticon
                           artboard={"meh"}
-                          handleReactionPost={() =>
-                            handleReactionPost("meh")
-                          }
+                          handleReactionPost={() => handleReactionPost("meh")}
                         />
                       </div>
 
                       <div style={{ width: "50%" }}>
                         <AnimatedEmoticon
                           artboard={"Onfire"}
-                          handleReactionPost={() =>
-                            handleReactionPost("fire")
-                          }
+                          handleReactionPost={() => handleReactionPost("fire")}
                         />
                         <AnimatedEmoticon
                           artboard={"love"}
-                          handleReactionPost={() =>
-                            handleReactionPost("love")
-                          }
-                        />
-                        <AnimatedEmoticon
-                          artboard={"Onfire"}
-                          handleReactionPost={() =>
-                            handleReactionPost("trash")
-                          }
+                          handleReactionPost={() => handleReactionPost("love")}
                         />
                       </div>
                     </section>
@@ -584,6 +459,17 @@ export default function ArtworkDetails({ windowDimensions }) {
               </Header>
 
               <Overlay />
+              <div className="tags-container">
+                {Artwork.tags.map((tag, i) =>
+                  i < 2 ? (
+                    <div style={{ display: "flex", width: "3rem" }} key={i}>
+                      {tag} |{" "}
+                    </div>
+                  ) : (
+                    <div key={i}>{tag} </div>
+                  )
+                )}
+              </div>
             </ArtworkContainer>
             <CommentsSection
               animation={variationsAnimation}
@@ -599,9 +485,20 @@ export default function ArtworkDetails({ windowDimensions }) {
               style={{ position: "absolute", bottom: "1.7rem", zIndex: "2" }}
             >
               <Avatar>
-              <svg width="2.4rem" height="2.4rem" viewBox="0 0 72 67" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fillRule="evenodd" clipRule="evenodd" d="M55.3199 66.382L55.3201 66.285C55.3201 53.8012 46.6457 43.6812 35.9454 43.6812C25.245 43.6812 16.5707 53.8012 16.5707 66.285L16.5707 66.312C6.60339 59.91 0 48.7261 0 36C0 16.1177 16.1177 0 36 0C55.8823 0 72 16.1177 72 36C72 48.7727 65.3483 59.9917 55.3199 66.382ZM22.7484 31.3223C23.8232 37.6715 29.349 42.5069 36.0041 42.5069C43.4295 42.5069 49.449 36.4874 49.449 29.062C49.449 21.6366 43.4295 15.6172 36.0041 15.6172C30.8627 15.6172 26.3953 18.5031 24.1335 22.7434C25.1523 22.0953 25.948 23.3626 25.9292 25.6566C25.9098 28.0236 25.0305 30.5872 23.9653 31.3827C23.5002 31.73 23.0765 31.6828 22.7484 31.3223ZM28.1133 27.0044C28.092 29.5983 29.3989 31.4914 31.0322 31.2327C32.6655 30.974 34.0068 28.6615 34.0281 26.0676C34.0494 23.4736 32.7426 21.5806 31.1092 21.8393C29.4759 22.0979 28.1346 24.4105 28.1133 27.0044Z" fill="black" />
-                  </svg>
+                <svg
+                  width="2.4rem"
+                  height="2.4rem"
+                  viewBox="0 0 72 67"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M55.3199 66.382L55.3201 66.285C55.3201 53.8012 46.6457 43.6812 35.9454 43.6812C25.245 43.6812 16.5707 53.8012 16.5707 66.285L16.5707 66.312C6.60339 59.91 0 48.7261 0 36C0 16.1177 16.1177 0 36 0C55.8823 0 72 16.1177 72 36C72 48.7727 65.3483 59.9917 55.3199 66.382ZM22.7484 31.3223C23.8232 37.6715 29.349 42.5069 36.0041 42.5069C43.4295 42.5069 49.449 36.4874 49.449 29.062C49.449 21.6366 43.4295 15.6172 36.0041 15.6172C30.8627 15.6172 26.3953 18.5031 24.1335 22.7434C25.1523 22.0953 25.948 23.3626 25.9292 25.6566C25.9098 28.0236 25.0305 30.5872 23.9653 31.3827C23.5002 31.73 23.0765 31.6828 22.7484 31.3223ZM28.1133 27.0044C28.092 29.5983 29.3989 31.4914 31.0322 31.2327C32.6655 30.974 34.0068 28.6615 34.0281 26.0676C34.0494 23.4736 32.7426 21.5806 31.1092 21.8393C29.4759 22.0979 28.1346 24.4105 28.1133 27.0044Z"
+                    fill="black"
+                  />
+                </svg>
               </Avatar>
             </div>
 
@@ -634,9 +531,35 @@ const MainWrapper = styled.div`
   align-items: center;
   background-color: black;
   padding: 0;
+
+  .tags-container {
+    width: 100%;
+    height: 8%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    position: absolute;
+    bottom: 0;
+    text-transform: uppercase;
+    color: lightgray;
+  }
 `;
 
-const ReactionsWrapper = styled(animated.div)`
+// keyframes of opacity and transformX for the artwork
+const reactionsAnimation = keyframes`
+
+  0% {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0px);
+  }
+  `;
+
+const ReactionsWrapper = styled.div`
   height: 70%;
   width: 100%;
   background: rgba(130, 132, 135, 0.23);
@@ -646,6 +569,8 @@ const ReactionsWrapper = styled(animated.div)`
   justify-content: center;
   color: white;
   position: relative;
+  animation: ${reactionsAnimation} 1.6s ease-out;
+  // transition: all 1.5s ease-out;
 `;
 
 const PromptOverlay = styled.div`
@@ -812,26 +737,29 @@ const moveX = keyframes`
 const fadeIn = keyframes`
 0% {
   opacity: 0;
+  transform: scale(0.5);
   }
   100% {
     opacity: 1;
+    transform: scale(1);
+
     }
     `;
 
-// create a styled component that implement the fadeIn animation and the scale animation
 
-const ArtworkContainer = styled(animated.div)`
+const ArtworkContainer = styled.div`
   display: flex;
   color: white;
   flex-direction: column;
   justify-content: space-between;
   align-items: left;
-  transform: scale(0.5);
   height: 86%;
   width: 30rem;
   position: relative;
   margin-bottom: 1rem;
   margin-top: 0rem;
+  opacity: 1;
+  animation: ${fadeIn} 2s ease-out;
   @media (max-width: 768px) {
     height: auto;
     width: 100vw;
@@ -873,7 +801,7 @@ const ArtworkContainer = styled(animated.div)`
 const Underline = styled.div`
   width: 20%;
   height: 0.2rem;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.5);
   transform: skewX(-20deg);
   left: 0;
   @media (max-width: 768px) {

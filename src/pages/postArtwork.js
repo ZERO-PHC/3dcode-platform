@@ -3,7 +3,6 @@ import Image from "next/image";
 // imoport styled and keyframes from the styled-components library
 import styled from "styled-components";
 import { useRouter } from "next/router";
-import { loadStripe } from "@stripe/stripe-js";
 
 import Navbar from "../components/Navbar";
 import { useAuth } from "../contexts/AuthContext";
@@ -17,26 +16,26 @@ import { useImage } from "../hooks/useImage";
 
 import { db } from "../firebase";
 import ArtgridComponent from "../components/ArtgridComponent";
-import { categories } from "../categories";
+import { categories } from "../data/categories";
 import VerticalSpace from "../atoms/VerticalSpace";
 
 const images = [
   {
     id: 0,
     src:
-      "https://mj-gallery.com/71fbcac0-0cd4-4f5e-b268-65f12b94b386/grid_0.png",
+      "https://mj-gallery.com/8d24ecb9-560f-4d95-9499-3a700932a372/grid_0.png",
     selected: false,
   },
   {
     id: 1,
     src:
-      "https://mj-gallery.com/9218c558-9d7a-4118-9df6-24f2de4d4ce6/grid_0.png",
+      "https://mj-gallery.com/62f649d3-fc1f-4042-8bc5-1ad63da57497/grid_0.png",
     selected: false,
   },
   {
     id: 2,
     src:
-      "https://mj-gallery.com/b0cf6b15-35a7-4a56-8b29-6a2dffd952ba/grid_0.png",
+      "https://mj-gallery.com/a7f943be-7992-4cfa-8c04-aebf9f801c8e/grid_0.png",
     selected: false,
   },
 ];
@@ -241,33 +240,48 @@ export default function PostArtwork() {
     // setImages(newImages);
   };
 
-  const ImagesOptions = () => {
-    const { hasLoaded, hasError, AspectRatio } = useImage(images[0].src);
+  const ImgOption = ({image}) => {
+    const { hasLoaded, hasError, AspectRatio } = useImage(image.src);
 
-    return Images.map((image, index) => {
-      return (
-        <div
-          onClick={() => handleSelectedImage(image.src)}
-          style={{ display: "flex" }}
-          key={index}
-        >
-          {hasLoaded ? (
-            <img
-              src={image.src}
+    return (
+      <div
+        onClick={() => handleSelectedImage(image.src)}
+        style={{ display: "flex" }}
+      >
+        {hasLoaded ? (
+          <img
+            src={image.src}
+            style={{
+              objectFit: "contain",
+              height: "4rem",
+              border: "2px solid black",
+            }}
+            alt="artwork"
+          />
+        ) : (
+          <div style={{ height: "4rem" }}>
+            <div
               style={{
-                objectFit: "contain",
                 height: "4rem",
-                border: "2px solid black",
+                width: "3rem",
+                backgroundColor: "black",
+                color: "white",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
               }}
-              alt="artwork"
-            />
-          ) : (
-            <div style={{height:"100%"}}>
+            >
               <Spinner />
             </div>
-          )}
-        </div>
-      );
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const ImagesOptions = () => {
+    return Images.map((image, i) => {
+      return <ImgOption key={i} image={image} />;
     });
   };
 
@@ -301,7 +315,7 @@ export default function PostArtwork() {
         ></div>
         <VerticalSpace height={"1rem"} />
         <section style={{ height: "9%" }}>
-          <ArtworkTitle>ARTWORKS</ArtworkTitle>
+          <ArtworkTitle>SELECT ARTWORK</ArtworkTitle>
           <Underline />
         </section>
         <section
@@ -393,9 +407,11 @@ export default function PostArtwork() {
         </section>
         <section style={{ margin: "2rem 0rem" }}>
           <PrimaryBtn onClick={handlePost}>
-            {Loading ? <Spinner /> : "POST"}
+             {"POST"}
             <div style={{ width: "0.5rem" }}></div>
-            <LogoutIcon />
+            {Loading ? <Spinner /> : <LogoutIcon />}
+
+            
           </PrimaryBtn>
         </section>
       </div>

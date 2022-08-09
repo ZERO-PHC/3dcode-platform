@@ -113,19 +113,44 @@ export default function Profile() {
             <Underline />
           </div>
           <section style={{ display: "flex" }}>
-            <PrimaryBtn onClick={() => setCategory("posted")}selected={Category === "posted"}>
+            <PrimaryBtn
+              onClick={() => setCategory("posted")}
+              selected={Category === "posted"}
+            >
               Posted
               <div style={{ width: "0.5rem" }}></div>
               <Iconify icon="mdi-upload" />
             </PrimaryBtn>
-            <PrimaryBtn onClick={() => setCategory("bookmarked")}selected={Category === "bookmarked"}>
+            <PrimaryBtn
+              onClick={() => setCategory("bookmarked")}
+              selected={Category === "bookmarked"}
+            >
               Bookmarked
               <div style={{ width: "0.5rem" }}></div>
               <Iconify icon="mdi-bookmark" />
             </PrimaryBtn>
           </section>
-          {PostedArtworks &&  <ProfileArtworksModule artworks={Category === "posted" ? PostedArtworks : BookmarkedArtworks} />}
-            
+          {PostedArtworks.length > 0 ? (
+            <ProfileArtworksModule
+              artworks={
+                Category === "posted" ? PostedArtworks : BookmarkedArtworks
+              }
+            />
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+                height: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {Category === "posted"
+                ? "No Posted Artworks"
+                : "No Bookmarked Artworks"}
+            </div>
+          )}
         </PacksWrapper>
       </Container>
     </MainWrapper>
@@ -209,7 +234,8 @@ const BalanceWrapper = styled.div`
   align-items: start;
   justify-content: center;
   width: 100vw;
-  height: 16%;
+  height: 20%;
+  margin-top: 1rem;
   font-size: 2rem;
   color: black;
   text-shadow: 0 0 0.2rem #000;

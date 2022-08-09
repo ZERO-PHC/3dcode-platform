@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled,{keyframes} from 'styled-components';
 import Spinner from '../atoms/Spinner';
 import CommentComponent from '../components/CommentComponent';
 import Iconify from '../components/Iconify';
-import { animated } from "react-spring";
 
 export default function CommentsSection({ comments, handleCommentPost, handleKeyboardPost, Comment, handleCommentChange, Loading, animation }) {
 
@@ -63,8 +62,19 @@ export default function CommentsSection({ comments, handleCommentPost, handleKey
     </main>)
 }
 
+const commentsAnimation = keyframes`
 
-const CommentsWrapper = styled(animated.div)`
+  0% {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0px);
+  }
+  `;
+
+const CommentsWrapper = styled.div`
             position:relative;
             height: 60%;
             max-height: 60%;
@@ -79,6 +89,7 @@ const CommentsWrapper = styled(animated.div)`
             color: white;
             overflow: scroll;
             overflow-x: hidden;
+            animation: ${commentsAnimation} 1.6s ease-out;
             ::-webkit-scrollbar {
               width: 0rem;
               background: rgba(130, 132, 135, 0.23);
@@ -97,6 +108,9 @@ const InputWrapper = styled.div`
   background: rgba(130, 132, 135, 0.18);
   background-filter: blur(0.5rem);
   border-top: 1px solid rgba(130, 132, 135, 0.18);
+  animation: ${commentsAnimation} 1.6s ease-out;
+  border-bottom-left-radius: 0.6rem;
+  border-bottom-right-radius: 0.6rem;
 
   .send-btn  {
     cursor: pointer;
@@ -161,7 +175,7 @@ const ReactionsTitle = styled.h1`
     position: absolute
     width: 10px;
     height: 0.2rem;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.5);
     transform: skewX(-20deg);
     right: 0px;
   }

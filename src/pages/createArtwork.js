@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../firebase";
 import { collection, doc, addDoc, updateDoc } from "firebase/firestore";
+import { categories } from "../data/categories";
 
 const portraitImgs = [
   "https://mj-gallery.com/71fbcac0-0cd4-4f5e-b268-65f12b94b386/grid_0.png",
@@ -16,7 +17,7 @@ const landscapeImgs = [
   "https://mj-gallery.com/af8da145-ad9c-40fb-863e-292276b3a947/grid_0.png",
   "https://mj-gallery.com/74c2a92e-948b-4251-b739-93f3fe57852e/grid_0.png",
   "https://mj-gallery.com/8b6acff4-1402-4ca0-8ed9-604e90036fdd/grid_0.png",
-  "https://mj-gallery.com/13c84a99-4d4d-40fb-8598-5e4982916d14/grid_0.png"
+  "https://mj-gallery.com/13c84a99-4d4d-40fb-8598-5e4982916d14/grid_0.png",
 ];
 const squareImgs = [
   "https://mj-gallery.com/b0cf6b15-35a7-4a56-8b29-6a2dffd952ba/grid_0.png",
@@ -28,256 +29,59 @@ const squareImgs = [
 ];
 
 const artworks = [
-  {
-    author: "zerø",
-    authorUrl:
-      "https://firebasestorage.googleapis.com/v0/b/flowty-14109.appspot.com/o/profileImage.jpg?alt=media&token=c73d72e1-946a-4c4c-b083-dcac3fcd92d3",
-    name: "Artwork 6",
-    state: "active",
-    ArtworkImg: portraitImgs[0],
-    prompt: "Prompt 6",
-    price: 33,
-    AspectRatio: "portrait",
-    SelectedEngine: "mid",
-    reactionPoints: 0,
-    tags: ["all"],
-    timestamp: Date.now(),
-  },
-  {
-    author: "zerø",
-    authorUrl:
-      "https://firebasestorage.googleapis.com/v0/b/flowty-14109.appspot.com/o/profileImage.jpg?alt=media&token=c73d72e1-946a-4c4c-b083-dcac3fcd92d3",
-    name: "Artwork 6",
-    state: "active",
-    ArtworkImg: portraitImgs[1],
-    prompt: "Prompt 6",
-    price: 33,
-    AspectRatio: "portrait",
-    SelectedEngine: "mid",
-    reactionPoints: 0,
-    tags: ["all"],
-    timestamp: Date.now(),
-  },
-  {
-    author: "zerø",
-    authorUrl:
-      "https://firebasestorage.googleapis.com/v0/b/flowty-14109.appspot.com/o/profileImage.jpg?alt=media&token=c73d72e1-946a-4c4c-b083-dcac3fcd92d3",
-    name: "Artwork 6",
-    state: "active",
-    ArtworkImg: portraitImgs[2],
-    prompt: "Prompt 6",
-    price: 33,
-    AspectRatio: "portrait",
-    SelectedEngine: "mid",
-    reactionPoints: 0,
-    tags: ["all"],
-    timestamp: Date.now(),
-  },
-  {
-    author: "zerø",
-    authorUrl:
-      "https://firebasestorage.googleapis.com/v0/b/flowty-14109.appspot.com/o/profileImage.jpg?alt=media&token=c73d72e1-946a-4c4c-b083-dcac3fcd92d3",
-    name: "Artwork 6",
-    state: "active",
-    ArtworkImg: portraitImgs[3],
-    prompt: "Prompt 6",
-    price: 33,
-    AspectRatio: "portrait",
-    SelectedEngine: "mid",
-    reactionPoints: 0,
-    tags: ["all"],
-    timestamp: Date.now(),
-  },
-  {
-    author: "zerø",
-    authorUrl:
-      "https://firebasestorage.googleapis.com/v0/b/flowty-14109.appspot.com/o/profileImage.jpg?alt=media&token=c73d72e1-946a-4c4c-b083-dcac3fcd92d3",
-    name: "Artwork 6",
-    state: "active",
-    ArtworkImg: portraitImgs[4],
-    prompt: "Prompt 6",
-    price: 33,
-    AspectRatio: "portrait",
-    SelectedEngine: "mid",
-    reactionPoints: 0,
-    tags: ["all"],
-    timestamp: Date.now(),
-  },
-  {
-    author: "zerø",
-    authorUrl:
-      "https://firebasestorage.googleapis.com/v0/b/flowty-14109.appspot.com/o/profileImage.jpg?alt=media&token=c73d72e1-946a-4c4c-b083-dcac3fcd92d3",
-    name: "Artwork 6",
-    state: "active",
-    ArtworkImg: portraitImgs[5],
-    prompt: "Prompt 6",
-    price: 33,
-    AspectRatio: "portrait",
-    SelectedEngine: "mid",
-    reactionPoints: 0,
-    tags: ["all"],
-    timestamp: Date.now(),
-  },
-  {
-    author: "zerø",
-    authorUrl:
-      "https://firebasestorage.googleapis.com/v0/b/flowty-14109.appspot.com/o/profileImage.jpg?alt=media&token=c73d72e1-946a-4c4c-b083-dcac3fcd92d3",
-    name: "Artwork 6",
-    state: "active",
-    ArtworkImg: landscapeImgs[0],
-    prompt: "Prompt 6",
-    price: 33,
-    AspectRatio: "landscape",
-    SelectedEngine: "mid",
-    reactionPoints: 0,
-    tags: ["all"],
-    timestamp: Date.now(),
-  },
-  {
-    author: "zerø",
-    authorUrl:
-      "https://firebasestorage.googleapis.com/v0/b/flowty-14109.appspot.com/o/profileImage.jpg?alt=media&token=c73d72e1-946a-4c4c-b083-dcac3fcd92d3",
-    name: "Artwork 6",
-    state: "active",
-    ArtworkImg: landscapeImgs[1],
-    prompt: "Prompt 6",
-    price: 33,
-    AspectRatio: "landscape",
-    SelectedEngine: "mid",
-    reactionPoints: 0,
-    tags: ["all"],
-    timestamp: Date.now(),
-  },
-  {
-    author: "zerø",
-    authorUrl:
-      "https://firebasestorage.googleapis.com/v0/b/flowty-14109.appspot.com/o/profileImage.jpg?alt=media&token=c73d72e1-946a-4c4c-b083-dcac3fcd92d3",
-    name: "Artwork 6",
-    state: "active",
-    ArtworkImg: landscapeImgs[2],
-    prompt: "Prompt 6",
-    price: 33,
-    AspectRatio: "landscape",
-    SelectedEngine: "mid",
-    reactionPoints: 0,
-    tags: ["all"],
-    timestamp: Date.now(),
-  },
-  {
-    author: "zerø",
-    authorUrl:
-      "https://firebasestorage.googleapis.com/v0/b/flowty-14109.appspot.com/o/profileImage.jpg?alt=media&token=c73d72e1-946a-4c4c-b083-dcac3fcd92d3",
-    name: "Artwork 6",
-    state: "active",
-    ArtworkImg: landscapeImgs[3],
-    prompt: "Prompt 6",
-    price: 33,
-    AspectRatio: "landscape",
-    SelectedEngine: "mid",
-    reactionPoints: 0,
-    tags: ["all"],
-    timestamp: Date.now(),
-  },
-  {
-    author: "zerø",
-    authorUrl:
-      "https://firebasestorage.googleapis.com/v0/b/flowty-14109.appspot.com/o/profileImage.jpg?alt=media&token=c73d72e1-946a-4c4c-b083-dcac3fcd92d3",
-    name: "Artwork 6",
-    state: "active",
-    ArtworkImg: landscapeImgs[4],
-    prompt: "Prompt 6",
-    price: 33,
-    AspectRatio: "landscape",
-    SelectedEngine: "mid",
-    reactionPoints: 0,
-    tags: ["all"],
-    timestamp: Date.now(),
-  },
-  {
-    author: "zerø",
-    authorUrl:
-      "https://firebasestorage.googleapis.com/v0/b/flowty-14109.appspot.com/o/profileImage.jpg?alt=media&token=c73d72e1-946a-4c4c-b083-dcac3fcd92d3",
-    name: "Artwork 6",
-    state: "active",
-    ArtworkImg: landscapeImgs[5],
-    prompt: "Prompt 6",
-    price: 33,
-    AspectRatio: "landscape",
-    SelectedEngine: "mid",
-    reactionPoints: 0,
-    tags: ["all"],
-    timestamp: Date.now(),
-  },
-  {
-    author: "zerø",
-    authorUrl:
-      "https://firebasestorage.googleapis.com/v0/b/flowty-14109.appspot.com/o/profileImage.jpg?alt=media&token=c73d72e1-946a-4c4c-b083-dcac3fcd92d3",
-    name: "Artwork 6",
-    state: "active",
-    ArtworkImg: landscapeImgs[6],
-    prompt: "Prompt 6",
-    price: 33,
-    AspectRatio: "landscape",
-    SelectedEngine: "mid",
-    reactionPoints: 0,
-    tags: ["all"],
-    timestamp: Date.now(),
-  },
-  {
-    author: "zerø",
-    authorUrl:
-      "https://firebasestorage.googleapis.com/v0/b/flowty-14109.appspot.com/o/profileImage.jpg?alt=media&token=c73d72e1-946a-4c4c-b083-dcac3fcd92d3",
-    name: "Artwork 6",
-    state: "active",
-    ArtworkImg: squareImgs[0],
-    prompt: "Prompt 6",
-    price: 33,
-    AspectRatio: "square",
-    SelectedEngine: "mid",
-    reactionPoints: 0,
-    tags: ["all"],
-    timestamp: Date.now(),
-  },
-  {
-    author: "zerø",
-    authorUrl:
-      "https://firebasestorage.googleapis.com/v0/b/flowty-14109.appspot.com/o/profileImage.jpg?alt=media&token=c73d72e1-946a-4c4c-b083-dcac3fcd92d3",
-    name: "Artwork 6",
-    state: "active",
-    ArtworkImg: squareImgs[1],
-    prompt: "Prompt 6",
-    price: 33,
-    AspectRatio: "square",
-    SelectedEngine: "mid",
-    reactionPoints: 0,
-    tags: ["all"],
-    timestamp: Date.now(),
-  },
-  {
-    author: "zerø",
-    authorUrl:
-      "https://firebasestorage.googleapis.com/v0/b/flowty-14109.appspot.com/o/profileImage.jpg?alt=media&token=c73d72e1-946a-4c4c-b083-dcac3fcd92d3",
-    name: "Artwork 6",
-    state: "active",
-    ArtworkImg: squareImgs[2],
-    prompt: "Prompt 6",
-    price: 33,
-    AspectRatio: "square",
-    SelectedEngine: "mid",
-    reactionPoints: 0,
-    tags: ["all"],
-    timestamp: Date.now(),
-  },
+  { img: portraitImgs[0], aspectRatio: "portrait" },
+  { img: portraitImgs[1], aspectRatio: "portrait" },
+  { img: portraitImgs[2], aspectRatio: "portrait" },
+  { img: portraitImgs[3], aspectRatio: "portrait" },
+  { img: portraitImgs[4], aspectRatio: "portrait" },
+  { img: portraitImgs[5], aspectRatio: "portrait" },
+  { img: landscapeImgs[0], aspectRatio: "landscape" },
+  { img: landscapeImgs[1], aspectRatio: "landscape" },
+  { img: landscapeImgs[2], aspectRatio: "landscape" },
+  { img: landscapeImgs[3], aspectRatio: "landscape" },
+  { img: landscapeImgs[4], aspectRatio: "landscape" },
+  { img: landscapeImgs[5], aspectRatio: "landscape" },
+  { img: squareImgs[0], aspectRatio: "square" },
+  { img: squareImgs[1], aspectRatio: "square" },
+  { img: squareImgs[2], aspectRatio: "square" },
+  { img: squareImgs[3], aspectRatio: "square" },
+  { img: squareImgs[4], aspectRatio: "square" },
+  { img: squareImgs[5], aspectRatio: "square" },
 ];
+
+function getRandomTags() {
+  const randomTags = ["all"];
+  for (let i = 0; i < 2; i++) {
+    const randomIndex = Math.floor(Math.random() * categories.length);
+    randomTags.push(categories[randomIndex === 0 ? 1 : randomIndex].id);
+  }
+  return randomTags;
+}
+
+const getArtworks = () =>
+  artworks.map((artwork, index) => ({
+    author: "zerø",
+    authorUrl:
+      "https://firebasestorage.googleapis.com/v0/b/flowty-14109.appspot.com/o/profileImage.jpg?alt=media&token=c73d72e1-946a-4c4c-b083-dcac3fcd92d3",
+    name: `Artwork ${index}`,
+    state: "active",
+    ArtworkImg: artwork.img,
+    AspectRatio: artwork.aspectRatio,
+    SelectedEngine: "mid",
+    reactionPoints: 0,
+    tags: getRandomTags(3),
+    timestamp: Date.now(),
+  }));
 
 export default function CreateArtwork() {
   useEffect(() => {
+    // nested functions each one with their own category
     createArtworks();
   }, []);
 
   // arrow function to create artwork
   const createArtworks = async () => {
-    artworks.forEach(async (artwork) => {
+    getArtworks().forEach(async (artwork) => {
       const docRef = await addDoc(collection(db, "artworks"), artwork);
 
       console.log("Document written with ID: ", docRef.id);

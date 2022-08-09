@@ -15,7 +15,7 @@ export default function ArtgridSection({ artworks, width, handleArtworkSelection
     return (
         <ArtgridContainer ref={scrollRef}>
             <ArtgridComponent
-                mobile={width < 768 ? true : false}
+                // mobile={width < 768 ? true : false}
                 artworks={artworks}
                 currentWrapper={"main"}
                 handleArtworkSelection={handleArtworkSelection}

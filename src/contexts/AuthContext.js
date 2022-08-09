@@ -13,6 +13,7 @@ import {
   collection,
   getDocs,
 } from "firebase/firestore";
+import { useRouter } from "next/router";
 import { pseudonyms } from "../pseudonyms";
 
 export const AuthContext = createContext({});
@@ -24,6 +25,7 @@ export default function AuthProvider({ children }) {
   const [FirestoreUser, setFirestoreUser] = useState(null);
   const [Coins, setCoins] = useState(0);
   const [Notifications, setNotifications] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -142,9 +144,9 @@ export default function AuthProvider({ children }) {
   //   // setCoins(userDoc.data().coins);
   // };
 
-  const logout = () => {
-    auth.signOut();
-    console.log("logout");
+  const logout = async () => {
+    await auth.signOut();
+    router.push("/");
   };
 
   // const logOut = async () => {
