@@ -13,6 +13,8 @@ import Image from "next/image";
 import PrimaryBtnComponent from "../components/PrimaryBtn";
 import VerticalSpace from "../atoms/VerticalSpace";
 import LogoWrapper from "../components/LogoWrapper";
+import Head from "next/head";
+import Header from "../components/Header";
 
 export default function Home({ windowDimensions }) {
   const { user, login } = useAuth();
@@ -72,6 +74,7 @@ export default function Home({ windowDimensions }) {
   if (Artworks)
     return (
       <>
+        <Header />
         <Wrapper>
           {!user && (
             <Overlay>

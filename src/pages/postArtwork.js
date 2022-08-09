@@ -18,6 +18,7 @@ import { db } from "../firebase";
 import ArtgridComponent from "../components/ArtgridComponent";
 import { categories } from "../data/categories";
 import VerticalSpace from "../atoms/VerticalSpace";
+import Header from "../components/Header";
 
 const images = [
   {
@@ -244,6 +245,8 @@ export default function PostArtwork() {
     const { hasLoaded, hasError, AspectRatio } = useImage(image.src);
 
     return (
+      <>
+      <Header/>
       <div
         onClick={() => handleSelectedImage(image.src)}
         style={{ display: "flex" }}
@@ -276,6 +279,7 @@ export default function PostArtwork() {
           </div>
         )}
       </div>
+      </>
     );
   };
 

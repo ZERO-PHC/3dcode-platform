@@ -16,6 +16,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useTransaction } from "../../contexts/TransactionContext";
 import Iconify from "../../components/Iconify";
 import AnimatedEmoticon from "../../components/AnimatedEmoticon";
+import HeaderComponent from "../../components/Header";
 import CommentsSection from "../../sections/CommentsSection";
 
 
@@ -258,6 +259,7 @@ export default function ArtworkDetails({ windowDimensions }) {
   if (Artwork && Comments !== [])
     return (
       <>
+      <HeaderComponent />
         <MainWrapper>
           <div
             style={{
@@ -366,7 +368,7 @@ export default function ArtworkDetails({ windowDimensions }) {
                 </ReactionsWrapper>
               </div>
             </main>
-            <ArtworkContainer mobile={mobile} style={artworkAnimation}>
+            <ArtworkContainer mobile={mobile} >
               <Image
                 src={ArtworkImage}
                 layout="fill"
@@ -404,7 +406,6 @@ export default function ArtworkDetails({ windowDimensions }) {
               </div>
             </ArtworkContainer>
             <CommentsSection
-              animation={variationsAnimation}
               {...inputProps}
               comments={Comments}
             />

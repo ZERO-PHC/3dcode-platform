@@ -13,6 +13,7 @@ import { collection, onSnapshot, getDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
 import ArtgridComponent from "../components/ArtgridComponent";
 import ProfileArtworksModule from "../modules/ProfileArtworksModule";
+import Header from "../components/Header";
 
 export default function Profile() {
   const router = useRouter();
@@ -89,6 +90,8 @@ export default function Profile() {
   // }
 
   return (
+    <>
+    <Header />
     <MainWrapper>
       <Container>
         <section style={{ height: "10%" }}>
@@ -154,6 +157,7 @@ export default function Profile() {
         </PacksWrapper>
       </Container>
     </MainWrapper>
+    </>
   );
 }
 
