@@ -2,7 +2,6 @@ import { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { animated, config, useSpring } from "react-spring"
 
 import { useAuth } from "../contexts/AuthContext";
 import styled from "styled-components";
@@ -427,7 +426,7 @@ const HeaderWrapper = styled.header`
 }
 `;
 
-const NotifsWrapper = styled(animated.div)`
+const NotifsWrapper = styled.div`
 display: flex;
 border: 2px solid lightgrey;
 flex-direction: column;

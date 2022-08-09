@@ -2,16 +2,11 @@ import React, { useState, useEffect } from "react";
 
 import styled, { keyframes } from "styled-components";
 import { useTransaction } from "../contexts/TransactionContext";
-import { useSpring, config, animated } from "react-spring";
 import Spinner from "../atoms/Spinner";
 
 export default function SnackbarComponent({ open, comment }) {
   const { TransactionStatus, state, IsProcessing, Message } = useTransaction();
 
-  const snackbarAnimation = useSpring({
-    scale: IsProcessing ? 1 : 0,
-    opacity: IsProcessing ? 1 : 0,
-  })
 
 
   if (IsProcessing)
@@ -31,6 +26,18 @@ export default function SnackbarComponent({ open, comment }) {
     );
 }
 
+ const opacity = keyframes`
+ from {
+   opacity: 0;
+   scale:0;
+ }
+ to {
+   opacity: 1;
+   scale:1;
+ }
+`;
+
+
 
 
 const ProgressBar = styled.div`
@@ -42,6 +49,7 @@ const ProgressBar = styled.div`
   margin-top: 10px;
   margin-bottom: 10px;
   overflow: hidden;
+  animation: ${opacity} 0.3s ease-in-out;
 `;
 
 const LoadingWrapper = styled.div`
@@ -52,14 +60,8 @@ const LoadingWrapper = styled.div`
   width: 100%;
 `;
 
-const ProgressBarInner = styled(animated.div)`
-  background: lightgreen;
-  width: ${(props) => props.progress}%;
-  height: 100%;
-  border-radius: 5px;
-`;
 
-const Main = styled(animated.main)`
+const Main = styled.main`
   position: absolute;
   padding: 2rem 1rem;
   display: flex;

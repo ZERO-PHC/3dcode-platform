@@ -2,19 +2,6 @@ import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { useRouter } from "next/router";
-import { animated, useSpring, config } from "react-spring";
-// import "@tensorflow/tfjs";
-// import * as toxicity from "@tensorflow-models/toxicity";
-
-import { useAuth } from "../../contexts/AuthContext";
-import { useTransaction } from "../../contexts/TransactionContext";
-
-import Iconify from "../../components/Iconify";
-import Navbar from "../../components/Navbar";
-import TransactionComponent from "../../components/TransactionComponent";
-import ArtworkPrompt from "../../components/ArtworkPrompt";
-import ArtgridComponent from "../../components/ArtgridComponent";
-
 import { db } from "../../firebase";
 import {
   doc,
@@ -24,14 +11,13 @@ import {
   addDoc,
   getDoc,
 } from "firebase/firestore";
-import PromptSection from "../../sections/PromptSection";
-import { TwitterAuthProvider } from "firebase/auth";
-import PromptVariations from "../../sections/PromptVariations";
+
+import { useAuth } from "../../contexts/AuthContext";
+import { useTransaction } from "../../contexts/TransactionContext";
+import Iconify from "../../components/Iconify";
 import AnimatedEmoticon from "../../components/AnimatedEmoticon";
-import CommentComponent from "../../components/CommentComponent";
 import CommentsSection from "../../sections/CommentsSection";
-import SnackbarComponent from "../../components/SnackbarComponent";
-import Spinner from "../../atoms/Spinner";
+
 
 export default function ArtworkDetails({ windowDimensions }) {
   const { setMessage, setIsProcessing } = useTransaction();
@@ -268,61 +254,7 @@ export default function ArtworkDetails({ windowDimensions }) {
     }).catch((err) => console.log(err));
   };
 
-  const promptStyles = useSpring({
-    opacity: IsAnimating ? 1 : 0,
-    transform: IsAnimating ? "translateX(0%) " : "translateX(50%) ",
-    delay: 500,
-    // config: { duration: 500, tension: 100, friction: 200, mass: 1 },
-    config: config.molasses,
-  });
-
-  const variationsAnimation = useSpring({
-    opacity: IsAnimating ? 1 : 0,
-    transform: IsAnimating ? "translateX(0%) " : "translateX(-50%) ",
-    delay: 500,
-    config: config.molasses,
-    // config: { duration: 500, tension: 100, friction: 200, mass: 1 },
-  });
-
-  // create a useSpring hook with a config with a delay of 2000
-  // const logoAnimation = useSpring({
-  //   opacity: IsAnimating ? 1 : 0,
-  //   transform: IsAnimating ? "translateX(0%) " : "translateX(50%) ",
-  //   config: { delay: 2000 },
-
-  const artworkAnimation = useSpring({
-    opacity: IsAnimating ? 1 : 0,
-
-    scale: IsAnimating ? 1 : 0.5,
-    delay: 1000,
-    config: config.molasses,
-  });
-
-  const promptAnimation = useSpring({
-    opacity: true ? 1 : 0,
-    fontSize: "0.9rem",
-    delay: 500,
-    config: config.molasses,
-  });
-
-  const placeholderAnimation = useSpring({
-    opacity: !true ? 1 : 0,
-    fontSize: "0.9rem",
-    config: config.molasses,
-    paddingLeft: "0.5rem",
-  });
-
-  const buyBtnAnimation = useSpring({
-    opacity: true ? 0 : 1,
-  });
-
-  const downloadBtnAnimation = useSpring({
-    opacity: true ? 1 : 0,
-    width: true ? "44%" : "0%",
-    config: config.molasses,
-    delay: 1000,
-  });
-
+  
   if (Artwork && Comments !== [])
     return (
       <>
@@ -584,7 +516,7 @@ const PromptOverlay = styled.div`
   border-top-right-radius: 0.5rem;
 `;
 
-const Overlay = styled(animated.div)`
+const Overlay = styled.div`
   background: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 0.3) 20%,

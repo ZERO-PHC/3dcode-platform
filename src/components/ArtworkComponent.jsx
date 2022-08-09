@@ -233,7 +233,6 @@ const ArtworkName = styled.div`
   transition: all 0.3s ease-in-out;
   `;
 
-// const EngineName = styled(animated.div)`
 const EngineName = styled.div`
   position: absolute;
   bottom: 0.6rem;
