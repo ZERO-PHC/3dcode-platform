@@ -6,7 +6,7 @@ import { useBottomScrollListener } from 'react-bottom-scroll-listener';
 import { useArtworks } from '../contexts/ArtworksContext';
 
 
-export default function ArtgridSection({ artworks, width, handleArtworkSelection }) {
+export default function ArtgridSection({ artworks, width, handleArtworkSelection, isMobile }) {
     const { add9Artworks } = useArtworks()
 
 
@@ -19,6 +19,7 @@ export default function ArtgridSection({ artworks, width, handleArtworkSelection
                 artworks={artworks}
                 currentWrapper={"main"}
                 handleArtworkSelection={handleArtworkSelection}
+                isMobile={isMobile}
 
             />
         </ArtgridContainer>)

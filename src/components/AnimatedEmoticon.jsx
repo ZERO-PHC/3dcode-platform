@@ -51,7 +51,7 @@ export default function AnimatedEmoticon({handleReactionPost, artboard }) {
     }
 
     return (
-        <div onClick={() => handleReactionPost("fire")} style={{}}>
+        <div  style={{}}>
             <RiveComponentPlayback style={{}} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} />
         </div>
     )

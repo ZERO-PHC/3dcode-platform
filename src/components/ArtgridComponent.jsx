@@ -15,6 +15,7 @@ export default function ArtgridComponent({
   mobile,
   lastArtwork,
   lastArtworkValue,
+  isMobile
 }) {
 
 
@@ -31,11 +32,8 @@ export default function ArtgridComponent({
 
 
   const resolveTransform = (i) => {
-    // the aspect ratio of the artwork in the index - 1
-    // get the aspect ratio of the artwork that is before the current artwork
-    // if the current artwork aspect ration is portrait and it isn´t the first artwork 
-    // if (artworks[i].AspectRatio === "portrait" && i !== 0) {
-    if (artworks[i].AspectRatio === "portrait" && i !== 0) {
+    
+  if(!isMobile) {    if (artworks[i].AspectRatio === "portrait" && i !== 0) {
       // it the next artwork is landscape
       if (artworks[i + 1].AspectRatio === "landscape") {
         return "TranslateY(-38.5%)"
@@ -53,6 +51,9 @@ export default function ArtgridComponent({
         return null
       }
 
+    }} else {
+      return "TranslateY(-38.5%)"
+
     }
     // return artworks[(i - 1)].AspectRatio === "square" && artworks[i + 1] === "landscape" ? "TranslateY(-38.5%)" : null;
   }
@@ -66,7 +67,7 @@ export default function ArtgridComponent({
           handleArtworkSelection={handleArtworkSelection}
           currentWrapper={currentWrapper}
           idx={i}
-          mobile={mobile}
+          mobile={isMobile}
           transform={resolveTransform(i)}
 
         />

@@ -36,6 +36,22 @@ export default function ArtworkDetails({ windowDimensions }) {
   const [result, setResult] = useState("");
   const [Comments, setComments] = useState([]);
   const [open, setOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+
+  // check if the screen is mobile or not
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setIsMobile(true);
+    } else if (window.innerWidth < 1024) {
+      setIsTablet(true);
+    } else {
+      setIsDesktop(true);
+
+    }
+  }, []);
 
   const threshold = 0.9;
 
@@ -260,7 +276,7 @@ export default function ArtworkDetails({ windowDimensions }) {
     return (
       <>
       <HeaderComponent />
-        <MainWrapper>
+        <MainWrapper  >
           <div
             style={{
               height: "100%",
@@ -292,35 +308,13 @@ export default function ArtworkDetails({ windowDimensions }) {
               display: "flex",
               flexDirection: `${mobile ? "column" : "row"}`,
               justifyContent: `${!mobile ? "space-evenly" : null}`,
-              alignItems: `${!mobile ? "end" : "center"}`,
+              alignItems: `${!mobile ? "center" : "center"}`,
               width: "100vw",
               height: `${!mobile ? "100%" : null}`,
               position: "relative",
             }}
           >
-            <main
-              style={{
-                height: "100%",
-                width: "30%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: "10rem",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  width: "80%",
-                  height: "100%",
-                  justifyContent: "end",
-                  marginBottom: "6rem",
-                  alignItems: "center",
-                }}
-              >
-                <ReactionsWrapper>
+            {!mobile ? <> <ReactionsWrapper mobile={mobile} >
                   <PromptOverlay>
                     <section
                       style={{
@@ -339,38 +333,48 @@ export default function ArtworkDetails({ windowDimensions }) {
                       <div style={{ width: "50%" }}>
                         <AnimatedEmoticon
                           artboard={"Mindblown"}
-                          handleReactionPost={() =>
-                            handleReactionPost("mindblown")
-                          }
+                          // handleReactionPost={() =>
+                          //   handleReactionPost("mindblown")
+                          // }
                         />
                         <AnimatedEmoticon
                           artboard={"joy"}
-                          handleReactionPost={() => handleReactionPost("lol")}
+                          // handleReactionPost={() => handleReactionPost("lol")}
                         />
                         <AnimatedEmoticon
                           artboard={"meh"}
-                          handleReactionPost={() => handleReactionPost("meh")}
+                          // handleReactionPost={() => handleReactionPost("meh")}
                         />
                       </div>
 
                       <div style={{ width: "50%" }}>
                         <AnimatedEmoticon
                           artboard={"Onfire"}
-                          handleReactionPost={() => handleReactionPost("fire")}
+                          // handleReactionPost={() => handleReactionPost("fire")}
                         />
                         <AnimatedEmoticon
                           artboard={"love"}
-                          handleReactionPost={() => handleReactionPost("love")}
+                          // handleReactionPost={() => handleReactionPost("love")}
                         />
                       </div>
                     </section>
                   </PromptOverlay>
                 </ReactionsWrapper>
-              </div>
-            </main>
-            <ArtworkContainer mobile={mobile} >
+            <main
+              style={{
+                height: "100%",
+                width:mobile ? "70%" : "30%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "10rem",
+              }}
+            >
+              
+                 <ArtworkContainer mobile={mobile} >
               <Image
-                src={ArtworkImage}
+                src={ArtworkImage} 
                 layout="fill"
                 objectFit="cover"
                 objectPosition="center"
@@ -405,10 +409,113 @@ export default function ArtworkDetails({ windowDimensions }) {
                 )}
               </div>
             </ArtworkContainer>
-            <CommentsSection
+             
+            </main>
+            </> :
+            <> <main
+              style={{
+                height: "100%",
+                width:mobile ? "70%" : "30%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "10rem",
+              }}
+            >
+              
+                 <ArtworkContainer mobile={mobile} >
+              <Image
+                src={ArtworkImage} 
+                layout="fill"
+                objectFit="cover"
+                objectPosition="center"
+                placeholder="blur"
+                blurDataURL="/assets/placeholder.png"
+                alt="artwork"
+              />
+              {/* <ArtworkDetailsWrapper> */}
+              <Header>
+                <FavoriteWrapper onClick={handleAddFavorite}>
+                  <Iconify
+                    icon={!IsFavorite ? "mdi-bookmark-outline" : "mdi-bookmark"}
+                  />
+                </FavoriteWrapper>
+
+                <ArtworkTitle>
+                  {Artwork.name.toUpperCase()}
+                  <Underline />
+                </ArtworkTitle>
+              </Header>
+
+              <Overlay />
+              <div className="tags-container">
+                {Artwork.tags.map((tag, i) =>
+                  i < 2 ? (
+                    <div style={{ display: "flex", width: "3rem" }} key={i}>
+                      {tag} |{" "}
+                    </div>
+                  ) : (
+                    <div key={i}>{tag} </div>
+                  )
+                )}
+              </div>
+            </ArtworkContainer>
+             
+            </main> 
+            <ReactionsWrapper mobile={mobile}>
+            <PromptOverlay>
+              <section
+                style={{
+                  position: "absolute",
+                  top: "3px",
+                  left: "10px",
+                  height: "2.8rem",
+                  zIndex: "1",
+                }}
+              >
+                <ReactionsTitle>REACTIONS</ReactionsTitle>
+                <Underline />
+              </section>
+
+              <section style={{ display: "flex", width: "100%" }}>
+                <div style={{ width: "50%" }}>
+                  <AnimatedEmoticon
+                    artboard={"Mindblown"}
+                    // handleReactionPost={() =>
+                    //   handleReactionPost("mindblown")
+                    // }
+                  />
+                  <AnimatedEmoticon
+                    artboard={"joy"}
+                    // handleReactionPost={() => handleReactionPost("lol")}
+                  />
+                  <AnimatedEmoticon
+                    artboard={"meh"}
+                    // handleReactionPost={() => handleReactionPost("meh")}
+                  />
+                </div>
+
+                <div style={{ width: "50%" }}>
+                  <AnimatedEmoticon
+                    artboard={"Onfire"}
+                    // handleReactionPost={() => handleReactionPost("fire")}
+                  />
+                  <AnimatedEmoticon
+                    artboard={"love"}
+                    // handleReactionPost={() => handleReactionPost("love")}
+                  />
+                </div>
+              </section>
+            </PromptOverlay>
+          </ReactionsWrapper>
+            </>
+           }
+           
+           {!mobile &&  <CommentsSection
               {...inputProps}
               comments={Comments}
-            />
+            />}
           </div>
           <AuthorContainer>
             {/* <AuthorName>{Artwork.author.toUpperCase()}</AuthorName> */}
@@ -460,6 +567,7 @@ const MainWrapper = styled.div`
   width: 100%;
   height: 100vh;
   display: flex;
+
   flex-direction: column;
   align-items: center;
   background-color: black;
@@ -494,7 +602,7 @@ const reactionsAnimation = keyframes`
 
 const ReactionsWrapper = styled.div`
   height: 70%;
-  width: 100%;
+  width:${(props) => (props.mobile ? "50%" : "30%")};}  
   background: rgba(130, 132, 135, 0.23);
   border-radius: 0.5rem;
   display: flex;
@@ -502,6 +610,7 @@ const ReactionsWrapper = styled.div`
   justify-content: center;
   color: white;
   position: relative;
+  margin-top: ${(props) => (props.mobile ? "0" : "10rem")};
   animation: ${reactionsAnimation} 1.6s ease-out;
   // transition: all 1.5s ease-out;
 `;
@@ -687,7 +796,7 @@ const ArtworkContainer = styled.div`
   justify-content: space-between;
   align-items: left;
   height: 86%;
-  width: 30rem;
+  width:  30rem;
   position: relative;
   margin-bottom: 1rem;
   margin-top: 0rem;
@@ -706,14 +815,13 @@ const ArtworkContainer = styled.div`
     flex-direction: column;
     align-items: left;
     height: 80%;
-    width: 10rem;
+    width: 30rem;
     position: relative;
     overflow: hidden;
   }
 
   @media (max-width: 480px) {
     height: 40rem;
-    width: 40rem;
     background-size: cover;
 
     background-position: center;

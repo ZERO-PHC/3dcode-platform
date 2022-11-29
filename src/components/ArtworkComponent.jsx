@@ -12,6 +12,7 @@ export default function ArtworkComponent({
   isOwner,
   idx,
   transform
+  ,mobile
 }) {
 
 
@@ -107,6 +108,8 @@ export default function ArtworkComponent({
 
   }
 
+  if (mobile && artwork.AspectRatio == "landscape") return null
+
   return (
     // <div style={{
     //   filter: "blur(none)"
@@ -122,7 +125,6 @@ export default function ArtworkComponent({
       transform={transform}
 
     >
-      {idx !== 6 ?
         <Image
           style={{ borderRadius: "0.5rem" }}
           src={artwork.ArtworkImg ? artwork.ArtworkImg : "/assets/images/coin.png"}
@@ -131,11 +133,8 @@ export default function ArtworkComponent({
           placeholder="blur"
           blurDataURL="/assets/placeholder.png"
           layout="fill"
-        /> :
-        //<video with au
-        <video autoPlay loop muted src="https://storage.googleapis.com/dream-machines-output/f4e5341a-d06c-42a9-8023-413d3b55fd47/video.mp4" style={{ height: "16rem", borderTopLeftRadius: "0.6rem", borderTopRightRadius: "0.6rem", borderBottom: "0.5px solid lightgrey" }} />
-      }
-      {/* <ArtworkName style={nameAnimation}> */}
+          />
+      
       <ArtworkName isHovered={Hovered} >
         {artwork.name}
       </ArtworkName>
@@ -189,7 +188,7 @@ background-color: black;
 border-radius:0.6rem;
 text-transform: uppercase;
 z-index: 0;
-transform: ${(props) => props.transform};
+transform: !mobile   ?  ${(props) => props.transform} :  none;
 width: ${(props) => props.width};
 height: ${(props) => props.height};
 // border-radius: 0.2rem;

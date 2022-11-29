@@ -33,6 +33,22 @@ export default function Home({ windowDimensions }) {
   } = useArtworks();
   const [ShowDialog, setShowDialog] = useState(false);
   const width = windowDimensions.width;
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+
+  // check if the screen is mobile or not
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setIsMobile(true);
+    } else if (window.innerWidth < 1024) {
+      setIsTablet(true);
+    } else {
+      setIsDesktop(true);
+
+    }
+  }, []);
   // const fetcher = (url) => fetch(url).then((res) => console.log(res.json())); // your main function export default function Profile() { //for relative and absolute paths const { data, error } = useSWR('/api/user', fetcher) if (error) return <div>failed to load</div> //for the loading you can create your custom component and insert instead of div, like this you keep same styling if (!data) return <div>loading...</div> if (data) return <div>hello {data.name}!</div> }
   // const { data, error } = useSWR("/", fetcher);
 
@@ -142,13 +158,15 @@ export default function Home({ windowDimensions }) {
               </div>
             </section>
             <ArtgridSection
+              isMobile={isMobile}
               artworks={Artworks}
               width={width}
               handleArtworkSelection={handleArtworkSelection}
             />
+          
           </main>
-          <FAB />
-        </Wrapper>
+{ !isMobile &&     <FAB />
+}        </Wrapper>
       </>
     );
 }
