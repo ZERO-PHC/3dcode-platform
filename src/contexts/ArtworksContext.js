@@ -10,8 +10,30 @@ export const useArtworks = () => useContext(ArtworksContext);
 
 const mainCategories = [
   {
+    name: "Featured",
+    id: "feautured",
+    color: "#f5f5f5",
+    background: "#f5f5f5",
+    border: "#f5f5f5",
+    text: "#f5f5f5",
+    icon: "🎨",
+    active: false,
+    selected: true,
+  },
+  {
     name: "New",
     id: "new",
+    color: "#f5f5f5",
+    background: "#f5f5f5",
+    border: "#f5f5f5",
+    text: "#f5f5f5",
+    icon: "akar-icons:thunder",
+    active: false,
+    selected: true,
+  },
+  {
+    name: "Free",
+    id: "free",
     color: "#f5f5f5",
     background: "#f5f5f5",
     border: "#f5f5f5",

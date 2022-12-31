@@ -303,10 +303,12 @@ const Wrapper = styled.main`
   }
 
   .main-categories {
-    height: 30%;
+    height: 46%;
     display: flex;
     flex-direction: column;
-    justify-content: end;
+    justify-content: start;
+    padding-top:46%;
+    padding-bottom: 30%;
     border-bottom: 1px solid #b6b6b6;
     // margin-top: 40%;
   }
