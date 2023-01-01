@@ -17,98 +17,7 @@ export default function ArtworkComponent({
 
 
   const [Hovered, setHovered] = useState();
-  // const lastArtwork = useRef();
-  // const lastArtworkValue = useOnScreen(lastArtwork);
 
-  // const nameAnimation = useSpring({
-  //   opacity: Hovered ? 1 : 0,
-  //   transform: Hovered ? 'translate(0%)' : 'translate(-30%)',
-  // })
-  // const underlineAnimation = useSpring({
-  //   opacity: Hovered ? 0.5 : 0,
-  //   transform: Hovered ? 'translateX(0%) skewX(-20deg)' : 'translateX(-30%) skewX(-20deg)',
-
-  // })
-  // const overlayAnimation = useSpring({
-  //   opacity: Hovered ? 1 : 0,
-  //   // transform: Hovered ? 'translateY(0%)' : 'translateY(0%)',
-  // })
-
-
-
-
-
-  const resolveWidth = () => {
-    switch (currentWrapper) {
-      case "dialog":
-        return "5rem"
-      case "details":
-        return "6rem"
-      case "main":
-        // // if (!mobile) {
-        return artwork.AspectRatio === "landscape" ? "32rem " : "16rem"
-      // // // } else {
-      //   return "8rem"
-      // }
-
-      default:
-        break;
-    }
-  }
-
-  const resolveHeight = () => {
-    switch (currentWrapper) {
-      case "dialog":
-        return "10rem"
-      case "details":
-        if (artwork.AspectRatio === "portrait") {
-          return "10rem"
-        } else {
-          return "2rem"
-        }
-      case "main":
-        // if (!mobile) {
-        if (artwork.AspectRatio === "portrait") {
-          return "26rem"
-        } else {
-          return "16rem"
-        }
-      // } else {
-      //   return "13rem"
-      // }
-
-      default:
-        break;
-    }
-  }
-
-  const resolveTransform = (idx) => {
-
-    // get the last and next artwork to be rendered with the idx
-
-    // switch (idx) {
-    //   // case 0:
-    //   //   // return "TranslateY(10%)"
-    //   // case 2:
-    //   //   // return "TranslateY(10%)"
-    //   case 4:
-    //     return "TranslateY(-38.5%) "
-    //   // case 5:
-    //   //   return "TranslateX(30%)"
-    //   case 6:
-    //     return "TranslateY(-38.5%)"
-    //   case 8:
-    //     return "TranslateY(-60%)"
-    //   case 7:
-    //     return "TranslateY(-60%)"
-
-    // default:
-    //   return "0rem 0rem"
-    // }
-
-  }
-
-  if (mobile && artwork.AspectRatio == "landscape") return null
 
   return (
     // <div style={{
@@ -119,14 +28,14 @@ export default function ArtworkComponent({
       onPointerLeave={() => setHovered(false)}
       onClick={() => handleArtworkSelection(artwork)}
       key={idx}
-      width={resolveWidth()}
-      height={resolveHeight()}
+      width={"16rem"}
+      height={"16rem"}
       isOwner={isOwner}
       transform={transform}
 
     >
         <Image
-          style={{ borderRadius: "0.5rem" }}
+          style={{ borderRadius: "12px" }}
           src={artwork.ArtworkImg ? artwork.ArtworkImg : "/assets/images/coin.png"}
           alt={"img"}
           loading="lazy"
@@ -182,7 +91,7 @@ const animationOne = keyframes`
 const Artwork = styled.div`
 position: relative;
 cursor: pointer;
-margin:0.5rem;
+margin:1rem;
 color:white;
 background-color: black;
 border-radius:0.6rem;

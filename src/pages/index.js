@@ -55,33 +55,14 @@ export default function Home({ windowDimensions }) {
   useEffect(() => {}, [router]);
 
   // function called handleDrawer that updates the show state to true
-  const MainCategoryIcon = ({ idx }) => {
-    if (idx === 0) {
+  const MainCategoryIcon = ({ idx, icon, id }) => {
       return (
         <Iconify
-          icon="akar-icons:thunder"
-          color={MainCategory === "new" ? "black" : "lightgrey"}
+          icon={icon}
+          color={MainCategory === id ? "black" : "lightgrey"}
         />
       );
-    } else if (idx === 1) {
-      return (
-        // <Iconify
-        //   icon="ant-design:rise-outlined"
-        //   color={MainCategory === "new" ? "black" : "lightgrey"}
-        // />
-        <Iconify
-          icon="fa6-solid:fire"
-          color={MainCategory === "hot" ? "black" : "lightgrey"}
-        />
-      );
-    } else {
-      return (
-        <Iconify
-          icon="akar-icons:thunder"
-          color={MainCategory === "rising" ? "black" : "lightgrey"}
-        />
-      );
-    }
+    
   };
 
   // if (error) return <div>failed to load</div>;
@@ -132,7 +113,7 @@ export default function Home({ windowDimensions }) {
                       handleMainCategorySelection(category.id, category)
                     }
                   >
-                    <MainCategoryIcon idx={idx} />
+                    <MainCategoryIcon idx={idx} icon={category.icon} id={category.id} />
                     <div style={{ width: "0.5rem" }}></div>
                     <div>
                       {category.name}
