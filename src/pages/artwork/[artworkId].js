@@ -40,7 +40,7 @@ export default function ArtworkDetails({ windowDimensions }) {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
-  const {setSelectedProduct} = useArtworks()
+  const {setSelectedProduct, SelectedCode, SelectedContent} = useArtworks()
 
   // check if the screen is mobile or not
   useEffect(() => {
@@ -296,19 +296,11 @@ export default function ArtworkDetails({ windowDimensions }) {
             <ArtworkContainer mobile={mobile}>
               <VideoComponent video={Artwork.video} />
               <Overlay />
-              {/* <div className="tags-container">
-                {Artwork.tags.map((tag, i) =>
-                  i < 2 ? (
-                    <div style={{ display: "flex", width: "3rem" }} key={i}>
-                      {tag} |
-                    </div>
-                  ) : (
-                    <div key={i}>{tag} </div>
-                  )
-                )}
-              </div> */}
+              <div className="tags-container">
+                {"Name"}
+              </div>
             </ArtworkContainer>
-            <CommentsSection />
+            <CommentsSection title={"CODE"} code={SelectedCode} productId={artworkId} />
           </>
           
         </MainWrapper>
@@ -319,7 +311,7 @@ export default function ArtworkDetails({ windowDimensions }) {
 const MainWrapper = styled.div`
   position: relative;
   width: 100%;
-  height: 100%;
+  // height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -331,11 +323,12 @@ const MainWrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.8rem;
+    font-size: large;
     position: absolute;
-    bottom: 0;
+    top: 1rem;
     text-transform: uppercase;
-    color: lightgray;
+    color: white;
+    z-index:99;
   }
 `;
 
@@ -547,7 +540,8 @@ const ArtworkContainer = styled.div`
   justify-content: space-between;
   align-items: left;
   // height: 100%;
-  height: 40rem;
+  height: 46vh;
+  min-height: 46vh;
 
   width: 100%;
   position: relative;

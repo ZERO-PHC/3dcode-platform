@@ -14,6 +14,7 @@ import { db } from "../firebase";
 import ArtgridComponent from "../components/ArtgridComponent";
 import ProfileArtworksModule from "../modules/ProfileArtworksModule";
 import Header from "../components/Header";
+import { useArtworks } from "../contexts/ArtworksContext";
 
 export default function Profile() {
   const router = useRouter();
@@ -22,56 +23,12 @@ export default function Profile() {
   const [PostedArtworks, setPostedArtworks] = useState([]);
   const [BookmarkedArtworks, setBookmarkedArtworks] = useState([]);
   const [Category, setCategory] = useState("posted");
+  // destructure the PurchasedProducts from the useArtworks context
+  const { PurchasedProducts } = useArtworks();
+  
 
-  useEffect(() => {
-    if (FirestoreUser) {
-      getPostedArtworks(FirestoreUser.postedArtworks);
-      getBookmarkedArtworks(FirestoreUser.bookmarkedArtworks);
-    }
-  }, [FirestoreUser]);
-
-  const getPostedArtworks = async (artworkIds) => {
-    // loop over the artworkIds and get the artwork for each one using the getDoc function
-    setLoading(true);
-
-    console.log(artworkIds, "artworkIds");
-
-    // loop over the artworkIds and get the artwork for each one using the getDoc function
-    const artworks = await Promise.all(
-      artworkIds.map(async (artworkId) => {
-        const docRef = doc(db, "artworks", artworkId);
-        const docSnap = await getDoc(docRef);
-        return docSnap.data();
-      })
-    );
-
-    setLoading(false);
-
-    console.log("artworks", artworks);
-    setPostedArtworks(artworks);
-  };
-
-  const getBookmarkedArtworks = async (artworkIds) => {
-    // loop over the artworkIds and get the artwork for each one using the getDoc function
-    setLoading(true);
-
-    console.log(artworkIds, "artworkIds");
-
-    // loop over the artworkIds and get the artwork for each one using the getDoc function
-    if (artworkIds.length > 0) {
-      const artworks = await Promise.all(
-        artworkIds.map(async (artworkId) => {
-          const docRef = doc(db, "artworks", artworkId);
-          const docSnap = await getDoc(docRef);
-          return docSnap.data();
-        })
-      );
-      console.log("artworks", artworks);
-      setBookmarkedArtworks(artworks);
-    }
-
-    setLoading(false);
-  };
+ 
+ 
 
   // create a function that returns a log out icon
   const LogoutIcon = () => {
@@ -115,28 +72,11 @@ export default function Profile() {
             <ArtworkTitle>{"Your Artworks".toUpperCase()}</ArtworkTitle>
             <Underline />
           </div>
-          <section style={{ display: "flex" }}>
-            <PrimaryBtn
-              onClick={() => setCategory("posted")}
-              selected={Category === "posted"}
-            >
-              Posted
-              <div style={{ width: "0.5rem" }}></div>
-              <Iconify icon="mdi-upload" />
-            </PrimaryBtn>
-            <PrimaryBtn
-              onClick={() => setCategory("bookmarked")}
-              selected={Category === "bookmarked"}
-            >
-              Bookmarked
-              <div style={{ width: "0.5rem" }}></div>
-              <Iconify icon="mdi-bookmark" />
-            </PrimaryBtn>
-          </section>
-          {PostedArtworks.length > 0 ? (
+        
+          {PurchasedProducts.length > 0 ? (
             <ProfileArtworksModule
               artworks={
-                Category === "posted" ? PostedArtworks : BookmarkedArtworks
+                PurchasedProducts
               }
             />
           ) : (

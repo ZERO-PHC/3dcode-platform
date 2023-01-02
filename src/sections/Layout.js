@@ -30,7 +30,7 @@ export default function Layout({ children, windowDimensions }) {
           </div>
         </div>
       </Drawer>
-      <main style={{ height: "100%", overflowX: "hidden", padding:"10vh 0" }}>{children}</main>
+      <main style={{ height: "100%", overflowX: "hidden", padding:"8vh 0" }}>{children}</main>
     </main>
   );
 }
