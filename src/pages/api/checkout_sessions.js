@@ -27,9 +27,11 @@ export default async function handler(req, res) {
 
   if (req.method === "POST") {
     // log the ids of the query params
-    console.log("ids", req.query.id);
+    console.log("server ids", req.query.id);
 
-    const productIds = req.query.id;
+    // const productIds = req.query.id;
+    const productIds = [req.query.id];
+    
 
     const resolveItems = () => {
       return productIds.map((id) => {
@@ -46,7 +48,7 @@ export default async function handler(req, res) {
       const session = await stripe.checkout.sessions.create({
         line_items: resolveItems(),
         mode: "payment",
-        success_url: `${req.headers.origin}/?success=true`,
+        success_url: `${req.headers.origin}/purchases`,
         cancel_url: `${req.headers.origin}/?canceled=true`,
       });
       res.redirect(303, session.url);

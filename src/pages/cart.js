@@ -79,7 +79,7 @@ const Cart = () => {
         <CartItem key={item.id}>
           <CartItemImage src={item.imageUrl} />
           <div>
-            <CartItemName>{item.name}</CartItemName>
+            <CartItemName>{item.id}</CartItemName>
             <CartItemPrice>${item.price}</CartItemPrice>
           </div>
         </CartItem>

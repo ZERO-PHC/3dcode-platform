@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "next test",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
+    "commit": "git add . && git commit -m \"$(git status -s)\" && git push origin main"
   },
   "dependencies": {
     "@iconify/react": "^3.2.2",

@@ -69,49 +69,73 @@ export default function ArtworksProvider({ children }) {
 
   // destructuring the user from the AuthContext
   const { user } = useAuth();
+
+  // useEffect to get the cart array from the user document usinf the onSnapshot function
+  useEffect(() => {
+    if (user) {
+      const docRef = doc(db, "users", user.uid);
+      const unsub = onSnapshot(docRef, (doc) => {
+        if (doc.exists()) {
+          const data = doc.data();
+          if (data.cart) {
+            setCart(data.cart);
+          }
+        }
+      });
+
+      return () => unsub();
+    }
+  }, [user]);
+
+  // useEffect to get the artworks from the firestore using the onSnapshot function
   
 
   useEffect(() => {
-    const colRef = collection(db, "artworks");
+    const colRef = collection(db, "scenes");
     const unsub = onSnapshot(colRef, (snapshot) => {
       const formattedDocs = getFormattedDocs(snapshot.docs);
 
-      switch (MainCategory) {
-        case "hot":
-          const sortedDocs = getSortedDocs(formattedDocs);
-          console.log("sortedDocs", sortedDocs);
+      setArtworks(formattedDocs);
 
-          const filteredArtworks = getFilteredDocs(sortedDocs);
-          console.log("filteredArtworks", filteredArtworks);
+    //   switch (MainCategory) {
+    //     case "hot":
+    //       const sortedDocs = getSortedDocs(formattedDocs);
+    //       console.log("sortedDocs", sortedDocs);
 
-          // const first9docs = filteredArtworks.slice(0, 10);
+    //       const filteredArtworks = getFilteredDocs(sortedDocs);
+    //       console.log("filteredArtworks", filteredArtworks);
 
-          const mosaicArtworks = createArtworksMosaic(filteredArtworks);
-          setArtworks(mosaicArtworks);
-          break;
+    //       // const first9docs = filteredArtworks.slice(0, 10);
 
-        case "new":
-          const newSortedDocs = formattedDocs.sort((a, b) => {
-            return b.timestamp - a.timestamp;
-          });
+    //       const mosaicArtworks = createArtworksMosaic(filteredArtworks);
+    //       setArtworks(mosaicArtworks);
+    //       break;
 
-          console.log("sortedDocs", sortedDocs);
+    //     case "new":
+    //       const newSortedDocs = formattedDocs.sort((a, b) => {
+    //         return b.timestamp - a.timestamp;
+    //       });
 
-          const newFilteredArtworks = newSortedDocs.filter((artwork) => {
-            return artwork.tags.includes(SelectedCategory);
-          });
-          console.log("newfilteredArtworks", newFilteredArtworks);
-          const newMosaicArtworks = createArtworksMosaic(newFilteredArtworks);
+    //       console.log("sortedDocs", sortedDocs);
 
-          setArtworks(newMosaicArtworks);
-          // setLoadedArtworks(LoadedArtworks + 9);
+    //       const newFilteredArtworks = newSortedDocs.filter((artwork) => {
+    //         return artwork.tags.includes(SelectedCategory);
+    //       });
+    //       console.log("newfilteredArtworks", newFilteredArtworks);
+    //       const newMosaicArtworks = createArtworksMosaic(newFilteredArtworks);
 
-          break;
+    //       setArtworks(newMosaicArtworks);
+    //       // setLoadedArtworks(LoadedArtworks + 9);
 
-        default:
-          break;
-      }
-    });
+    //       break;
+
+    //     default:
+    //       break;
+    //   }
+     });
+    
+
+
 
     return () => {
       // clean up the listener

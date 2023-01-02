@@ -78,32 +78,10 @@ export default function ArtworkDetails({ windowDimensions }) {
     };
   }, [user]);
 
-  useEffect(() => {
-    if (artworkId) {
-      let collectionRef = collection(db, "artworks", artworkId, "comments");
 
-      onSnapshot(collectionRef, (querySnapshot) => {
-        // const comments = querySnapshot.docs.filter(
-        //   (doc) => !doc.data().active
-        // );
-        const comments = querySnapshot.docs;
-
-        const formattedComments = comments.map((doc) => {
-          return {
-            id: doc.id,
-            ...doc.data(),
-          };
-        });
-
-        console.log("formattedComments", formattedComments);
-        setComments(formattedComments);
-      });
-    }
-  }, [artworkId]);
-
-  useEffect(() => {
-    checkFavorites(FirestoreUser.bookmarkedArtworks);
-  }, [FirestoreUser]);
+  // useEffect(() => {
+  //   checkFavorites(FirestoreUser.bookmarkedArtworks);
+  // }, [FirestoreUser]);
 
   useEffect(() => {
     setIsAnimating(true);
@@ -318,7 +296,7 @@ export default function ArtworkDetails({ windowDimensions }) {
             <ArtworkContainer mobile={mobile}>
               <VideoComponent video={Artwork.video} />
               <Overlay />
-              <div className="tags-container">
+              {/* <div className="tags-container">
                 {Artwork.tags.map((tag, i) =>
                   i < 2 ? (
                     <div style={{ display: "flex", width: "3rem" }} key={i}>
@@ -328,7 +306,7 @@ export default function ArtworkDetails({ windowDimensions }) {
                     <div key={i}>{tag} </div>
                   )
                 )}
-              </div>
+              </div> */}
             </ArtworkContainer>
             <CommentsSection />
           </>
