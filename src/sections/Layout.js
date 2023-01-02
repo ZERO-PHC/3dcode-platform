@@ -15,7 +15,7 @@ export default function Layout({ children, windowDimensions }) {
 
   // alert(windowDimensions.);
   return (
-    <main style={{ height: "100vh", maxHeight: "100vh", overflow: "hidden" }}>
+    <main style={{ height: "100vh", maxHeight: "100vh", overflow: "hidden",  }}>
       <Navbar windowDimensions={windowDimensions} handleDrawer={handleDrawer} />
       <Drawer show={Show}>
         <div>
@@ -30,7 +30,7 @@ export default function Layout({ children, windowDimensions }) {
           </div>
         </div>
       </Drawer>
-      <main style={{ height: "100%", overflowX: "hidden" }}>{children}</main>
+      <main style={{ height: "100%", overflowX: "hidden", padding:"10vh 0" }}>{children}</main>
     </main>
   );
 }

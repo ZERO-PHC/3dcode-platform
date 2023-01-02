@@ -10,6 +10,7 @@ import Iconify from "./Iconify";
 
 import { collection, onSnapshot, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import { Icon } from "@iconify/react";
 
 
 const Navbar = ({ handleDrawer }) => {
@@ -82,6 +83,10 @@ const Navbar = ({ handleDrawer }) => {
     router.push("/coins")
   }
 
+  const handleCartNavigation = (e) => {
+    router.push("/cart")
+  }
+
 
   const MyImage = (props) => {
     return (
@@ -132,20 +137,8 @@ const Navbar = ({ handleDrawer }) => {
 
           {<>
             <section className="navbar-section" >
-              <main style={{ cursor: "default", minWidth: "16rem" }} className="navbar-main">
-                <CoinsRow>
-                  <Image style={{ cursor: "default", }} height={36} width={36} src="/assets/coin.png" alt="coin" />
-                  <span>
-                    {Coins}
-                  </span >
-                </CoinsRow>
-                <div style={{ width: "0.5rem", cursor: "default" }}></div>
-                <div className="buy-container">
-                  <span>
-                    Buy Coins
-
-                  </span>
-                </div>
+              <main className="icon-wrapper" >
+                <Icon icon="material-symbols:shopping-cart-outline-sharp" style={{ fontSize: "1.5rem" }} onClick={handleCartNavigation} />
               </main>
               {/* { !isMobile &&  <div className="notifs-container" >
             <div className="avatar" onClick={toggleDrawer} style={{ cursor: "pointer" }}>
@@ -249,6 +242,20 @@ const HeaderWrapper = styled.header`
   backdrop-filter: blur(10px); /* blur effect to the backdrop */
   background-color: rgba(255, 255, 255, 0.2);
 
+  .icon-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+    margin-right: 0.5rem;
+  }
+
   .buy-container {
     display: flex;
     flex-direction: row;
@@ -305,11 +312,9 @@ const HeaderWrapper = styled.header`
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     width: 100%;
     height: 2.4rem;
-    border-radius: 0.5rem;
-    background-color: #D9D9D9;
     color: black;
     padding:0rem 0rem;
     

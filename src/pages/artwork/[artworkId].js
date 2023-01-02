@@ -18,7 +18,8 @@ import Iconify from "../../components/Iconify";
 import AnimatedEmoticon from "../../components/AnimatedEmoticon";
 import HeaderComponent from "../../components/Header";
 import CommentsSection from "../../sections/CommentsSection";
-
+import CommentComponent from "../../components/CommentComponent";
+import { useArtworks } from "../../contexts/ArtworksContext";
 
 export default function ArtworkDetails({ windowDimensions }) {
   const { setMessage, setIsProcessing } = useTransaction();
@@ -39,7 +40,7 @@ export default function ArtworkDetails({ windowDimensions }) {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
-
+  const {setSelectedProduct} = useArtworks()
 
   // check if the screen is mobile or not
   useEffect(() => {
@@ -49,7 +50,6 @@ export default function ArtworkDetails({ windowDimensions }) {
       setIsTablet(true);
     } else {
       setIsDesktop(true);
-
     }
   }, []);
 
@@ -67,6 +67,7 @@ export default function ArtworkDetails({ windowDimensions }) {
       const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
       // console.log(source, " data: ", doc.data());
       setArtwork(doc.data());
+      setSelectedProduct(doc.data());
       setArtworkImage(doc.data().ArtworkImg);
       setLoading(false);
     });
@@ -271,137 +272,57 @@ export default function ArtworkDetails({ windowDimensions }) {
     }).catch((err) => console.log(err));
   };
 
-  
+  const VideoComponent = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: `${!mobile ? "center" : "flex-start"}`,
+          justifyContent: "center",
+          width: "100%",
+          height: "100%",
+          overflow: "hidden",
+          position: "absolute",
+          top: "0",
+          left: "0",
+        }}
+      >
+        <video
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center",
+            position: "absolute",
+            top: "0",
+            left: "0",
+          }}
+          src={
+            "https://res.cloudinary.com/ddbgaessi/video/upload/v1668725025/Untitled_video_-_Made_with_Clipchamp_4_spns2r.mp4"
+          }
+          autoPlay
+          loop
+          muted
+        />
+      </div>
+    );
+  };
+
   if (Artwork && Comments !== [])
     return (
       <>
-      <HeaderComponent />
-        <MainWrapper  >
-          <div
-            style={{
-              height: "100%",
-              width: "100%",
-              position: "fixed",
-              top: "0",
-              background: "black",
-            }}
-          >
-            <Image
-              style={{
-                filter: "blur(12px)",
-                opacity: 0.5,
-                position: "sticky",
-                top: "0",
-              }}
-              src={ArtworkImage}
-              layout="fill"
-              objectFit="cover"
-              objectPosition="center"
-              placeholder="blur"
-              blurDataURL="/assets/placeholder.png"
-              alt="artwork"
-            />
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              flexDirection: `${mobile ? "column" : "row"}`,
-              justifyContent: `${!mobile ? "space-evenly" : null}`,
-              alignItems: `${!mobile ? "center" : "center"}`,
-              width: "100vw",
-              height: `${!mobile ? "100%" : null}`,
-              position: "relative",
-            }}
-          >
-            {!mobile ? <> <ReactionsWrapper mobile={mobile} >
-                  <PromptOverlay>
-                    <section
-                      style={{
-                        position: "absolute",
-                        top: "3px",
-                        left: "10px",
-                        height: "2.8rem",
-                        zIndex: "1",
-                      }}
-                    >
-                      <ReactionsTitle>REACTIONS</ReactionsTitle>
-                      <Underline />
-                    </section>
-
-                    <section style={{ display: "flex", width: "100%" }}>
-                      <div style={{ width: "50%" }}>
-                        <AnimatedEmoticon
-                          artboard={"Mindblown"}
-                          // handleReactionPost={() =>
-                          //   handleReactionPost("mindblown")
-                          // }
-                        />
-                        <AnimatedEmoticon
-                          artboard={"joy"}
-                          // handleReactionPost={() => handleReactionPost("lol")}
-                        />
-                        <AnimatedEmoticon
-                          artboard={"meh"}
-                          // handleReactionPost={() => handleReactionPost("meh")}
-                        />
-                      </div>
-
-                      <div style={{ width: "50%" }}>
-                        <AnimatedEmoticon
-                          artboard={"Onfire"}
-                          // handleReactionPost={() => handleReactionPost("fire")}
-                        />
-                        <AnimatedEmoticon
-                          artboard={"love"}
-                          // handleReactionPost={() => handleReactionPost("love")}
-                        />
-                      </div>
-                    </section>
-                  </PromptOverlay>
-                </ReactionsWrapper>
-            <main
-              style={{
-                height: "100%",
-                width:mobile ? "70%" : "30%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: "10rem",
-              }}
-            >
-              
-                 <ArtworkContainer mobile={mobile} >
-              <Image
-                src={ArtworkImage} 
-                layout="fill"
-                objectFit="cover"
-                objectPosition="center"
-                placeholder="blur"
-                blurDataURL="/assets/placeholder.png"
-                alt="artwork"
-              />
-              {/* <ArtworkDetailsWrapper> */}
-              <Header>
-                <FavoriteWrapper onClick={handleAddFavorite}>
-                  <Iconify
-                    icon={!IsFavorite ? "mdi-bookmark-outline" : "mdi-bookmark"}
-                  />
-                </FavoriteWrapper>
-
-                <ArtworkTitle>
-                  {Artwork.name.toUpperCase()}
-                  <Underline />
-                </ArtworkTitle>
-              </Header>
-
+        <HeaderComponent />
+        <MainWrapper>
+          <>
+            <ArtworkContainer mobile={mobile}>
+              <VideoComponent video={Artwork.video} />
               <Overlay />
               <div className="tags-container">
                 {Artwork.tags.map((tag, i) =>
                   i < 2 ? (
                     <div style={{ display: "flex", width: "3rem" }} key={i}>
-                      {tag} |{" "}
+                      {tag} |
                     </div>
                   ) : (
                     <div key={i}>{tag} </div>
@@ -409,154 +330,9 @@ export default function ArtworkDetails({ windowDimensions }) {
                 )}
               </div>
             </ArtworkContainer>
-             
-            </main>
-            </> :
-            <> <main
-              style={{
-                height: "100%",
-                width:mobile ? "70%" : "30%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: "10rem",
-              }}
-            >
-              
-                 <ArtworkContainer mobile={mobile} >
-              <Image
-                src={ArtworkImage} 
-                layout="fill"
-                objectFit="cover"
-                objectPosition="center"
-                placeholder="blur"
-                blurDataURL="/assets/placeholder.png"
-                alt="artwork"
-              />
-              {/* <ArtworkDetailsWrapper> */}
-              <Header>
-                <FavoriteWrapper onClick={handleAddFavorite}>
-                  <Iconify
-                    icon={!IsFavorite ? "mdi-bookmark-outline" : "mdi-bookmark"}
-                  />
-                </FavoriteWrapper>
-
-                <ArtworkTitle>
-                  {Artwork.name.toUpperCase()}
-                  <Underline />
-                </ArtworkTitle>
-              </Header>
-
-              <Overlay />
-              <div className="tags-container">
-                {Artwork.tags.map((tag, i) =>
-                  i < 2 ? (
-                    <div style={{ display: "flex", width: "3rem" }} key={i}>
-                      {tag} |{" "}
-                    </div>
-                  ) : (
-                    <div key={i}>{tag} </div>
-                  )
-                )}
-              </div>
-            </ArtworkContainer>
-             
-            </main> 
-            <ReactionsWrapper mobile={mobile}>
-            <PromptOverlay>
-              <section
-                style={{
-                  position: "absolute",
-                  top: "3px",
-                  left: "10px",
-                  height: "2.8rem",
-                  zIndex: "1",
-                }}
-              >
-                <ReactionsTitle>REACTIONS</ReactionsTitle>
-                <Underline />
-              </section>
-
-              <section style={{ display: "flex", width: "100%" }}>
-                <div style={{ width: "50%" }}>
-                  <AnimatedEmoticon
-                    artboard={"Mindblown"}
-                    // handleReactionPost={() =>
-                    //   handleReactionPost("mindblown")
-                    // }
-                  />
-                  <AnimatedEmoticon
-                    artboard={"joy"}
-                    // handleReactionPost={() => handleReactionPost("lol")}
-                  />
-                  <AnimatedEmoticon
-                    artboard={"meh"}
-                    // handleReactionPost={() => handleReactionPost("meh")}
-                  />
-                </div>
-
-                <div style={{ width: "50%" }}>
-                  <AnimatedEmoticon
-                    artboard={"Onfire"}
-                    // handleReactionPost={() => handleReactionPost("fire")}
-                  />
-                  <AnimatedEmoticon
-                    artboard={"love"}
-                    // handleReactionPost={() => handleReactionPost("love")}
-                  />
-                </div>
-              </section>
-            </PromptOverlay>
-          </ReactionsWrapper>
-            </>
-           }
-           
-           {!mobile &&  <CommentsSection
-              {...inputProps}
-              comments={Comments}
-            />}
-          </div>
-          <AuthorContainer>
-            {/* <AuthorName>{Artwork.author.toUpperCase()}</AuthorName> */}
-            <AuthorName>{Artwork.author.toUpperCase()}</AuthorName>
-            <div style={{ height: "4.5rem" }}></div>
-            <div
-              style={{ position: "absolute", bottom: "1.7rem", zIndex: "2" }}
-            >
-              <Avatar>
-                <svg
-                  width="2.4rem"
-                  height="2.4rem"
-                  viewBox="0 0 72 67"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M55.3199 66.382L55.3201 66.285C55.3201 53.8012 46.6457 43.6812 35.9454 43.6812C25.245 43.6812 16.5707 53.8012 16.5707 66.285L16.5707 66.312C6.60339 59.91 0 48.7261 0 36C0 16.1177 16.1177 0 36 0C55.8823 0 72 16.1177 72 36C72 48.7727 65.3483 59.9917 55.3199 66.382ZM22.7484 31.3223C23.8232 37.6715 29.349 42.5069 36.0041 42.5069C43.4295 42.5069 49.449 36.4874 49.449 29.062C49.449 21.6366 43.4295 15.6172 36.0041 15.6172C30.8627 15.6172 26.3953 18.5031 24.1335 22.7434C25.1523 22.0953 25.948 23.3626 25.9292 25.6566C25.9098 28.0236 25.0305 30.5872 23.9653 31.3827C23.5002 31.73 23.0765 31.6828 22.7484 31.3223ZM28.1133 27.0044C28.092 29.5983 29.3989 31.4914 31.0322 31.2327C32.6655 30.974 34.0068 28.6615 34.0281 26.0676C34.0494 23.4736 32.7426 21.5806 31.1092 21.8393C29.4759 22.0979 28.1346 24.4105 28.1133 27.0044Z"
-                    fill="black"
-                  />
-                </svg>
-              </Avatar>
-            </div>
-
-            <Avatar>
-              <Image
-                style={{ borderRadius: "50px", border: "2px solid black" }}
-                src={
-                  Artwork.SelectedEngine === "mid"
-                    ? "https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg"
-                    : "https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg"
-                }
-                width={100}
-                height={100}
-                layout="fill"
-                alt="avatar"
-              />
-            </Avatar>
-          </AuthorContainer>
+            <CommentsSection />
+          </>
+          
         </MainWrapper>
       </>
     );
@@ -565,13 +341,11 @@ export default function ArtworkDetails({ windowDimensions }) {
 const MainWrapper = styled.div`
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   display: flex;
-
   flex-direction: column;
+  justify-content: space-around;
   align-items: center;
-  background-color: black;
-  padding: 0;
 
   .tags-container {
     width: 100%;
@@ -788,54 +562,21 @@ const fadeIn = keyframes`
     }
     `;
 
-
 const ArtworkContainer = styled.div`
   display: flex;
   color: white;
   flex-direction: column;
   justify-content: space-between;
   align-items: left;
-  height: 86%;
-  width:  30rem;
+  // height: 100%;
+  height: 40rem;
+
+  width: 100%;
   position: relative;
-  margin-bottom: 1rem;
+  margin-bottom: 0rem;
   margin-top: 0rem;
   opacity: 1;
   animation: ${fadeIn} 2s ease-out;
-  @media (max-width: 768px) {
-    height: auto;
-    width: 100vw;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-blend-mode: multiply;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    height: 80%;
-    width: 30rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  @media (max-width: 480px) {
-    height: 40rem;
-    background-size: cover;
-
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-blend-mode: multiply;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    width: 80%;
-    position: relative;
-    overflow: hidden;
-  }
 `;
 
 // create the underline component that has a white skewed rectangle that is 40% of the width of the artwork container

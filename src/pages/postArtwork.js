@@ -9,7 +9,7 @@ import { useAuth } from "../contexts/AuthContext";
 import Iconify from "../components/Iconify";
 import Spinner from "../atoms/Spinner";
 
-import { collection, doc, addDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, addDoc, updateDoc, setDoc } from "firebase/firestore";
 
 // import useImage from the hooks folder
 import { useImage } from "../hooks/useImage";
@@ -22,19 +22,19 @@ import Header from "../components/Header";
 
 const images = [
   {
-    id: 0,
+    id: 1,
     src:
       "https://mj-gallery.com/8d24ecb9-560f-4d95-9499-3a700932a372/grid_0.png",
     selected: false,
   },
   {
-    id: 1,
+    id: 2,
     src:
       "https://mj-gallery.com/62f649d3-fc1f-4042-8bc5-1ad63da57497/grid_0.png",
     selected: false,
   },
   {
-    id: 2,
+    id: 3,
     src:
       "https://mj-gallery.com/a7f943be-7992-4cfa-8c04-aebf9f801c8e/grid_0.png",
     selected: false,
@@ -52,6 +52,7 @@ export default function PostArtwork() {
   const [Images, setImages] = useState(images);
   const [Artwork, setArtwork] = useState({ ArtworkImg, SelectedEngine, Tags });
   const { hasLoaded, hasError, AspectRatio } = useImage(ArtworkImg);
+  const [SelectedId, setSelectedId] = useState(0);
   console.log("hasLoaded", hasLoaded, AspectRatio);
 
   const imgRef = React.useRef(null);
@@ -126,6 +127,7 @@ export default function PostArtwork() {
     setLoading(true);
 
     const artwork = {
+      id: SelectedId,
       tags: getSelectedTags(),
       ArtworkImg,
       SelectedEngine,
@@ -139,7 +141,11 @@ export default function PostArtwork() {
     };
 
     try {
-      const docRef = await addDoc(collection(db, "artworks"), artwork);
+      const colRef = collection(db, "artworks");
+      // set the doc with the artwork id and the artwork object
+      const docRef = await setDoc(doc(colRef, artwork.id.toString()), artwork);
+
+
 
       console.log("Document written with ID: ", docRef.id);
 
@@ -227,18 +233,10 @@ export default function PostArtwork() {
     setDescription(e.target.value);
   };
 
-  const handleSelectedImage = (src) => {
+  const handleSelectedImage = (src, id) => {
     setArtworkImg(src);
-    // update the Images array with the selected image
-    // const newImages = Images.map((i) => {
-    //   if (i.id === id) {
-    //     i.selected = true;
-    //   } else {
-    //     i.selected = false;
-    //   }
-    //   return i;
-    // });
-    // setImages(newImages);
+    setSelectedId(id);
+    
   };
 
   const ImgOption = ({image}) => {
@@ -248,7 +246,7 @@ export default function PostArtwork() {
       <>
       <Header/>
       <div
-        onClick={() => handleSelectedImage(image.src)}
+        onClick={() => handleSelectedImage(image.src, image.id)}
         style={{ display: "flex" }}
       >
         {hasLoaded ? (

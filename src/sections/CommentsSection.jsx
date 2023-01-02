@@ -1,68 +1,171 @@
 import React, { useState, useEffect } from 'react';
-import styled,{keyframes} from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import Spinner from '../atoms/Spinner';
 import CommentComponent from '../components/CommentComponent';
 import Iconify from '../components/Iconify';
+import PrimaryBtnComponent from '../components/PrimaryBtn';
+import { useArtworks } from '../contexts/ArtworksContext';
 
 export default function CommentsSection({ comments, handleCommentPost, handleKeyboardPost, Comment, handleCommentChange, Loading, animation }) {
+  const { handleAddProduct } = useArtworks()
 
   console.log(comments);
   return (
-    <main
+    <section
       style={{
-        height: "100%",
-        width: "30%",
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
         justifyContent: "center",
-        marginTop: "10rem",
+        width: "100%",
+        height: "100%",
+        alignItems: "center",
+        position: "relative",
       }}
     >
 
-      <section
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          width: "80%",
-          height: "100%",
-          justifyContent: "end",
-          marginBottom: "6rem",
-          alignItems: "center",
-          position: "relative",
-        }}
-      >
+      <CommentsWrapper style={animation}>
+        <TopComponent>
+          <ReactionsTitle>
+            DETAILS
+            <div className='underline'></div>
+          </ReactionsTitle>
 
-        <CommentsWrapper style={animation}>
-          <PromptOverlay>
-            <section style={{ top: "3px", right: "10px", height: "20%", paddingLeft: "0.5rem", width: "100%", display: "flex", flexDirection: "column", alignItems: "end" }}>
-              <ReactionsTitle>
-                  COMMENTS
-                  <div className='underline'></div>
-                                  {/* <Underline /> */}
+        </TopComponent>
+        <BottomComponent>
+         
 
-                
-              </ReactionsTitle>
-            </section>
-          </PromptOverlay>
-          <main
-            style={{ width: "100%", height: "40%" }}
-            className="comments-section"
-          >
-            {comments ? comments.map(comment => <CommentComponent key={comment.id} comment={comment} />) : <Spinner />}
-          </main>
-        </CommentsWrapper>
-        <InputWrapper>
-          <input placeholder='Something cool' onChange={handleCommentChange} onKeyUp={handleKeyboardPost} value={Comment} />
-          <main className='send-btn' onClick={handleCommentPost}>
-            {Loading ? <Spinner /> : <Iconify icon='fa-send' color="white" />
-            }          </main>
-        </InputWrapper>
-      </section>
-    </main>)
+          <AddButtonComponent>
+            <PrimaryBtnComponent label={"5 USD"} onClick={handleAddProduct} />
+          </AddButtonComponent>
+        </BottomComponent>
+
+      </CommentsWrapper>
+
+    </section>
+  )
 }
 
 const commentsAnimation = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0px);
+  }
+  `;
+
+const PriceComponent = styled.div`
+  width: 25%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: rgba(130, 132, 135, 0.18);
+  background-filter: blur(0.5rem);
+  border-top: 1px solid rgba(130, 132, 135, 0.18);
+  animation: ${commentsAnimation} 1.6s ease-out;
+  border-bottom-left-radius: 0.6rem;
+  border-bottom-right-radius: 0.6rem;
+
+  .send-btn  {
+    cursor: pointer;
+    width: 2.4rem;
+    height: 2.4rem;
+    background: rgba(130, 132, 135, 0.18);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+  }
+
+`
+
+const AddButtonComponent = styled.div`
+  width: 25%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+ 
+  animation: ${commentsAnimation} 1.6s ease-out;
+  border-bottom-left-radius: 0.6rem;
+  border-bottom-right-radius: 0.6rem;
+
+  .add-btn  {
+    cursor: pointer;
+    width: 2.4rem;
+    height: 2.4rem;
+    background: rgba(130, 132, 135, 0.18);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+  }
+  `
+
+const TopComponent = styled.div`
+  width: 100%;
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  animation: ${commentsAnimation} 1.6s ease-out;
+  border-bottom-left-radius: 0.6rem;
+  border-bottom-right-radius: 0.6rem;
+
+  .send-btn  {
+    cursor: pointer;
+    width: 2.4rem;
+    height: 2.4rem;
+    background: rgba(130, 132, 135, 0.18);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+  }
+
+  input {
+    padding: 0rem 0.5rem;
+    margin: 0;
+    width: 80%;
+    height: 60%;
+    // border: 2px solid #b6b6b6;
+    border: none;
+    border-radius: 12px;
+    font-family: "Monument", sans-serif;
+    font-size: 1rem;
+    text-align: left;
+    background-color: rgba(130, 132, 135, 0.18);
+    color: white;
+    text-shadow: 0 0 0.1rem #000;
+    &:focus {
+      outline: none;
+      border: 2px solid white;
+    }
+  }
+`;
+
+const BottomComponent = styled.div`
+  width: 100%;
+  height: 30%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: end;
+  border-top: 1px solid rgba(130, 132, 135, 0.18);
+  animation: ${commentsAnimation} 1.6s ease-out;
+  border-bottom-left-radius: 0.6rem;
+  border-bottom-right-radius: 0.6rem;
+
+  .send-btn  {
+    cursor: pointer;
+    width: 2.4
+
 
   0% {
     opacity: 0;
@@ -78,15 +181,12 @@ const CommentsWrapper = styled.div`
             position:relative;
             height: 60%;
             max-height: 60%;
-            width: 100%;
-            background: rgba(130, 132, 135, 0.18);
-            border-top-left-radius: 0.5rem;
-            border-top-right-radius: 0.5rem;
+            width: 60%;
+            border-radius: 0.5rem;
             display: flex;
             flex-direction: column;
-            align-items: end;
             justify-content: start;
-            color: white;
+            border: 1px solid rgba(130, 132, 135, 0.18);
             overflow: scroll;
             overflow-x: hidden;
             animation: ${commentsAnimation} 1.6s ease-out;
@@ -153,8 +253,8 @@ const ReactionsTitle = styled.h1`
   position: relative;
   font-size: 1rem;
   margin:1rem 0.6rem;
-  text-align: right;
-  width: 40%;
+  text-align: left;
+  width: 30%;
   height: 10%;
   @media (max-width: 768px) {
     font-size: 1.6rem;
@@ -175,7 +275,7 @@ const ReactionsTitle = styled.h1`
     position: absolute
     width: 10px;
     height: 0.2rem;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(0, 0, 0, 0.2);
     transform: skewX(-20deg);
     right: 0px;
   }
@@ -209,7 +309,7 @@ const PromptOverlay = styled.div`
   z-index: 1;
   width: 100%;
   height: 20%;
-  background: linear-gradient(180deg, black 10%, rgba(130, 132, 135, 0) 100%);
+  background: black;
   border-top-left-radius: 0.5rem;
   border-top-right-radius: 0.5rem;
 `;

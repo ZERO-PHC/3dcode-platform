@@ -4,7 +4,6 @@ import { useAuth } from "../contexts/AuthContext";
 import { useArtworks } from "../contexts/ArtworksContext";
 import styled from "styled-components";
 import { useRouter } from "next/router";
-// import useSWR from "swr";
 import useSWR from "swr";
 import Iconify from "../components/Iconify";
 import FAB from "../components/FAB/FAB";
@@ -15,6 +14,11 @@ import VerticalSpace from "../atoms/VerticalSpace";
 import LogoWrapper from "../components/LogoWrapper";
 import Head from "next/head";
 import Header from "../components/Header";
+
+// Make sure to call `loadStripe` outside of a component’s render to avoid
+// recreating the `Stripe` object on every render.
+  
+
 
 export default function Home({ windowDimensions }) {
   const { user, login } = useAuth();

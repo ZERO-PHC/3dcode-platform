@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useAuth } from "./AuthContext";
 import { db } from "../firebase";
-import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import { collection, getDocs, onSnapshot, doc, getDoc, updateDoc} from "firebase/firestore";
 import { categories } from "../data/categories";
 import { useRouter } from "next/router";
 
@@ -62,7 +62,14 @@ export default function ArtworksProvider({ children }) {
   const [Categories, setCategories] = useState(categories);
   const [MainCategories, setMainCategories] = useState(mainCategories);
   const [LoadedArtworks, setLoadedArtworks] = useState(0);
+  const [SelectedProduct, setSelectedProduct] = useState({})
+  const [cart, setCart] = useState([])
+  const [CartTotal, setCartTotal] = useState(0)
   const router = useRouter();
+
+  // destructuring the user from the AuthContext
+  const { user } = useAuth();
+  
 
   useEffect(() => {
     const colRef = collection(db, "artworks");
@@ -245,7 +252,37 @@ export default function ArtworksProvider({ children }) {
     );
   };
 
+  function handleAddProduct() {
+    console.log("add product");
+
+    // add the product to the cart array on the user document
+    // get the user document
+    const userRef = doc(db, "users", user.uid);
+    // get the user data
+    getDoc(userRef).then((doc) => {
+      // check if the user has a cart array
+      if (doc.data().cart) {
+        // if the user has a cart array, add the product to the cart array
+        updateDoc(userRef, {
+          cart: [...doc.data().cart, SelectedProduct],
+        }).then(() => console.log("added"))
+      } else {
+        // if the user doesn't have a cart array, create a cart array and add the SelectedProduct to it
+        updateDoc(userRef, {
+          cart: [SelectedProduct],
+        }).then(() => console.log("added"))
+      }
+    }
+    );
+
+    // add the SelectedProduct to the cart array on the state
+    setCart([...cart, SelectedProduct]);
+  }
+
   const value = {
+    cart,
+    setSelectedProduct,
+    handleAddProduct,
     Artworks,
     SelectedCategory,
     MainCategory,
