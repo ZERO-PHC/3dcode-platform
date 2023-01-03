@@ -5,23 +5,51 @@ import Navbar from "../components/Navbar";
 import Image from "next/image";
 import Iconify from "../components/Iconify";
 import { useArtworks } from "../contexts/ArtworksContext";
+import { useRouter } from "next/router";
 
 export default function Layout({ children, windowDimensions }) {
   const [Show, setShow] = useState(false);
+  const [IsHome, setIsHome] = useState(true);
+  const  router  = useRouter();
   // destructure the useArtworks context to get the categories and artworks
-  const { 
+  const {
     Categories,
     MainCategories,
     handleCategorySelection,
     handleMainCategorySelection,
     handleCategoryHover,
-    MainCategory
+    MainCategory,
   } = useArtworks();
 
   const handleDrawer = () => {
     console.log("handling");
     setShow(!Show);
   };
+
+  // listen to the
+  useEffect(() => {
+    const handleRouteChange = (url) => {
+      console.log(
+        `App is changing to ${url}`
+      )
+
+      if (url === "/") {
+        setIsHome(true);
+      }
+      if (url !== "/") {
+        setIsHome(false);
+      }
+    }
+
+    router.events.on('routeChangeStart', handleRouteChange)
+
+    // If the component is unmounted, unsubscribe
+    // from the event with the `off` method:
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange)
+    }
+  }, [])
+
 
   const MainCategoryIcon = ({ idx, icon, id }) => {
     return (
@@ -30,8 +58,7 @@ export default function Layout({ children, windowDimensions }) {
         color={MainCategory === id ? "black" : "lightgrey"}
       />
     );
-  
-};
+  };
 
   // alert(windowDimensions.);
   return (
@@ -50,43 +77,52 @@ export default function Layout({ children, windowDimensions }) {
           </div>
         </div>
       </Drawer>
-      <main style={{position:"relative", height: "100%", overflowX: "hidden", padding: "8vh 0" }}>
-        <Sidebar>
-          <div className="main-categories">
-            {MainCategories.map((category, idx) => (
-              <MainCategoryStyles
-                key={category.id}
-                onPointerEnter={() => handleCategoryHover(category.id)}
-                onClick={() =>
-                  handleMainCategorySelection(category.id, category)
-                }
-              >
-                <MainCategoryIcon
-                  idx={idx}
-                  icon={category.icon}
-                  id={category.id}
-                />
-                <div style={{ width: "0.5rem" }}></div>
-                <div>
+      <main
+        style={{
+          position: "relative",
+          height: "100%",
+          overflowX: "hidden",
+          padding: "8vh 0",
+        }}
+      >
+        {IsHome && (
+          <Sidebar>
+            <div className="main-categories">
+              {MainCategories.map((category, idx) => (
+                <MainCategoryStyles
+                  key={category.id}
+                  onPointerEnter={() => handleCategoryHover(category.id)}
+                  onClick={() =>
+                    handleMainCategorySelection(category.id, category)
+                  }
+                >
+                  <MainCategoryIcon
+                    idx={idx}
+                    icon={category.icon}
+                    id={category.id}
+                  />
+                  <div style={{ width: "0.5rem" }}></div>
+                  <div>
+                    {category.name}
+                    <StyledRectangle active={category.selected} />
+                  </div>
+                </MainCategoryStyles>
+              ))}
+            </div>
+            <div className="categories-wrapper">
+              {Categories.map((category) => (
+                <CategoryStyles
+                  key={category.id}
+                  onPointerEnter={() => handleCategoryHover(category.id)}
+                  onClick={() => handleCategorySelection(category.id, category)}
+                >
                   {category.name}
-                  <StyledRectangle active={category.selected} />
-                </div>
-              </MainCategoryStyles>
-            ))}
-          </div>
-          <div className="categories-wrapper">
-            {Categories.map((category) => (
-              <CategoryStyles
-                key={category.id}
-                onPointerEnter={() => handleCategoryHover(category.id)}
-                onClick={() => handleCategorySelection(category.id, category)}
-              >
-                {category.name}
-                <ActiveHighlight selected={category.selected} />
-              </CategoryStyles>
-            ))}
-          </div>
-        </Sidebar>
+                  <ActiveHighlight selected={category.selected} />
+                </CategoryStyles>
+              ))}
+            </div>
+          </Sidebar>
+        )}
         {children}
       </main>
     </main>
@@ -172,16 +208,17 @@ position: relative;
 `;
 
 const Sidebar = styled.div`
-position:fixed;
-height: 100%;
+  position: fixed;
+  height: 100%;
+  z-index: 90;
 
-background: lighten(#fafafa, 10%);
-border-right: 1.5px solid lightgrey;
+  background: #f5f5f5;
+  border-right: 1.5px solid lightgrey;
 
-@media (max-width: 768px) {
-  visibility: hidden;
-  width: 0px;
-}
+  @media (max-width: 768px) {
+    visibility: hidden;
+    width: 0px;
+  }
 
   .categories-wrapper {
     height: 70%;
@@ -239,27 +276,26 @@ const ActiveHighlight = styled.div`
 `;
 
 const StyledRectangle = styled.div`
-width: ${(props) => (props.active ? "6rem" : "3rem")};
-height: 0.2rem;
-background: ${(props) => (props.active ? "black" : "lightgrey")};
-transform: skew(-20deg);
-// transition: all 0.3s ease-in-out;
-// opacity: ${(props) => (props.active ? 1 : 0.1)};
-animation-fill-mode: forwards;
-animation-iteration-count: 1;
-animation-timing-function: ease-in-out;
-animation-duration: 0.5s;
-animation-name: extend;
+  width: ${(props) => (props.active ? "6rem" : "3rem")};
+  height: 0.2rem;
+  background: ${(props) => (props.active ? "black" : "lightgrey")};
+  transform: skew(-20deg);
+  // transition: all 0.3s ease-in-out;
+  // opacity: ${(props) => (props.active ? 1 : 0.1)};
+  animation-fill-mode: forwards;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in-out;
+  animation-duration: 0.5s;
+  animation-name: extend;
 
-
-@keyframes extend {
-  0% {
-    opacity: 0;
+  @keyframes extend {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
   }
-  100% {
-    opacity: 1;
-  }
-}
 `;
 
 // create a Drawer component with a background color of white and a width of 50%

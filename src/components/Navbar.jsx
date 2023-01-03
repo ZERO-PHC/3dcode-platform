@@ -306,7 +306,7 @@ const HeaderWrapper = styled.header`
   height: 8vh;
   width: 100%;
   color:${(props) => (props.width > 768 ? "black" : "white")};
-  z-index: 20;
+  z-index: 99;
   padding-left: 3rem;
   padding-right:3rem;
   background-color: rgba(255, 255, 255, 0.5);
@@ -361,7 +361,7 @@ const HeaderWrapper = styled.header`
   
 
 
-  z-index: 20;
+  z-index: 99;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
   position: fixed;
 

@@ -5,7 +5,7 @@ import ArtworkComponent from "./ArtworkComponent";
 import { resolve } from "path";
 import { Icon } from "@iconify/react";
 
-export default function ArtgridComponent({
+export default function ArtlistComponent({
   currentWrapper,
   artworks,
   handleArtworkSelection,
@@ -13,6 +13,7 @@ export default function ArtgridComponent({
 }) {
   const containerRef = useRef(null);
   const [IsPointerDown, setIsPointerDown] = useState(false)
+  const [IsPointerOver, setIsPointerOver] = useState(false)
 
   useEffect(() => {
     // while the pointer is down on the artgrid, scroll according to pointer movement
@@ -23,17 +24,25 @@ export default function ArtgridComponent({
     }
 
     return () => {
-      containerRef.current.removeEventListener("pointermove", handlePointerMove);
+      // containerRef.current.removeEventListener("pointermove", handlePointerMove);
     }
 
   }, [IsPointerDown]);
 
-  function handlePointerDown() {
+  function handlePointerDown(event) {
+    event.preventDefault()
     setIsPointerDown(true);
   }
 
   function handlePointerUp() {
     setIsPointerDown(false);
+  }
+
+  function handlePointerEnter() {
+    // if the pointer is down, don't change the cursor
+    if (IsPointerDown) return;
+
+    setIsPointerOver(true);
   }
 
   function handlePointerMove(e) {
@@ -50,22 +59,38 @@ export default function ArtgridComponent({
           currentWrapper={currentWrapper}
           idx={i}
           mobile={isMobile}
+          isPointerDown={IsPointerDown}
         />
       );
     });
   }
 
   return (
-      <Artgrid ref={containerRef} onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}>
+      <ArtList ref={containerRef} onPointerDown={handlePointerDown} IsPointerDown={IsPointerDown} onPointerUp={handlePointerUp} onPointerEnter={handlePointerEnter} isPointerOver={IsPointerOver}>
         {renderArtworks()}
-      </Artgrid>
+      </ArtList>
   );
 }
 
-const Artgrid = styled.div`
-  width: 80%;
-  max-width: 80%;
+const ArtList = styled.div`
+  width: 100%;
+  max-width: 100%;
   display: flex;
   overflow-x: scroll;
   white-space: nowrap;
+  padding-left: 20%;
+  height: 100%;
+  border-bottom: 1px solid #eaeaea;
+  margin:0rem 0rem;
+  cursor: ${props => resolveCursor(props.IsPointerDown, props.isPointerOver)};
+  ::-webkit-scrollbar {
+    height: 0px;
+  }
+
 `;
+
+function resolveCursor(IsPointerDown, isPointerOver) {
+  if (IsPointerDown) return "grabbing";
+  if (isPointerOver) return "grab";
+  return "default";
+}

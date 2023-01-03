@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import Iconify from "../components/Iconify";
 import FAB from "../components/FAB/FAB";
-import ArtgridSection from "../sections/ArtgridSection";
+import ArtlistSection from "../sections/ArtlistSection";
 import Image from "next/image";
 import PrimaryBtnComponent from "../components/PrimaryBtn";
 import VerticalSpace from "../atoms/VerticalSpace";
@@ -93,14 +93,29 @@ export default function Home({ windowDimensions }) {
             </Overlay>
           )}
           <main className="mainContent">
-            <ArtgridSection
+            <ArtlistSection
+              title={"FEATURED"}
+              isMobile={isMobile}
+              artworks={Artworks}
+              width={width}
+              handleArtworkSelection={handleArtworkSelection}
+            />
+            <ArtlistSection
+              title={"NEW"}
+              isMobile={isMobile}
+              artworks={Artworks}
+              width={width}
+              handleArtworkSelection={handleArtworkSelection}
+            />
+            <ArtlistSection
+              title={"FREE"}
               isMobile={isMobile}
               artworks={Artworks}
               width={width}
               handleArtworkSelection={handleArtworkSelection}
             />
           </main>
-          {!isMobile && <FAB />}{" "}
+          {!isMobile && <FAB />}
         </Wrapper>
       </>
     );
@@ -137,8 +152,8 @@ const Wrapper = styled.main`
   overflow: hidden;
 
   .mainContent {
-    height: 100vh;
-    width: 100%;
+    // height: 100vh;
+    width: 100vw;
     background: lighten(#fafafa, 10%);
     display: flex;
     flex-direction: column;
