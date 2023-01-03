@@ -40,14 +40,6 @@ export default function ArtgridComponent({
     containerRef.current.scrollLeft += e.movementX;
   }
 
-
-
- 
-
-    
-    
-  
-
   function renderArtworks() {
     return artworks.map((artwork, i) => {
       return (
