@@ -28,48 +28,33 @@ export default function ArtworkComponent({
       onPointerLeave={() => setHovered(false)}
       onClick={() => handleArtworkSelection(artwork)}
       key={idx}
-      width={"16rem"}
-      height={"16rem"}
+      width={"14rem"}
+      height={"10rem"}
       isOwner={isOwner}
       transform={transform}
 
     >
         <Image
           style={{ borderRadius: "12px" }}
-          src={artwork.ArtworkImg ? artwork.ArtworkImg : "/assets/images/coin.png"}
+          src={Hovered ?  "/assets/orbit.gif" : "/assets/sphere.png"}
           alt={"img"}
           loading="lazy"
           placeholder="blur"
-          blurDataURL="/assets/placeholder.png"
+          blurDataURL="/assets/sphere.png"
+          objectFit='cover'
           layout="fill"
+          quality={100}
           />
       
       <ArtworkName isHovered={Hovered} >
         {artwork.name}
       </ArtworkName>
-      <EngineName isHovered={Hovered}  >
-        {artwork.SelectedEngine === "mid" ? <main style={{ position: "relative", borderRadius: "50px", height: "2rem", width: "2rem", border: "2px solid black", }}>
-          <Image src="https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg" layout="fill" alt="mid" style={{ borderRadius: "50px" }}
-          />
-        </main> : <Image src="https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg" height={100} width={100}
-          alt="low" />}
-      </EngineName>
+      
       <Underline isHovered={Hovered}  />
       {/* <Overlay style={overlayAnimation} /> */}
       <Overlay isHovered={Hovered} />
-      {idx === 6 && <div style={{ height: "40%", width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}  >
-        <div style={{ width: "100%", textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <header style={{ fontSize: "small" }}>Created with</header>
-          <main style={{ position: "relative", borderRadius: "50px", height: "2rem", width: "2rem", border: "2px solid black", margin: "0.5rem" }}>
-            <Image src="https://pbs.twimg.com/profile_images/1500078940299272198/quB4bgi9_400x400.jpg" layout="fill" alt="mid" style={{ borderRadius: "50px", marginLeft: "0.5rem" }}
-            />
-          </main>
-        </div>
-
-        <PrimaryBtnComponent label={"Get your free trial"} />
-      </div>}
+     
     </Artwork>
-    // </div>
   );
 
 
@@ -89,17 +74,19 @@ const animationOne = keyframes`
 
 
 const Artwork = styled.div`
+display: inline-block;
 position: relative;
 cursor: pointer;
-margin:1rem;
+margin:0rem 3rem;
 color:white;
 background-color: black;
-border-radius:0.6rem;
+border-radius:14px;
 text-transform: uppercase;
 z-index: 0;
 transform: !mobile   ?  ${(props) => props.transform} :  none;
 width: ${(props) => props.width};
 height: ${(props) => props.height};
+min-width: 14rem;
 // border-radius: 0.2rem;
 transition: all 0.3s ease-in-out;
   &:hover {
@@ -117,7 +104,7 @@ background: linear-gradient(to top, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 100%
   height: 100%;
   width: 100%;
   position: absolute;
-  border-radius: 0.2rem;
+  border-radius: 12px;
   bottom: 0;
   opacity: ${(props) => props.isHovered ? "1" : "0"};
   transition: all 0.3s ease-in-out;

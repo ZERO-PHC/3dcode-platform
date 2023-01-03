@@ -90,9 +90,9 @@ export default function ArtworkDetails({ windowDimensions }) {
             <ArtworkContainer mobile={mobile}>
               <Overlay />
               <SceneSection />
-              <div className="tags-container">
+              {/* <div className="tags-container">
                 {Scene.name}
-              </div>
+              </div> */}
             </ArtworkContainer>
             <CommentsSection title={"CODE"} code={Scene.code} productId={artworkId} />
           </>

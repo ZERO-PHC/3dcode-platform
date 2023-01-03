@@ -24,7 +24,6 @@ export default function LogoWrapper() {
       useFrame(() => {
         mesh.current.rotation.y += 0.01;
         mesh.current.rotation.x += 0.01;
-        
       });
       return (
         <group scale={1} position={[0,0,0]}>

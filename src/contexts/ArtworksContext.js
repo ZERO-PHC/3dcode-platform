@@ -15,7 +15,7 @@ import { useRouter } from "next/router";
 export const ArtworksContext = React.createContext("");
 export const useArtworks = () => useContext(ArtworksContext);
 
-const mainCategories = [
+const contentCategories = [
   {
     name: "Featured",
     id: "featured",
@@ -60,6 +60,31 @@ const mainCategories = [
     active: false,
     selected: false,
   },
+];
+const mainCategories = [
+  {
+    name: "Functionality",
+    id: "featured",
+    color: "#f5f5f5",
+    background: "#f5f5f5",
+    border: "#f5f5f5",
+    text: "#f5f5f5",
+    icon: "ph:function-bold",
+    active: false,
+    selected: true,
+  },
+  {
+    name: "Graphics",
+    id: "new",
+    color: "#f5f5f5",
+    background: "#f5f5f5",
+    border: "#f5f5f5",
+    text: "#f5f5f5",
+    icon: "grommet-icons:gem",
+    active: false,
+    selected: true,
+  },
+ 
 ];
 
 export default function ArtworksProvider({ children }) {
@@ -130,7 +155,7 @@ export default function ArtworksProvider({ children }) {
 
     // get the formatted docs
     const formattedProducts = getFormattedDocs(filteredProducts);
-    console.log("formattedProducts", formattedProducts)
+    console.log("formattedProducts", formattedProducts);
 
     // set the purchased products
     setPurchasedProducts(formattedProducts);
@@ -220,10 +245,6 @@ export default function ArtworksProvider({ children }) {
 
     return formattedDocs;
   };
-
- 
-
-  
 
   const handleArtworkSelection = (artwork) => {
     console.log("artwork selected: ", artwork);
