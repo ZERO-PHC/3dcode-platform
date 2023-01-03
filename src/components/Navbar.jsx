@@ -17,6 +17,9 @@ import {
 import { db } from "../firebase";
 import { Icon } from "@iconify/react";
 import { useArtworks } from "../contexts/ArtworksContext";
+import { Scene } from "three";
+import SceneSection from "../sections/SceneSection";
+import LogoWrapper from "./LogoWrapper";
 
 const Navbar = ({ handleDrawer }) => {
   const { login, logout, user, Coins, Notifications } = useAuth();
@@ -149,9 +152,9 @@ const Navbar = ({ handleDrawer }) => {
 
   return (
     <HeaderWrapper>
-      <div>
+      <div style={{height:"100%"}}>
         <Link href="/">
-          <Image height={50} width={50} src="/Logo.png" />
+          <LogoWrapper />
         </Link>
       </div>
 

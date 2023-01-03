@@ -1,20 +1,22 @@
-import { Icon } from '@iconify/react';
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-
+import { Icon } from "@iconify/react";
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 
 export default function PrimaryBtnComponent({ label, onClick }) {
   return (
     <PrimaryBtn onClick={onClick}>
-      <span>
-        {label}
-      </span>
+      <span>{label}</span>
 
-      <Icon icon="material-symbols:add-shopping-cart-sharp" style={{marginLeft:"1rem"}} />
-      
-
+      {label != "COPY" ? (
+        <Icon
+          icon="material-symbols:add-shopping-cart-sharp"
+          style={{ marginLeft: "1rem" }}
+        />
+      ) : (
+        <Icon icon="carbon:copy" style={{ marginLeft: "1rem" }} />
+      )}
     </PrimaryBtn>
-  )
+  );
 }
 
 const PrimaryBtn = styled.div`

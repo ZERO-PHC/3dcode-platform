@@ -20,6 +20,7 @@ import HeaderComponent from "../../components/Header";
 import CommentsSection from "../../sections/CommentsSection";
 import CommentComponent from "../../components/CommentComponent";
 import { useArtworks } from "../../contexts/ArtworksContext";
+import SceneSection from "../../sections/SceneSection";
 
 export default function ArtworkDetails({ windowDimensions }) {
   const { setMessage, setIsProcessing } = useTransaction();
@@ -27,7 +28,7 @@ export default function ArtworkDetails({ windowDimensions }) {
   const router = useRouter();
   const { artworkId } = router.query;
   const [Loading, setLoading] = useState(false);
-  const [Artwork, setArtwork] = useState(null);
+  const [Scene, setScene] = useState({})
   const [ArtworkImage, setArtworkImage] = useState();
   const [IsFavorite, setIsFavorite] = useState(false);
   const [IsAnimating, setIsAnimating] = useState(false);
@@ -62,11 +63,11 @@ export default function ArtworkDetails({ windowDimensions }) {
 
   // create a useEffect that will the artwork with the id of artworkId from the firestore database in realtime
   useEffect(() => {
-    const artworkRef = doc(db, "artworks", artworkId);
+    const artworkRef = doc(db, "scenes", artworkId);
     const unsub = onSnapshot(artworkRef, (doc) => {
       const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
       // console.log(source, " data: ", doc.data());
-      setArtwork(doc.data());
+      setScene(doc.data());
       setSelectedProduct(doc.data());
       setArtworkImage(doc.data().ArtworkImg);
       setLoading(false);
@@ -79,228 +80,21 @@ export default function ArtworkDetails({ windowDimensions }) {
   }, [user]);
 
 
-  // useEffect(() => {
-  //   checkFavorites(FirestoreUser.bookmarkedArtworks);
-  // }, [FirestoreUser]);
-
-  useEffect(() => {
-    setIsAnimating(true);
-  }, []);
-
-  const handleCommentChange = (e) => {
-    setComment(e.target.value);
-  };
-
-  const handleKeyboardPost = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleCommentPost();
-    }
-  };
-
-  const handleCommentPost = async () => {
-    setLoading(true);
-    console.log("loading model");
-
-    postComment();
-  };
-
-  const postComment = async () => {
-    const artworkRef = doc(db, "artworks", artworkId);
-
-    const colRef = collection(artworkRef, "comments");
-
-    addDoc(colRef, { Comment, read: false }).catch((error) => {
-      console.log(error);
-    });
-    setComment("");
-
-    setLoading(false);
-    console.log("added doc");
-
-    const userRef = doc(db, "users", user.email);
-
-    const notifsRef = collection(userRef, "notifications");
-
-    addDoc(notifsRef, {
-      notification: "You have a new comment!",
-      read: false,
-      artworkId,
-    }).catch((error) => {
-      console.log(error);
-    });
-    console.log("added notif doc");
-  };
-
-  // addUserPoints(FirestoreUser.points);
-  const addUserPoints = async () => {
-    const userRef = doc(db, "users", FirestoreUser.email);
-    const userData = {
-      coins: FirestoreUser.coins + 30,
-    };
-
-    try {
-      await updateDoc(userRef, userData);
-      console.log("added points");
-      setMessage("You earned 30 points for this reaction!");
-      setTimeout(() => {
-        setIsProcessing(false);
-      }, 3000);
-    } catch (error) {
-      console.log(error);
-      alert("Error adding points, try again later");
-    }
-  };
-
-  const handleReactionPost = async (reaction) => {
-    setIsProcessing(true);
-    setMessage("loading");
-
-    const userRef = doc(db, "users", user.email);
-
-    const notifsRef = collection(userRef, "notifications");
-
-    addDoc(notifsRef, {
-      notification: "Someone reacted to your artwork!",
-      read: false,
-      artworkId,
-    }).catch((error) => {
-      console.log(error);
-    });
-    console.log("added notif doc");
-
-    // update the reaction on the reactions object of the ArtworkId
-    const artworkRef = doc(db, "artworks", artworkId);
-    // const reactionsRef = collection(artworkRef, "reactions");
-
-    const artworkReactions = await getArtworkReactions();
-    console.log("artworkReactions", artworkReactions);
-
-    const reactionData = {
-      reactions: [...artworkReactions, reaction],
-    };
-    updateDoc(artworkRef, reactionData)
-      .then(() => {
-        console.log("reaction added");
-        setTimeout(() => {
-          setIsProcessing(false);
-        }, 3000);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    const colRef = collection(db, "reactions");
-
-    // artwork.variations.forEach((variation) => {
-    // add each variation to the artwork
-    addDoc(colRef, { reaction, points: 3 })
-      .then(() => {
-        addUserPoints();
-        // setMessage("You earned 3 points for reacting to this artwork!");
-
-        // set processing true
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    // });
-    console.log("added doc");
-  };
-
-  const getArtworkReactions = async () => {
-    const artworkRef = doc(db, "artworks", artworkId);
-
-    try {
-      const doc = await getDoc(artworkRef);
-      console.log("doc", doc.data().reactions);
-      return doc.data().reactions;
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-  };
-
-  const inputProps = {
-    handleCommentChange,
-    handleCommentPost,
-    handleKeyboardPost,
-    Comment,
-    Loading,
-  };
-
-  const checkFavorites = (favorites) => {
-    console.log("favorites", favorites);
-    if (favorites) {
-      if (favorites.includes(artworkId)) {
-        setIsFavorite(true);
-      } else {
-        setIsFavorite(false);
-      }
-    }
-  };
-
-  const handleAddFavorite = async () => {
-    // add the artwork to the user's collection of favorites
-    const userRef = doc(db, "users", user.email);
-    console.log("FirestoreUser", FirestoreUser);
-    await updateDoc(userRef, {
-      bookmarkedArtworks: [...FirestoreUser?.bookmarkedArtworks, artworkId],
-    }).catch((err) => console.log(err));
-  };
-
-  const VideoComponent = () => {
-    return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: `${!mobile ? "center" : "flex-start"}`,
-          justifyContent: "center",
-          width: "100%",
-          height: "100%",
-          overflow: "hidden",
-          position: "absolute",
-          top: "0",
-          left: "0",
-        }}
-      >
-        <video
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            objectPosition: "center",
-            position: "absolute",
-            top: "0",
-            left: "0",
-          }}
-          src={
-            "https://res.cloudinary.com/ddbgaessi/video/upload/v1668725025/Untitled_video_-_Made_with_Clipchamp_4_spns2r.mp4"
-          }
-          autoPlay
-          loop
-          muted
-        />
-      </div>
-    );
-  };
-
-  if (Artwork && Comments !== [])
+  
+  if (Scene)
     return (
       <>
         <HeaderComponent />
         <MainWrapper>
           <>
             <ArtworkContainer mobile={mobile}>
-              <VideoComponent video={Artwork.video} />
               <Overlay />
+              <SceneSection />
               <div className="tags-container">
-                {"Name"}
+                {Scene.name}
               </div>
             </ArtworkContainer>
-            <CommentsSection title={"CODE"} code={SelectedCode} productId={artworkId} />
+            <CommentsSection title={"CODE"} code={Scene.code} productId={artworkId} />
           </>
           
         </MainWrapper>
@@ -323,12 +117,16 @@ const MainWrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: large;
+    font-size: 1.5rem;
+    font-weight: 600;
     position: absolute;
-    top: 1rem;
+    top: 2rem;
     text-transform: uppercase;
     color: white;
     z-index:99;
+    text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
+    letter-spacing: 0.2rem;
+    text-decoration: underline;
   }
 `;
 
@@ -538,17 +336,17 @@ const ArtworkContainer = styled.div`
   color: white;
   flex-direction: column;
   justify-content: space-between;
-  align-items: left;
+  align-items: center;
   // height: 100%;
-  height: 46vh;
-  min-height: 46vh;
+  height: 50vh;
+  min-height: 50vh;
 
   width: 100%;
   position: relative;
   margin-bottom: 0rem;
   margin-top: 0rem;
   opacity: 1;
-  animation: ${fadeIn} 2s ease-out;
+  // animation: ${fadeIn} 2s ease-out;
 `;
 
 // create the underline component that has a white skewed rectangle that is 40% of the width of the artwork container

@@ -31,7 +31,7 @@ export default function CommentsSection({
       (product) => product.id === productId
     );
 
-      console.log("isPurchased", isPurchased)
+    console.log("isPurchased", isPurchased);
 
     if (isPurchased) {
       return true;
@@ -40,7 +40,17 @@ export default function CommentsSection({
     }
   };
 
-  console.log(comments);
+  const resolveCode = () => {
+    if (code) {
+      const codeString = code.replace(/"/g, "`");
+
+      // break the line of the code after the ;
+      const codeArray = codeString.split(";");
+
+      return codeArray.join(";\n");
+    }
+  };
+
   return (
     <section
       style={{
@@ -74,27 +84,27 @@ export default function CommentsSection({
             }}
           >
             {/* {code} */}
-            <CodeComponent isPurchased={resolvePurchased()} />
+            <CodeWrapper isPurchased={resolvePurchased()} />
             <div
               style={{
                 display: "flex",
                 height: "100%",
+                width: "100%",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              <Code language="javascript">
-                {`<div className="example">
-  {Math.random()}
-</div>`}
-              </Code>
+              <Code language="javascript">{resolveCode()}</Code>
             </div>
           </div>
         </TopComponent>
         <BottomComponent>
           <AddButtonComponent>
-            <PriceAddWrapper>
+            {!resolvePurchased() ? <PriceAddWrapper>
               5 USD
               <PrimaryBtnComponent label={"ADD"} onClick={handleAddProduct} />
-            </PriceAddWrapper>
+            </PriceAddWrapper> :               <PrimaryBtnComponent label={"COPY"} onClick={handleAddProduct} />
+}
           </AddButtonComponent>
         </BottomComponent>
       </CommentsWrapper>
@@ -118,8 +128,8 @@ const PriceAddWrapper = styled.div`
   padding-left: 1rem;
 `;
 
-// create a CodeComponent that blurs the background
-const CodeComponent = styled.div`
+// create a CodeWrapper that blurs the background
+const CodeWrapper = styled.div`
   width: 100%;
   height: 100%;
   background: rgba(40, 34, 34, 0.5);
@@ -129,6 +139,7 @@ const CodeComponent = styled.div`
   border-bottom-right-radius: 0.6rem;
   display: flex;
   position: absolute;
+  top: 0;
   z-index: 1;
 `;
 

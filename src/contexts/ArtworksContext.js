@@ -221,70 +221,9 @@ export default function ArtworksProvider({ children }) {
     return formattedDocs;
   };
 
-  const add9Artworks = async () => {
-    // filter the rendered artworks instead
+ 
 
-    // get the artworks from the firestore using the getDocs function
-    // create the artworks ref
-
-    if (Artworks.length < 27) {
-      console.log("adding docs");
-
-      const colRef = collection(db, "artworks");
-
-      // get the docs from the colRef using the getDocs function
-      const qSnap = await getDocs(colRef);
-      // console.log("docs", qSnap.docs)
-      const docs = qSnap.docs;
-      const formattedDocs = getFormattedDocs(docs);
-      // console.log("formattedDocs2", formattedDocs)
-
-      // filter out the artworks that are already in the Artworks array
-      const filteredDocs = formattedDocs.filter((artwork) => {
-        return !Artworks.some((art) => art.id === artwork.id);
-      });
-      console.log("filteredDocs2", filteredDocs);
-
-      // create the mosaic artworks
-      const mosaicArtworks = createArtworksMosaic(filteredDocs);
-
-      // add the mosaic artworks to the Artworks array
-      setArtworks([...Artworks, ...mosaicArtworks]);
-    }
-  };
-
-  const createArtworksMosaic = (docs) => {
-    const portraitArtworks = docs.filter((doc) => {
-      return doc.AspectRatio === "portrait";
-    });
-    const squareArtworks = docs.filter((doc) => {
-      return doc.AspectRatio === "square";
-    });
-    const landscapeArtworks = docs.filter((doc) => {
-      return doc.AspectRatio === "landscape";
-    });
-
-    console.log(
-      "artworksAspects",
-      portraitArtworks,
-      squareArtworks,
-      landscapeArtworks
-    );
-
-    const artworksSet = [
-      { ...squareArtworks[0] },
-      { ...portraitArtworks[0] },
-      { ...portraitArtworks[1] },
-      { ...squareArtworks[1] },
-      { ...portraitArtworks[2] },
-      { ...landscapeArtworks[0] },
-      { ...portraitArtworks[3] },
-      { ...landscapeArtworks[1] },
-      { ...landscapeArtworks[2] },
-    ];
-
-    return artworksSet;
-  };
+  
 
   const handleArtworkSelection = (artwork) => {
     console.log("artwork selected: ", artwork);
@@ -400,7 +339,6 @@ export default function ArtworksProvider({ children }) {
     handleArtworkSelection,
     MainCategories,
     Categories,
-    add9Artworks,
   };
 
   return (
