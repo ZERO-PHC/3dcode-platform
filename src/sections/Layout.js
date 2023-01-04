@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 
 export default function Layout({ children, windowDimensions }) {
   const [Show, setShow] = useState(false);
-  const [IsHome, setIsHome] = useState(true);
+  const [IsHome, setIsHome] = useState(false);
   const  router  = useRouter();
   // destructure the useArtworks context to get the categories and artworks
   const {

@@ -153,9 +153,10 @@ const Navbar = ({ handleDrawer }) => {
   return (
     <HeaderWrapper>
       <div style={{height:"100%"}}>
-        <Link href="/">
-          <LogoWrapper />
-        </Link>
+      <LogoWrapper />
+
+        {/* <Link href="/">
+        {/* </Link> */} 
       </div>
 
       {/* {!IsLoading && NextDay ? <TimerComponent nextDay={NextDay} /> : <div>loading</div>} */}
