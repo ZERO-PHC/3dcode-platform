@@ -11,6 +11,9 @@ const nextConfig = {
     ],
   },
 
+  scripts: ['cursor.js'],
+
+
   experimental: { images: { layoutRaw: true } },
 };
 

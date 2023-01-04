@@ -63,7 +63,7 @@ const contentCategories = [
 ];
 const mainCategories = [
   {
-    name: "Functionality",
+    name: "Functions",
     id: "featured",
     color: "#f5f5f5",
     background: "#f5f5f5",

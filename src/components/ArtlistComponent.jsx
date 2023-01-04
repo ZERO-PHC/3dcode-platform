@@ -91,6 +91,6 @@ const ArtList = styled.div`
 
 function resolveCursor(IsPointerDown, isPointerOver) {
   if (IsPointerDown) return "grabbing";
-  if (isPointerOver) return "grab";
+  if (isPointerOver) return `url(${"/cursor.png"}), grab`;
   return "default";
 }

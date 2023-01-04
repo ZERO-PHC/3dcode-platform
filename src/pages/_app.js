@@ -1,6 +1,8 @@
 import "../../styles/globals.css";
 // import "@stripe/stripe-js";
 import React,{useEffect} from "react";
+import '../cursor.js';
+
 
 import AuthProvider from "../contexts/AuthContext";
 import ArtworkProvider from "../contexts/ArtworksContext";
@@ -24,7 +26,22 @@ function MyApp({ Component, pageProps }) {
             const loader = document.getElementById('globalLoader');
         if (loader)
             loader.style.display = 'none';
+
+            document.querySelectorAll('.cursor-element').forEach(el => {
+              el.addEventListener('mouseenter', () => {
+                  const cursorImgPath = "./cursor.png"
+          
+          
+          
+                document.body.style.cursor = 'url("./cursor.png"), auto';
+              });
+              el.addEventListener('mouseleave', () => {
+                document.body.style.cursor = 'auto';
+              });
+            }); 
     }
+
+    
 }, []);
 
   return (

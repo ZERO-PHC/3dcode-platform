@@ -11,7 +11,6 @@ import Iconify from "../components/Iconify";
 
 import { collection, onSnapshot, getDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
-import ArtgridComponent from "../components/ArtgridComponent";
 import ProfileArtworksModule from "../modules/ProfileArtworksModule";
 import Header from "../components/Header";
 import { useArtworks } from "../contexts/ArtworksContext";

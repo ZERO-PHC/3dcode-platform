@@ -28,6 +28,12 @@ export default function Layout({ children, windowDimensions }) {
 
   // listen to the
   useEffect(() => {
+
+    // if the route is home set the isHome state to true
+    if (router.pathname === "/") {
+      setIsHome(true);
+    }
+
     const handleRouteChange = (url) => {
       console.log(
         `App is changing to ${url}`

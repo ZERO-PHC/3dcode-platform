@@ -61,7 +61,7 @@ export default function Home({ windowDimensions }) {
   // if (Artworks && data)
   if (Artworks)
     return (
-      <>
+      <div className="cursor-element">
         <Header />
         <Wrapper>
           {!user && (
@@ -117,7 +117,7 @@ export default function Home({ windowDimensions }) {
           </main>
           {!isMobile && <FAB />}
         </Wrapper>
-      </>
+      </div>
     );
 }
 
