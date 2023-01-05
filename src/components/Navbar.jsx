@@ -152,14 +152,16 @@ const Navbar = ({ handleDrawer }) => {
 
   return (
     <HeaderWrapper>
-      <div style={{height:"100%"}}>
+      <div style={{height:"100%", display:"flex", alignItems:"center", width:"30%", justifyContent:"start"}}>
       <LogoWrapper />
+      <TextLogo>
+        HYPER-THREE
+      </TextLogo>
 
         {/* <Link href="/">
         {/* </Link> */} 
       </div>
 
-      {/* {!IsLoading && NextDay ? <TimerComponent nextDay={NextDay} /> : <div>loading</div>} */}
 
       {user ? (
         <>
@@ -267,6 +269,20 @@ mo            </section> */}
 };
 
 export default Navbar;
+
+const TextLogo = styled.div`
+  // text stroke 
+  -webkit-text-stroke: 0.5px black;
+  -webkit-text-fill-color: transparent;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 0.1rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+`
 
 
 const CartCounter = styled.div`

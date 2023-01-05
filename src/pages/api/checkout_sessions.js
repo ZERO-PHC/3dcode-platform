@@ -7,12 +7,12 @@ const firebase = require("firebase-admin");
 
 
 // initialize the SDK with your Firebase project credentials
-// const serviceAccount = require('./serviceAccountKey.json');
+const serviceAccount = require('./serviceAccountKey.json');
 
-// firebase.initializeApp({
-//   credential: firebase.credential.cert(serviceAccount),
-//   databaseURL: 'flowty-14109.firebaseapp.com'
-// });
+firebase.initializeApp({
+  credential: firebase.credential.cert(serviceAccount),
+  databaseURL: 'flowty-14109.firebaseapp.com'
+});
 
 
 const serverItems = [

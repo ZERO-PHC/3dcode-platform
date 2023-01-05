@@ -103,7 +103,7 @@ const Overlay = styled.div`
   position: absolute;
   border-radius: 12px;
   bottom: 0;
-  opacity: ${(props) => (props.isHovered ? "1" : "0")};
+  opacity: ${(props) => (props.isHovered ? "0" : "1")};
   transition: all 0.3s ease-in-out;
 
   &:hover {
@@ -121,8 +121,8 @@ const ArtworkName = styled.div`
   z-index: 4;
   // animate the translateX when hovered
   transform: ${(props) =>
-    props.isHovered ? "translateX(0rem)" : "translateX(-2rem)"};
-  opacity: ${(props) => (props.isHovered ? "1" : "0")};
+    props.isHovered ? "translateX(-2rem)" : "translateX(0rem)"};
+  opacity: ${(props) => (props.isHovered ? "0" : "1")};
   transition: all 0.3s ease-in-out;
 `;
 
@@ -153,9 +153,9 @@ const Underline = styled.div`
   // animate the translateX when hovered
   transform: ${(props) =>
     props.isHovered
-      ? "translateX(0rem) skewX(-30deg)"
-      : "translateX(-1rem) skewX(-30deg)"};
-  opacity: ${(props) => (props.isHovered ? "1" : "0")};
+      ? "translateX(-1rem) skewX(-30deg)"
+      : "translateX(0rem) skewX(-30deg)"};
+  opacity: ${(props) => (props.isHovered ? "0" : "1")};
   transition: all 0.6s ease-in-out;
 
   @media(max - width: 768px) {

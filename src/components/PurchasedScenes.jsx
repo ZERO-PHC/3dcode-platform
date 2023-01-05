@@ -5,11 +5,12 @@ import { loadStripe } from "@stripe/stripe-js";
 // import useArtworks from the context folder
 import { useArtworks } from "../contexts/ArtworksContext";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 import PrimaryBtn from "../components/PrimaryBtn";
 import SecondaryButton from "../components/SecondaryButton";
+import SearchbarComponent from "./SearchbarComponent";
 
-const stripePromise = loadStripe("price_1MLcaFJ1nxfzB4nBGV0ciQDf");
 
 const CartContainer = styled.div`
   display: flex;
@@ -17,7 +18,7 @@ const CartContainer = styled.div`
   justify-content: space-between;
   padding: 3% 0% 0 0%;
   border: 0.5px solid lightgrey;
-  width: 60%;
+  width: 100%;
   height: 60vh;
   min-height: 60vh;
 `;
@@ -70,10 +71,12 @@ const CartTotal = styled.div`
 const Main = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: start;
   justify-content: center;
   margin: 0;
-  padding: 6rem 0;
+  padding: 2rem 0;
+  width: 100%;
+  
 `;
 
 const Footer = styled.div`
@@ -87,45 +90,20 @@ const Footer = styled.div`
   border-top: 0.5px solid lightgrey;
 `;
 
-const Cart = () => {
-  const { cart } = useArtworks();
-
-  React.useEffect(() => {
-    // Check to see if this is a redirect back from Checkout
-    const query = new URLSearchParams(window.location.search);
-    if (query.get("success")) {
-      console.log("Order placed! You will receive an email confirmation.");
-    }
-
-    if (query.get("canceled")) {
-      console.log(
-        "Order canceled -- continue to shop around and checkout when you’re ready."
-      );
-    }
-  }, []);
-
-  const total = cart.reduce((acc, item) => acc + item.price, 0);
-
-  const resolveEndpoint = () => {
-    const endpoint = "/api/checkout_sessions";
-    const args = cart.map((item) => `id=${item.id}&quantity=1`).join("&");
-    const finalEndpoint = `${endpoint}?${args}`;
-
-    console.log("finalEndpoint", finalEndpoint);
-    return finalEndpoint;
-  };
+const PurchasedScenes = ({scenes}) => {
+  const router = useRouter();
 
   const CartHeader = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     margin: 0;
     padding: 0rem 3rem;
     border-bottom: 0.5px solid lightgrey;
     text-transform: uppercase;
     max-height: 1rem;
-    width: 60%;
+    width: 100%;
     height: 3rem;
     min-height: 3rem;
     border: 0.5px solid lightgrey;
@@ -140,17 +118,20 @@ const Cart = () => {
 
   `;
 
+  const handleItemNavigation = (id) => {
+    router.push(`/artwork/${id}`);
+  };
+
 
   return (
     <Main>
       <CartHeader>
-          <h2> Cart</h2>
-        </CartHeader>
-      <CartContainer>
-        
-        {cart.map((item) => (
+          <SearchbarComponent />    
+      </CartHeader>
+      <CartContainer> 
+        {scenes.map((item) => (
           <CartItem key={item.id}>
-            <CartItemImage>
+            <CartItemImage onClick={() => handleItemNavigation(item.id)}>
               <Image
                 src={"/assets/orbit.gif"}
                 alt={"img"}
@@ -162,47 +143,18 @@ const Cart = () => {
               {/* <CartItemName>{item.nombre}</CartItemName> */}
               <div>
               <CartItemName>{"Nombre"}</CartItemName>
-              <CartItemPrice>$ 12{item.price}</CartItemPrice>
               </div>
               <div>
-                <SecondaryButton label="REMOVE" onClick={() => {}}>Remove</SecondaryButton>
               </div>
               
             </ItemColumn>
           </CartItem>
         ))}
 
-        <Footer>
-          <div style={{ minWidth: "33.3%" }}></div>
-          <div style={{ minWidth: "33.3%", textAlign: "center" }}>
-            <form action={resolveEndpoint()} method="POST">
-              <section>
-                <button
-                  type="submit"
-                  role="link"
-                  style={{
-                    background: "black",
-                    fontFamily: "Monument",
-                    textTransform: "uppercase",
-                    fontWeight: "lighter",
-                    color: "white",
-                    padding: "0.3rem 1rem",
-                    border: "2px solid #b6b6b6",
-                    borderRadius: "40px",
-                    fontSize:"medium",
-                  }}
-                >
-                  Go to Checkout
-                </button>
-              </section>
-            </form>
-          </div>
-
-          <CartTotal>Total: ${20}</CartTotal>
-        </Footer>
+        
       </CartContainer>
     </Main>
   );
 };
 
-export default Cart;
+export default PurchasedScenes;

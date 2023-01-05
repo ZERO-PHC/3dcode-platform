@@ -14,6 +14,7 @@ import { db } from "../firebase";
 import ProfileArtworksModule from "../modules/ProfileArtworksModule";
 import Header from "../components/Header";
 import { useArtworks } from "../contexts/ArtworksContext";
+import PurchasedScenes from "../components/PurchasedScenes";
 
 export default function Profile() {
   const router = useRouter();
@@ -55,7 +56,7 @@ export default function Profile() {
           <Underline />
         </section>
         <BalanceWrapper>
-          <div>{FirestoreUser && FirestoreUser.name.toUpperCase()}</div>
+          {/* <div>{FirestoreUser && FirestoreUser.name.toUpperCase()}</div> */}
           <div>{user && user.email.toUpperCase()}</div>
           <div style={{ width: "0.5rem" }}></div>
           <PrimaryBtn onClick={logout}>
@@ -68,16 +69,13 @@ export default function Profile() {
           <div
             style={{ height: "20%", marginTop: "2rem", marginBottom: "1rem" }}
           >
-            <ArtworkTitle>{"Your Artworks".toUpperCase()}</ArtworkTitle>
+            <ArtworkTitle>{"Your scenes".toUpperCase()}</ArtworkTitle>
             <Underline />
           </div>
         
           {PurchasedProducts.length > 0 ? (
-            <ProfileArtworksModule
-              artworks={
-                PurchasedProducts
-              }
-            />
+            <PurchasedScenes scenes={PurchasedProducts} />
+            
           ) : (
             <div
               style={{
@@ -129,6 +127,7 @@ const PacksRow = styled.div`
 const PacksWrapper = styled.section`
   height: 60%;
   display: flex;
+  width: 100%;
   flex-direction: column;
 `;
 
@@ -178,10 +177,9 @@ const BalanceWrapper = styled.div`
   justify-content: center;
   width: 100vw;
   height: 20%;
-  margin-top: 1rem;
+  margin-top: 0rem;
   font-size: 2rem;
   color: black;
-  text-shadow: 0 0 0.2rem #000;
 
   @media (max-width: 768px) {
     font-size: 4rem;
@@ -244,7 +242,6 @@ const MainWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  background-color: white;
   padding: 3.5rem 0rem;
 `;
 

@@ -48,7 +48,7 @@ export default function LogoWrapper() {
     };
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%", width:"20%"}}>
       <Canvas>
         {/* <Stage position={[0, 0, 1]} preset="rembrandt" gl={{ alpha: false }}> */}
           <Model />
