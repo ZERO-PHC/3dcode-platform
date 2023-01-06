@@ -4,9 +4,15 @@ import { Environment, OrbitControls, Html, Stage } from "@react-three/drei";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import LogoModel from "./LogoModel";
 import Spinner from "../atoms/Spinner";
+import  {useRouter} from 'next/router'
 
 export default function LogoWrapper() {
   const boxRef = useRef();
+  const router = useRouter();
+
+  const handleNavigation = () => {
+    router.push("/");
+  };
 
   const style = {
     width: "100%",
@@ -48,7 +54,7 @@ export default function LogoWrapper() {
     };
 
   return (
-    <div style={{ height: "100%", width:"20%"}}>
+    <div style={{ height: "100%", width:"20%", cursor:"pointer"}} onClick={handleNavigation}>
       <Canvas>
         {/* <Stage position={[0, 0, 1]} preset="rembrandt" gl={{ alpha: false }}> */}
           <Model />

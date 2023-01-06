@@ -7,9 +7,9 @@ export default function SceneSection() {
     const mesh = useRef();
 
     useFrame(() => {
-      mesh.current.rotation.y += 0.01;
-      mesh.current.position.x = Math.cos(mesh.current.rotation.y) * 0.6;
-      mesh.current.position.z = Math.sin(mesh.current.rotation.y) * 0.6;
+      mesh.current.position.y += 0.01;
+      // mesh.current.position.x = Math.cos(mesh.current.rotation.y) * 0.6;
+      // mesh.current.position.z = Math.sin(mesh.current.rotation.y) * 0.6;
     });
     return (
       <mesh ref={mesh}>
